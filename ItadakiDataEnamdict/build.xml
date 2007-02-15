@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<project name="ItadakiDataEnamdict" default="uno-package" basedir=".">
+
+	<property name="version" value="20070125"/>
+
+	<path id="project.class.path">
+		<pathelement path="../Seashell/bin"/>
+	</path>
+
+	<!-- Create dictionary index -->
+	<target name="index">
+		<java classname="org.itadaki.seashell.tools.Indexer"
+		      classpathref="project.class.path">
+			<arg line="enamdict"/>
+		</java>
+	</target>
+
+	<!-- Build OOo extension Uno package -->
+	<target name="uno-package" depends="index">
+		<zip destfile="itadaki-data-enamdict-${version}.uno.pkg">
+			<zipfileset dir="." includes="itadaki-data.properties"/>
+			<zipfileset dir="." includes="enamdict"/>
+			<zipfileset dir="." includes="enamdict.iidx"/>
+			<zipfileset dir="." includes="LICENSE"/>
+			<zipfileset dir="." includes="README"/>
+			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml"/>
+		</zip>
+	</target>
+
+	<!-- Clean project -->
+	<target name="clean">
+		<delete file="enamdict.iidx"/>
+		<delete file="itadaki-data-enamdict-${version}.uno.pkg"/>
+	</target>
+
+</project>
+
