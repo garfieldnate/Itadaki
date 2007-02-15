@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+<project name="Itadaki" default="uno-package" basedir=".">
+
+	<property name="version" value="1.0beta"/>
+	<property name="src.dir" location="src/"/>
+	<property name="bin.dir" location="bin/"/>
+	<property name="javadoc.dir" location="docs/api"/>
+	<property name="openoffice.home" location="/usr/lib/openoffice.org2.0"/>
+
+	<path id="itadaki.class.path">
+		<pathelement location="libs/sen-2.0.jar"/>
+		<pathelement location="libs/itadaki-dictionary-1.0beta.jar"/>
+		<pathelement location="libs/itadaki-furigana-1.0beta.jar"/>
+		<pathelement location="${openoffice.home}/program/classes/juh.jar"/>
+		<pathelement location="${openoffice.home}/program/classes/jurt.jar"/>
+		<pathelement location="${openoffice.home}/program/classes/ridl.jar"/>
+		<pathelement location="${openoffice.home}/program/classes/unoil.jar"/>
+	</path>
+
+	<!-- Create build directories -->
+	<target name="prepare-directories">
+		<mkdir dir="${bin.dir}"/>
+		<mkdir dir="${javadoc.dir}"/>
+	</target>
+
+	<!-- Build javadocs -->
+	<target name="javadoc">
+		<javadoc sourcepath="${src.dir}"
+		         destdir="${javadoc.dir}"
+		         author="true"
+		         version="true"
+		         use="true"
+		         windowtitle="Itadaki API"
+		         doctitle="Sen"
+		         source="1.5">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+
+	<!-- Compile source -->
+	<target name="compile" depends="prepare-directories">
+		<javac srcdir="${src.dir}"
+		       destdir="${bin.dir}"
+		       includes="org/**/*.java"
+		       debug="true"
+		       encoding="utf-8"
+		       source="1.5">
+			<classpath refid="itadaki.class.path"/>
+		</javac>
+	</target>
+
+	<!-- Create library jar -->
+	<target name="jar" depends="compile">
+		<jar jarfile="itadaki-${version}.uno.jar" manifest="unopackage/manifest.mf">
+			<fileset dir="${bin.dir}" includes="org/**"/>
+			<fileset dir="unopackage" includes="itadaki-1.0beta.uno.Manifest"/>
+		</jar>
+	</target>
+
+	<!-- Build OOo extension Uno package -->
+	<target name="uno-package" depends="jar">
+		<zip destfile="itadaki-${version}.uno.pkg">
+			<zipfileset dir="." includes="itadaki-${version}.uno.jar"/>
+			<zipfileset dir="libs" includes="*.jar"/>
+			<zipfileset dir="unopackage" includes="*.xcu"/>
+			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml"/>
+		</zip>
+	</target>
+
+	<!-- Clean project -->
+	<target name="clean">
+		<delete dir="${bin.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+		<delete file="itadaki-${version}.jar"/>
+	</target>
+
+</project>
+
