@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project default="jar" basedir=".">
+
+	<property name="version" value="2.0"/>
+	<property name="src.dir" location="src/"/>
+	<property name="bin.dir" location="bin/"/>
+	<property name="javadoc.dir" location="docs/api"/>
+
+	<!-- Create build directories -->
+	<target name="prepare-directories">
+		<mkdir dir="${bin.dir}"/>
+		<mkdir dir="${javadoc.dir}"/>
+	</target>
+
+	<!-- Build javadocs -->
+	<target name="javadoc">
+		<javadoc sourcepath="${src.dir}"
+		         destdir="${javadoc.dir}"
+		         author="true"
+		         version="true"
+		         use="true"
+		         windowtitle="Sen API"
+		         doctitle="Sen"
+		         source="1.5">
+			<fileset dir="${src.dir}">
+				<include name="net/**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+
+	<!-- Compile source -->
+	<target name="compile" depends="prepare-directories">
+		<javac srcdir="${src.dir}"
+		       destdir="${bin.dir}"
+		       includes="**/net/**/*.java **/examples/**/*.java **/benchmark/**/*.java"
+		       debug="true"
+		       encoding="utf-8"
+		       source="1.5"/>
+	</target>
+
+	<!-- Create library jar -->
+	<target name="jar" depends="compile">
+		<jar jarfile="sen-${version}.jar" basedir="${bin.dir}">
+			<include name="net/**"/>
+		</jar>
+	</target>
+
+	<!-- Clean project -->
+	<target name="clean">
+		<delete dir="${bin.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+		<delete file="sen-${version}.jar"/>
+	</target>
+
+</project>
+
+
