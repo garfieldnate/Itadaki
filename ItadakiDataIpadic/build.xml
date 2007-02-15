@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<project name="ItadakiDataIpadic" default="uno-package" basedir=".">
+
+	<property name="version" value="1.0"/>
+
+	<!-- Build OOo extension Uno package -->
+	<target name="uno-package">
+		<zip destfile="itadaki-data-ipadic-${version}.uno.pkg">
+			<zipfileset dir="." includes="COPYING"/>
+			<zipfileset dir="dictionary" prefix="dictionary"/>
+			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml"/>
+		</zip>
+	</target>
+
+	<!-- Clean project -->
+	<target name="clean">
+		<delete file="itadaki-data-ipadic-${version}.uno.pkg"/>
+	</target>
+
+</project>
+
