@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project default="jar" basedir=".">
+
+	<property name="version" value="1.0"/>
+	<property name="src.dir" location="src/"/>
+	<property name="bin.dir" location="bin/"/>
+	<property name="javadoc.dir" location="docs/api"/>
+
+	<!-- Create build directories -->
+	<target name="prepare-directories">
+		<mkdir dir="${bin.dir}"/>
+		<mkdir dir="${javadoc.dir}"/>
+	</target>
+
+	<!-- javadoc -->
+	<target name="javadoc">
+		<javadoc sourcepath="${src.dir}"
+		         destdir="${javadoc.dir}"
+		         author="true"
+		         version="true"
+		         use="true"
+		         windowtitle="JISX 0213 API"
+		         doctitle="JISX 0213"
+		         source="1.5">
+			<fileset dir="${src.dir}">
+				<include name="org/**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+	
+
+	<!-- Compile source -->
+	<target name="compile" depends="prepare-directories">
+		<javac srcdir="${src.dir}"
+		       destdir="${bin.dir}"
+		       includes="**/org/**/*.java"
+		       debug="true"
+		       encoding="utf-8"
+		       source="1.5">
+		</javac>
+	</target>
+
+	<!-- Create library jar -->
+	<target name="jar" depends="compile">
+		<mkdir dir="bin/META-INF/services"/>
+		<copy todir="bin/META-INF/services" file="conf/java.nio.charset.spi.CharsetProvider"/>
+		<copy todir="bin/" file="src/jisx0213_to_ucs2.bin"/>
+		<jar jarfile="jisx0213-${version}.jar" basedir="${bin.dir}">
+			<include name="org/**"/>
+			<include name="jisx0213_to_ucs2.bin"/>
+			<include name="META-INF/services/java.nio.charset.spi.CharsetProvider"/>
+		</jar>
+		<delete file="bin/jisx0213_to_ucs2.bin"/>
+		<delete dir="bin/META-INF"/>
+	</target>
+
+	<!-- Clean project -->
+	<target name="clean">
+		<delete dir="${bin.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+		<delete file="sen-${version}.jar"/>
+	</target>
+
+</project>
+
+
