@@ -2,7 +2,7 @@
 
 <project name="ItadakiDataEnamdict" default="uno-package" basedir=".">
 
-	<property name="version" value="20070125"/>
+	<property name="version" value="20070228"/>
 
 	<path id="project.class.path">
 		<pathelement path="../Seashell/bin"/>

@@ -2,14 +2,14 @@
 
 <project name="Itadaki" default="uno-package" basedir=".">
 
-	<property name="version" value="1.0beta"/>
+	<property name="version" value="1.0alpha1"/>
 	<property name="src.dir" location="src/"/>
 	<property name="bin.dir" location="bin/"/>
 	<property name="javadoc.dir" location="docs/api"/>
 	<property name="openoffice.home" location="/usr/lib/openoffice.org2.0"/>
 
 	<path id="itadaki.class.path">
-		<pathelement location="libs/sen-2.0.jar"/>
+		<pathelement location="libs/gosen-1.0.jar"/>
 		<pathelement location="libs/itadaki-dictionary-1.0beta.jar"/>
 		<pathelement location="libs/itadaki-furigana-1.0beta.jar"/>
 		<pathelement location="${openoffice.home}/program/classes/juh.jar"/>
@@ -56,7 +56,7 @@
 	<target name="jar" depends="compile">
 		<jar jarfile="itadaki-${version}.uno.jar" manifest="unopackage/manifest.mf">
 			<fileset dir="${bin.dir}" includes="org/**"/>
-			<fileset dir="unopackage" includes="itadaki-1.0beta.uno.Manifest"/>
+			<fileset dir="unopackage" includes="itadaki-${version}.uno.Manifest"/>
 		</jar>
 	</target>
 
@@ -74,7 +74,8 @@
 	<target name="clean">
 		<delete dir="${bin.dir}"/>
 		<delete dir="${javadoc.dir}"/>
-		<delete file="itadaki-${version}.jar"/>
+		<delete file="itadaki-${version}.uno.jar"/>
+		<delete file="itadaki-${version}.uno.pkg"/>
 	</target>
 
 </project>

@@ -7,11 +7,11 @@
 	<classpathentry kind="var" path="OPENOFFICE_HOME/program/classes/ridl.jar"/>
 	<classpathentry kind="var" path="OPENOFFICE_HOME/program/classes/unoil.jar"/>
 	<classpathentry kind="lib" path="libs/jisx0213-1.0.jar"/>
-	<classpathentry kind="lib" path="libs/sen-2.0.jar"/>
 	<classpathentry kind="lib" path="libs/fasttextpane-1.0beta.jar"/>
 	<classpathentry kind="lib" path="libs/seashell-1.0beta.jar"/>
 	<classpathentry kind="lib" path="libs/itadaki-dictionary-1.0beta.jar"/>
 	<classpathentry kind="lib" path="libs/itadaki-furigana-1.0beta.jar"/>
+	<classpathentry kind="lib" path="libs/gosen-1.0beta.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
