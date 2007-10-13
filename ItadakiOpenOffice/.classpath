@@ -2,10 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="OPENOFFICE_HOME/program/classes/juh.jar"/>
-	<classpathentry kind="var" path="OPENOFFICE_HOME/program/classes/jurt.jar"/>
-	<classpathentry kind="var" path="OPENOFFICE_HOME/program/classes/ridl.jar"/>
-	<classpathentry kind="var" path="OPENOFFICE_HOME/program/classes/unoil.jar"/>
+	<classpathentry kind="var" path="OPENOFFICE_LIBRARY_PATH/juh.jar"/>
+	<classpathentry kind="var" path="OPENOFFICE_LIBRARY_PATH/jurt.jar"/>
+	<classpathentry kind="var" path="OPENOFFICE_LIBRARY_PATH/ridl.jar"/>
+	<classpathentry kind="var" path="OPENOFFICE_LIBRARY_PATH/unoil.jar"/>
 	<classpathentry kind="lib" path="libs/jisx0213-1.0.jar"/>
 	<classpathentry kind="lib" path="libs/fasttextpane-1.0beta.jar"/>
 	<classpathentry kind="lib" path="libs/seashell-1.0beta.jar"/>
