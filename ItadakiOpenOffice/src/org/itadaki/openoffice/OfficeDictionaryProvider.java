@@ -3,6 +3,9 @@ package org.itadaki.openoffice;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -45,23 +48,28 @@ public class OfficeDictionaryProvider implements SystemProvider {
 					XPackageManagerFactory.class,
 					componentContext.getValueByName ("/singletons/com.sun.star.deployment.thePackageManagerFactory")
 			);
-	
+
 			XMacroExpander macroExpander = (XMacroExpander) UnoRuntime.queryInterface (
 					XMacroExpander.class,
 					componentContext.getValueByName ("/singletons/com.sun.star.util.theMacroExpander")
 			);
-	
-	
-			XPackageManager packageManager = packageManagerFactory.getPackageManager ("user");
-			XPackage[] packages = packageManager.getDeployedPackages (null, null);
 
-			for (XPackage onePackage : packages) {
+			List<XPackage> allPackages = new ArrayList<XPackage>();
+
+			XPackageManager sharedPackageManager = packageManagerFactory.getPackageManager ("shared");
+			allPackages.addAll (Arrays.asList (sharedPackageManager.getDeployedPackages (null, null)));
+
+			XPackageManager userPackageManager = packageManagerFactory.getPackageManager ("user");
+			allPackages.addAll (Arrays.asList (userPackageManager.getDeployedPackages (null, null)));
+
+
+			for (XPackage onePackage : allPackages) {
 	
 				String packageURL = macroExpander.expandMacros (onePackage.getURL());
 				packageURL = packageURL.replaceFirst ("^vnd\\.sun\\.star\\.expand:", "");
-	
+
 				if (onePackage.getName().startsWith ("itadaki-data-")) {
-	
+
 					File propertiesFile = new File (new URI (packageURL + "/itadaki-data.properties")).getAbsoluteFile();
 
 					if (propertiesFile.exists()) {
