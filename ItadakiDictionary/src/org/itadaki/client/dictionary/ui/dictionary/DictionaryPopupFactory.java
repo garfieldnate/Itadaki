@@ -26,6 +26,7 @@ import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JToggleButton;
 import javax.swing.text.JTextComponent;
 
 import org.itadaki.client.dictionary.settings.Settings;
@@ -63,6 +64,16 @@ public class DictionaryPopupFactory {
 	 * Shared SearchOnSelectAction instance
 	 */
 	private SearchOnSelectAction searchOnSelectAction;
+
+	/**
+	 * Shared always-on-top menu item model
+	 */
+	private JToggleButton.ToggleButtonModel onTopModel;
+
+	/**
+	 * Shared search-on-select menu item model
+	 */
+	private JToggleButton.ToggleButtonModel searchOnSelectModel;
 
 
 	/**
@@ -199,12 +210,12 @@ public class DictionaryPopupFactory {
 
 		JMenuItem onTopItem = new JCheckBoxMenuItem (this.onTopAction);
 		onTopItem.setText ("Always On Top");
-		onTopItem.setSelected (Settings.getInstance().getAlwaysOnTop());
+		onTopItem.setModel (this.onTopModel);
 		popupMenu.add (onTopItem);
 
 		JMenuItem searchOnSelectItem = new JCheckBoxMenuItem (this.searchOnSelectAction);
 		searchOnSelectItem.setText ("Search On Select");
-		searchOnSelectItem.setSelected (Settings.getInstance().getSearchOnSelect());
+		searchOnSelectItem.setModel (this.searchOnSelectModel);
 		popupMenu.add (searchOnSelectItem);
 
 		popupMenu.addSeparator();
@@ -278,6 +289,11 @@ public class DictionaryPopupFactory {
 
 		this.onTopAction = new OnTopAction();
 		this.searchOnSelectAction = new SearchOnSelectAction();
+		this.onTopModel = new JToggleButton.ToggleButtonModel();
+		this.searchOnSelectModel = new JToggleButton.ToggleButtonModel();
+
+		this.onTopModel.setSelected (Settings.getInstance().getAlwaysOnTop());
+		this.searchOnSelectModel.setSelected (Settings.getInstance().getSearchOnSelect());
 
 	}
 
