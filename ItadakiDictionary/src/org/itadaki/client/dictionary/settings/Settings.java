@@ -541,15 +541,19 @@ public class Settings {
 		this.properties = new Properties();
 
 		// Set user data directory in a system dependent way (ick)
-		String osName = System.getProperty("os.name");
-		String userHome = System.getProperty("user.home");
+		String osName = System.getProperty ("os.name");
+		String userHome = System.getProperty ("user.home");
 		String propertiesDirectory;
 		if (osName.startsWith ("Windows")) {
-			propertiesDirectory = userHome + File.separator + "Application Data" + File.separator + "Itadaki";
+			String applicationDataName = System.getenv ("APPDATA");
+			if (applicationDataName == null) {
+				applicationDataName = "Application Data";
+			}
+			propertiesDirectory = userHome + File.separator + applicationDataName + File.separator + "Itadaki";
 		} else {
 			propertiesDirectory = userHome + File.separator + ".itadaki";
 		}
-		File propertiesDirectoryFile = new File(propertiesDirectory);
+		File propertiesDirectoryFile = new File (propertiesDirectory);
 		if (!propertiesDirectoryFile.exists()) {
 			propertiesDirectoryFile.mkdirs();
 		}
