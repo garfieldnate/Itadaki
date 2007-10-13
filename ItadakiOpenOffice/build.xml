@@ -2,7 +2,7 @@
 
 <project name="Itadaki" default="uno-package" basedir=".">
 
-	<property name="version" value="1.0alpha1"/>
+	<property name="version" value="1.0alpha2"/>
 	<property name="src.dir" location="src/"/>
 	<property name="bin.dir" location="bin/"/>
 	<property name="javadoc.dir" location="docs/api"/>
