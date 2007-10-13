@@ -319,7 +319,7 @@ public class DictionaryWindow extends JFrame implements FocusListener, WindowLis
 		this.searchButton.setInheritsPopupMenu (true);
 		this.searchButton.setFocusable (false);
 
-		ImageIcon resetIcon = new ImageIcon (ClassLoader.getSystemResource("reset-20.png"), "Reset");
+		ImageIcon resetIcon = new ImageIcon (getClass().getClassLoader().getResource ("reset-20.png"), "Reset");
 		this.resetButton = new JButton (resetIcon);
 		this.resetButton.setMargin (new Insets (0,0,0,0));
 		this.resetButton.setInheritsPopupMenu (true);
