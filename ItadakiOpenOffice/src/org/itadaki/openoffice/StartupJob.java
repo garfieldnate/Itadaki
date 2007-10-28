@@ -22,6 +22,9 @@ package org.itadaki.openoffice;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.itadaki.client.dictionary.DictionaryService;
 import org.itadaki.client.furigana.FuriganaService;
@@ -81,10 +84,7 @@ public class StartupJob extends WeakBase implements XServiceInfo, XJob {
 		if (!startupComplete) {
 
 			try {
-	
-				// Initialise dictionary service
-				DictionaryService.createInstance (new OfficeDictionaryProvider (componentContext));
-	
+
 				// Connect services with their data packages
 				scanInstalledPackages (componentContext);
 	
@@ -116,7 +116,13 @@ public class StartupJob extends WeakBase implements XServiceInfo, XJob {
 	             throws IllegalArgumentException, DeploymentException, CommandFailedException,
 	                    CommandAbortedException, URISyntaxException
 	{
-	
+
+		String furiganaConfigFilename = null;
+		List<String> dictionaryConfigFilenames = new ArrayList<String>();
+
+
+		// Build list of all available user and system packages
+
 		XPackageManagerFactory packageManagerFactory = (XPackageManagerFactory) UnoRuntime.queryInterface (
 				XPackageManagerFactory.class,
 				componentContext.getValueByName ("/singletons/com.sun.star.deployment.thePackageManagerFactory")
@@ -127,25 +133,45 @@ public class StartupJob extends WeakBase implements XServiceInfo, XJob {
 				componentContext.getValueByName ("/singletons/com.sun.star.util.theMacroExpander")
 		);
 
+		List<XPackage> allPackages = new ArrayList<XPackage>();
 
-		XPackageManager packageManager = packageManagerFactory.getPackageManager ("user");
-		XPackage[] packages = packageManager.getDeployedPackages (null, null);
+		XPackageManager sharedPackageManager = packageManagerFactory.getPackageManager ("shared");
+		allPackages.addAll (Arrays.asList (sharedPackageManager.getDeployedPackages (null, null)));
 
-		for (XPackage onePackage : packages) {
+		XPackageManager userPackageManager = packageManagerFactory.getPackageManager ("user");
+		allPackages.addAll (Arrays.asList (userPackageManager.getDeployedPackages (null, null)));
+
+
+		// Find dictionaries and furigana data
+
+		for (XPackage onePackage : allPackages) {
 
 			String packageURL = macroExpander.expandMacros (onePackage.getURL());
 			packageURL = packageURL.replaceFirst ("^vnd\\.sun\\.star\\.expand:", "");
 
 			if (onePackage.getName().startsWith ("itadaki-data-ipadic-")) {
 
-				String configFilename = new File (new URI (packageURL + "/dictionary/dictionary.xml")).getAbsolutePath();
+				furiganaConfigFilename = new File (new URI (packageURL + "/dictionary/dictionary.xml")).getAbsolutePath();
 
-				FuriganaService.getInstance().setConfiguration (configFilename);
+			} else if (onePackage.getName().startsWith ("itadaki-data-")) {
+
+				dictionaryConfigFilenames.add (new File (new URI (packageURL + "/itadaki-data.properties")).getAbsolutePath());
 
 			}
 
+
 		}
 
+
+		// Connect services with their configurations
+
+		if (furiganaConfigFilename != null) {
+			FuriganaService.getInstance().setConfiguration (furiganaConfigFilename);
+		}
+
+		DictionaryService.createInstance (new OfficeDictionaryProvider (dictionaryConfigFilenames));
+
+		
 	}
 
 
