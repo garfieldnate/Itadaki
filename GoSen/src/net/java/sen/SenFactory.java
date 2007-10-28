@@ -217,7 +217,7 @@ public class SenFactory {
 		try {
 
 			// Create tokenizer
-			Class tokenizerClass = Class.forName(configuration.tokenizerClassName);
+			Class<?> tokenizerClass = Class.forName(configuration.tokenizerClassName);
 			Constructor constructor = tokenizerClass.getConstructor(new Class[] { Dictionary.class, String.class });
 
 			Dictionary dictionary = new Dictionary (
