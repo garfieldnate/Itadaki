@@ -23,30 +23,8 @@ public class TextPortionIterator {
 	 */
 	private XEnumeration portionEnumeration;
 
-	/**
-	 * The next available text portion, or <code>null</code>
-	 */
-	private Object nextPortion;
 
 
-	/**
-	 * Finds the next available text portion, if any
-	 *
-	 * @return The next available text portion, or <code>null</code> 
-	 * @throws NoSuchElementException
-	 * @throws WrappedTargetException
-	 */
-	private Object readNextPortion() throws NoSuchElementException, WrappedTargetException {
-
-		if ((this.portionEnumeration != null) && this.portionEnumeration.hasMoreElements()) {
-
-			return this.portionEnumeration.nextElement();
-
-		}
-
-		return null;
-
-	}
 
 
 	/**
@@ -57,7 +35,7 @@ public class TextPortionIterator {
 	 */
 	public boolean hasNext() {
 
-		return (this.nextPortion != null);
+		return (this.portionEnumeration != null) && this.portionEnumeration.hasMoreElements();
 
 	}
 
@@ -71,11 +49,7 @@ public class TextPortionIterator {
 	 */
 	public Object next() throws NoSuchElementException, WrappedTargetException {
 
-		Object portion = this.nextPortion;
-		
-		this.nextPortion = readNextPortion();
-
-		return portion;
+		return this.portionEnumeration.nextElement();
 
 	}
 
@@ -90,8 +64,8 @@ public class TextPortionIterator {
 	 */
 	public Object nextTextPortion() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
 
-		while (hasNext()) {
-			Object portion = next();
+		while (this.portionEnumeration.hasMoreElements()) {
+			Object portion = this.portionEnumeration.nextElement();
 			XPropertySet portionProperties = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, portion);
 			String textPortionType = (String)portionProperties.getPropertyValue ("TextPortionType");
 
@@ -99,7 +73,7 @@ public class TextPortionIterator {
 				return portion;
 			}
 		}
-
+		
 		return null;
 
 	}
@@ -150,10 +124,8 @@ public class TextPortionIterator {
 
 	/**
 	 * @param paragraph A text paragraph to iterate the portions of
-	 * @throws WrappedTargetException 
-	 * @throws NoSuchElementException 
 	 */
-	public TextPortionIterator (XTextContent paragraph) throws NoSuchElementException, WrappedTargetException {
+	public TextPortionIterator (XTextContent paragraph) {
 
 		XServiceInfo serviceInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, paragraph);
 		if (serviceInfo.supportsService ("com.sun.star.text.TextTable")) {
@@ -166,8 +138,6 @@ public class TextPortionIterator {
 		);
 		this.portionEnumeration = portionEnumerationAccess.createEnumeration();
 
-		this.nextPortion = readNextPortion();
-
 	}
 
 
@@ -175,9 +145,8 @@ public class TextPortionIterator {
 	 * @param textCursor A model cursor to iterate the portions of. Only the
 	 *                   first paragraph under the cursor is used.
 	 * @throws WrappedTargetException 
-	 * @throws NoSuchElementException 
 	 */
-	public TextPortionIterator (XTextCursor textCursor) throws NoSuchElementException, WrappedTargetException {
+	public TextPortionIterator (XTextCursor textCursor) throws WrappedTargetException {
 
 		try {
 
@@ -209,7 +178,6 @@ public class TextPortionIterator {
 			// Iterating over text sections inside table cells has some issues.
 		}
 
-		this.nextPortion = readNextPortion();
 
 	}
 
