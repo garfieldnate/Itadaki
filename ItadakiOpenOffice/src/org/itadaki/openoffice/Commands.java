@@ -364,7 +364,7 @@ public class Commands {
 				  	    // Process the document
 						model.lockControllers();
 
-						OfficeSentenceProvider sentenceProvider = new OfficeSentenceProvider (frame, textDocument, false);
+						DocumentSentenceProvider sentenceProvider = new DocumentSentenceProvider (textDocument);
 						sentenceProvider.setOfficeSentenceProviderListener (new OfficeSentenceProviderListener() {
 
 							private long lastUpdate = System.currentTimeMillis();

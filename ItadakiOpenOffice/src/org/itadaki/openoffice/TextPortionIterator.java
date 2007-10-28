@@ -7,13 +7,13 @@ import com.sun.star.container.XEnumeration;
 import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
 import com.sun.star.uno.UnoRuntime;
 
 /**
- * Iterates over text portions from the first paragraph selected in a model
- * cursor
+ * Iterates over the text portions of a single text paragraph
  */
 public class TextPortionIterator {
 
@@ -149,7 +149,31 @@ public class TextPortionIterator {
 
 
 	/**
-	 * @param textCursor A model cursor to iterate the portions of
+	 * @param paragraph A text paragraph to iterate the portions of
+	 * @throws WrappedTargetException 
+	 * @throws NoSuchElementException 
+	 */
+	public TextPortionIterator (XTextContent paragraph) throws NoSuchElementException, WrappedTargetException {
+
+		XServiceInfo serviceInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, paragraph);
+		if (serviceInfo.supportsService ("com.sun.star.text.TextTable")) {
+			throw new IllegalArgumentException();
+		}
+
+		XEnumerationAccess portionEnumerationAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
+				XEnumerationAccess.class,
+				paragraph
+		);
+		this.portionEnumeration = portionEnumerationAccess.createEnumeration();
+
+		this.nextPortion = readNextPortion();
+
+	}
+
+
+	/**
+	 * @param textCursor A model cursor to iterate the portions of. Only the
+	 *                   first paragraph under the cursor is used.
 	 * @throws WrappedTargetException 
 	 * @throws NoSuchElementException 
 	 */
