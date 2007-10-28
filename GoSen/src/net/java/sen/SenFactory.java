@@ -139,7 +139,7 @@ public class SenFactory {
 			configuration.tokenFilename = parentDirectory + separator + TOKEN_DATA_FILENAME;
 			configuration.trieFilename = parentDirectory + separator + TRIE_DATA_FILENAME;
 			
-			Document document = builder.parse(new InputSource(configurationFilename));
+			Document document = builder.parse(new InputSource(configurationFile.toURI().toURL().toString()));
 			NodeList nodeList = document.getFirstChild().getChildNodes();
 
 			for (int i = 0; i < nodeList.getLength(); i++) {
