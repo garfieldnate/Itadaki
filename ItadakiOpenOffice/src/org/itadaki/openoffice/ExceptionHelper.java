@@ -24,9 +24,14 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -103,7 +108,50 @@ public class ExceptionHelper {
 		t.printStackTrace();
 
 
-		// Second, attempt to show an explanatory dialog
+		// Second, write the exception to a log file
+
+		String osName = System.getProperty ("os.name");
+		String userHome = System.getProperty ("user.home");
+		String propertiesDirectory;
+
+		if (osName.startsWith ("Windows")) {
+			String applicationDataName = System.getenv ("APPDATA");
+			if (applicationDataName == null) {
+				applicationDataName = "Application Data";
+			}
+			propertiesDirectory = userHome + File.separator + applicationDataName + File.separator + "Itadaki";
+		} else {
+			propertiesDirectory = userHome + File.separator + ".itadaki";
+		}
+
+		File propertiesDirectoryFile = new File (propertiesDirectory);
+		if (!propertiesDirectoryFile.exists()) {
+			propertiesDirectoryFile.mkdirs();
+		}
+
+		String logFilename = propertiesDirectory  + File.separator + "itadaki.log";
+		FileWriter fileWriter = null;
+		try {
+			fileWriter = new FileWriter (new File (logFilename), true);
+			PrintWriter printWriter = new PrintWriter (fileWriter);
+			printWriter.println ("Exception caught at " + DateFormat.getDateTimeInstance().format (new Date()));
+			t.printStackTrace (printWriter);
+			printWriter.println();
+			printWriter.println();
+		} catch (IOException e) {
+			// Not much to do about it really
+		} finally {
+			try {
+				if (fileWriter != null) {
+					fileWriter.close();
+				}
+			} catch (IOException e) {
+				// Ignore
+			}
+		}
+		
+
+		// Finally, attempt to show an explanatory dialog
 
 		SwingUtilities.invokeLater (new Runnable() {
 
