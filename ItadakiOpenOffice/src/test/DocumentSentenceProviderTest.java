@@ -398,7 +398,7 @@ public class DocumentSentenceProviderTest {
 	public void testBlankPlainBlank() throws Exception {
 
 		// Create text document
-		XComponent component = createBlankDocument (false);
+		XComponent component = createBlankDocument (true);
 		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
