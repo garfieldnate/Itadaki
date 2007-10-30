@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.itadaki.client.furigana.SentenceProvider;
 import org.itadaki.openoffice.OfficeSentenceProvider;
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
 import org.junit.Test;
 
 import com.sun.star.beans.PropertyValue;
@@ -12,17 +14,16 @@ import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.container.XIndexAccess;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
+import com.sun.star.frame.XDesktop;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.text.ControlCharacter;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.Any;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 
@@ -78,15 +79,14 @@ public class OfficeSentenceProviderTest {
 			context = Bootstrap.bootstrap();
 		}
 
-		XMultiComponentFactory multiComponentFactory = context.getServiceManager();
-		Object desktop = multiComponentFactory.createInstanceWithContext ("com.sun.star.frame.Desktop", context);
+		XDesktop desktop = OfficeUtil.desktopFor (context);
 
 		PropertyValue[] properties = new PropertyValue[1];
 		properties[0] = new PropertyValue();
 		properties[0].Name = "Hidden";
 		properties[0].Value = new Boolean (hidden); 
 
-		XComponentLoader componentLoader = (XComponentLoader) UnoRuntime.queryInterface (XComponentLoader.class, desktop);
+		XComponentLoader componentLoader = As.XComponentLoader (desktop);
 		XComponent component = componentLoader.loadComponentFromURL ("private:factory/swriter", "_blank", 0, properties);
 
 		return component;
@@ -103,8 +103,8 @@ public class OfficeSentenceProviderTest {
 	 */
 	private OfficeSentenceProvider createSentenceProvider (XComponent component, boolean startFromViewCursor) {
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
-		XModel model = (XModel) UnoRuntime.queryInterface (XModel.class, textDocument);
+		XTextDocument textDocument = As.XTextDocument (component);
+		XModel model = As.XModel (textDocument);
 		XController controller = model.getCurrentController();
 		XFrame frame = controller.getFrame();
 
@@ -126,7 +126,7 @@ public class OfficeSentenceProviderTest {
 	 */
 	private void insertBlankParagraph (XText text, XTextCursor textCursor, boolean appendNewParagraph) throws Exception {
 
-		XPropertySet propertySet = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+		XPropertySet propertySet = As.XPropertySet (textCursor);
 		textCursor.collapseToEnd();
 		propertySet.setPropertyValue ("NumberingRules", Any.VOID);
 
@@ -148,7 +148,7 @@ public class OfficeSentenceProviderTest {
 	 */
 	private void insertPlainParagraph (XText text, XTextCursor textCursor, String extraText, boolean appendNewParagraph) throws Exception {
 
-		XPropertySet propertySet = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+		XPropertySet propertySet = As.XPropertySet (textCursor);
 		textCursor.collapseToEnd();
 		propertySet.setPropertyValue ("NumberingRules", Any.VOID);
 		textCursor.setString ("This is a plain paragraph" + extraText);
@@ -176,17 +176,11 @@ public class OfficeSentenceProviderTest {
 		textCursor.collapseToEnd();
 		textCursor.setString ("This is a numbered paragraph" + extraText);
 
-		XMultiServiceFactory multiServiceFactory = (XMultiServiceFactory) UnoRuntime.queryInterface(
-				XMultiServiceFactory.class,
-				textDocument
-		);
+		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
 
-		XIndexAccess rulesIndexAccess = (XIndexAccess) UnoRuntime.queryInterface(
-				XIndexAccess.class,
-				multiServiceFactory.createInstance ("com.sun.star.text.NumberingRules")
-		);
+		XIndexAccess rulesIndexAccess = As.XIndexAccess (multiServiceFactory.createInstance ("com.sun.star.text.NumberingRules"));
 
-		XPropertySet propertySet = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+		XPropertySet propertySet = As.XPropertySet (textCursor);
 		propertySet.setPropertyValue ("NumberingRules", rulesIndexAccess);
 
 		if (appendNewParagraph) {
@@ -255,7 +249,7 @@ public class OfficeSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -291,7 +285,7 @@ public class OfficeSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -330,7 +324,7 @@ public class OfficeSentenceProviderTest {
 //
 //		// Create text document
 //		XComponent component = createBlankDocument (true);
-//		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+//		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
 //
@@ -369,7 +363,7 @@ public class OfficeSentenceProviderTest {
 //
 //		// Create text document
 //		XComponent component = createBlankDocument (true);
-//		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+//		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
 //
@@ -411,7 +405,7 @@ public class OfficeSentenceProviderTest {
 //
 //		// Create text document
 //		XComponent component = createBlankDocument (true);
-//		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+//		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
 //
@@ -452,7 +446,7 @@ public class OfficeSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -491,7 +485,7 @@ public class OfficeSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -527,7 +521,7 @@ public class OfficeSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -566,7 +560,7 @@ public class OfficeSentenceProviderTest {
 //
 //		// Create text document
 //		XComponent component = createBlankDocument (true);
-//		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+//		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
 //		
@@ -606,7 +600,7 @@ public class OfficeSentenceProviderTest {
 //
 //		// Create text document
 //		XComponent component = createBlankDocument (true);
-//		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+//		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
 //		
@@ -648,7 +642,7 @@ public class OfficeSentenceProviderTest {
 //
 //		// Create text document
 //		XComponent component = createBlankDocument (true);
-//		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+//		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
 //		
@@ -689,7 +683,7 @@ public class OfficeSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		

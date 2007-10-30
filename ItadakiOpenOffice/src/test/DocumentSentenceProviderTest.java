@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.itadaki.client.furigana.SentenceProvider;
 import org.itadaki.openoffice.DocumentSentenceProvider;
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
 import org.junit.Test;
 
 import com.sun.star.beans.PropertyValue;
@@ -11,8 +13,8 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.container.XIndexAccess;
 import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XDesktop;
 import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.text.ControlCharacter;
 import com.sun.star.text.XText;
@@ -21,7 +23,6 @@ import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextSection;
 import com.sun.star.text.XTextTable;
 import com.sun.star.uno.Any;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 
@@ -68,15 +69,14 @@ public class DocumentSentenceProviderTest {
 			context = Bootstrap.bootstrap();
 		}
 
-		XMultiComponentFactory multiComponentFactory = context.getServiceManager();
-		Object desktop = multiComponentFactory.createInstanceWithContext ("com.sun.star.frame.Desktop", context);
+		XDesktop desktop = OfficeUtil.desktopFor (context);
 
 		PropertyValue[] properties = new PropertyValue[1];
 		properties[0] = new PropertyValue();
 		properties[0].Name = "Hidden";
 		properties[0].Value = new Boolean (hidden); 
 
-		XComponentLoader componentLoader = (XComponentLoader) UnoRuntime.queryInterface (XComponentLoader.class, desktop);
+		XComponentLoader componentLoader = As.XComponentLoader (desktop);
 		XComponent component = componentLoader.loadComponentFromURL ("private:factory/swriter", "_blank", 0, properties);
 
 		return component;
@@ -92,7 +92,7 @@ public class DocumentSentenceProviderTest {
 	 */
 	private DocumentSentenceProvider createSentenceProvider (XComponent component) {
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 
 		DocumentSentenceProvider sentenceProvider = new DocumentSentenceProvider (textDocument);
 
@@ -111,7 +111,7 @@ public class DocumentSentenceProviderTest {
 	 */
 	private void insertBlankParagraph (XText text, XTextCursor textCursor, boolean appendNewParagraph) throws Exception {
 
-		XPropertySet propertySet = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+		XPropertySet propertySet = As.XPropertySet (textCursor);
 		textCursor.collapseToEnd();
 		propertySet.setPropertyValue ("NumberingRules", Any.VOID);
 
@@ -133,7 +133,7 @@ public class DocumentSentenceProviderTest {
 	 */
 	private void insertPlainParagraph (XText text, XTextCursor textCursor, String extraText, boolean appendNewParagraph) throws Exception {
 
-		XPropertySet propertySet = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+		XPropertySet propertySet = As.XPropertySet (textCursor);
 		textCursor.collapseToEnd();
 		propertySet.setPropertyValue ("NumberingRules", Any.VOID);
 		textCursor.setString ("This is a plain paragraph" + extraText);
@@ -161,17 +161,11 @@ public class DocumentSentenceProviderTest {
 		textCursor.collapseToEnd();
 		textCursor.setString ("This is a numbered paragraph" + extraText);
 
-		XMultiServiceFactory multiServiceFactory = (XMultiServiceFactory) UnoRuntime.queryInterface(
-				XMultiServiceFactory.class,
-				textDocument
-		);
+		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
 
-		XIndexAccess rulesIndexAccess = (XIndexAccess) UnoRuntime.queryInterface(
-				XIndexAccess.class,
-				multiServiceFactory.createInstance ("com.sun.star.text.NumberingRules")
-		);
+		XIndexAccess rulesIndexAccess = As.XIndexAccess (multiServiceFactory.createInstance ("com.sun.star.text.NumberingRules"));
 
-		XPropertySet propertySet = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+		XPropertySet propertySet = As.XPropertySet (textCursor);
 		propertySet.setPropertyValue ("NumberingRules", rulesIndexAccess);
 
 		if (appendNewParagraph) {
@@ -195,12 +189,9 @@ public class DocumentSentenceProviderTest {
 	 */
 	private XTextTable insertTable (XTextDocument textDocument, XText text, XTextCursor textCursor, int rows, int columns, String[] cellContents) throws Exception {
 
-		XMultiServiceFactory multiServiceFactory = (XMultiServiceFactory) UnoRuntime.queryInterface(
-				XMultiServiceFactory.class,
-				textDocument
-		);
+		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
 
-		XTextTable textTable = (XTextTable) UnoRuntime.queryInterface (XTextTable.class, multiServiceFactory.createInstance ("com.sun.star.text.TextTable"));
+		XTextTable textTable = As.XTextTable (multiServiceFactory.createInstance ("com.sun.star.text.TextTable"));
 
 		textTable.initialize (rows, columns);
 		text.insertTextContent (textCursor, textTable, false);
@@ -209,7 +200,7 @@ public class DocumentSentenceProviderTest {
 
 		for (int i = 0; i < cellContents.length; i++) {
 
-			XText cellText = (XText) UnoRuntime.queryInterface (XText.class, textTable.getCellByName(cellNames[i]));
+			XText cellText = As.XText (textTable.getCellByName (cellNames[i]));
 			cellText.setString (cellContents[i]);
 
 		}
@@ -231,12 +222,9 @@ public class DocumentSentenceProviderTest {
 	 */
 	private XTextSection insertTextSection (XTextDocument textDocument, XText text, XTextCursor textCursor, String content) throws Exception {
 
-		XMultiServiceFactory multiServiceFactory = (XMultiServiceFactory) UnoRuntime.queryInterface(
-				XMultiServiceFactory.class,
-				textDocument
-		);
+		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
 
-		XTextSection textSection = (XTextSection) UnoRuntime.queryInterface (XTextSection.class, multiServiceFactory.createInstance ("com.sun.star.text.TextSection"));
+		XTextSection textSection = As.XTextSection (multiServiceFactory.createInstance ("com.sun.star.text.TextSection"));
 		
 		text.insertTextContent (textCursor, textSection, false);
 
@@ -287,7 +275,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -323,7 +311,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -361,7 +349,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -399,7 +387,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -440,7 +428,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -481,7 +469,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -520,7 +508,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -556,7 +544,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -594,7 +582,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -633,7 +621,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -674,7 +662,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -715,7 +703,7 @@ public class DocumentSentenceProviderTest {
 
 		// Create text document
 		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
@@ -752,7 +740,7 @@ public class DocumentSentenceProviderTest {
 
 		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -788,7 +776,7 @@ public class DocumentSentenceProviderTest {
 
 		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -836,7 +824,7 @@ public class DocumentSentenceProviderTest {
 
 		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -846,7 +834,7 @@ public class DocumentSentenceProviderTest {
 					"Test 7", "Test 8", "Test 9"
 		});
 
-		XText cellText = (XText) UnoRuntime.queryInterface (XText.class, outerTable.getCellByName ("B2"));
+		XText cellText = As.XText (outerTable.getCellByName ("B2"));
 		insertTable (textDocument, cellText, cellText.createTextCursor(), 1, 1, new String[] {
 				"Inner Test 1"
 		});
@@ -889,7 +877,7 @@ public class DocumentSentenceProviderTest {
 
 		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
@@ -924,12 +912,12 @@ public class DocumentSentenceProviderTest {
 
 		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = (XTextDocument) UnoRuntime.queryInterface (XTextDocument.class, component);
+		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		XTextTable textTable = insertTable (textDocument, text, textCursor, 1, 1, new String[] {""});
-		XText cellText = (XText) UnoRuntime.queryInterface (XText.class, textTable.getCellByName ("A1"));
+		XText cellText = As.XText (textTable.getCellByName ("A1"));
 		insertTextSection (textDocument, cellText, cellText.createTextCursor(), "Test");
 
 
