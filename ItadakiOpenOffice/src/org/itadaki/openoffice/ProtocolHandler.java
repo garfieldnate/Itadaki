@@ -19,6 +19,7 @@
 
 package org.itadaki.openoffice;
 
+import org.itadaki.openoffice.util.OfficeUtil;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.frame.DispatchDescriptor;
@@ -28,10 +29,8 @@ import com.sun.star.frame.XDispatchProvider;
 import com.sun.star.frame.XStatusListener;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XInitialization;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.WeakBase;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.URL;
 
@@ -219,14 +218,7 @@ public class ProtocolHandler extends WeakBase
 
 		try {
 
-			XMultiComponentFactory multiComponentFactory = this.componentContext.getServiceManager();
-			
-			XDesktop desktop = (XDesktop) UnoRuntime.queryInterface (
-					XDesktop.class,
-					multiComponentFactory.createInstanceWithContext ("com.sun.star.frame.Desktop", this.componentContext)
-			);
-
-			this.desktop = desktop;
+			this.desktop = OfficeUtil.desktopFor (componentContext);
 
 		} catch (Throwable t) {
 			ExceptionHelper.dealWith (t);

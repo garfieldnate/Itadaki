@@ -19,6 +19,8 @@
 
 package org.itadaki.openoffice;
 
+import org.itadaki.openoffice.util.As;
+
 import com.sun.star.beans.NamedValue;
 import com.sun.star.frame.XFrame;
 import com.sun.star.frame.XModel;
@@ -26,10 +28,8 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lib.uno.helper.WeakBase;
 import com.sun.star.task.XJob;
-import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.uno.Type;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
@@ -97,7 +97,7 @@ public class NewFrameJob extends WeakBase implements XServiceInfo, XJob {
 
 
 			// Set up the frame if it is a text document frame
-			if (UnoRuntime.queryInterface (XTextDocument.class, model) != null) {
+			if (As.XTextDocument (model) != null) {
 				frameManager.installFrame (frame);
 				selectionManager.installFrame (frame);
 			}

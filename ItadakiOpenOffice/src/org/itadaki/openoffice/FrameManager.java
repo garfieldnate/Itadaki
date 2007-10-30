@@ -22,12 +22,14 @@ package org.itadaki.openoffice;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.itadaki.openoffice.util.As;
+
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XEventListener;
 import com.sun.star.ui.XContextMenuInterception;
-import com.sun.star.uno.UnoRuntime;
+
 
 /**
  * Manages the installation of context menu interceptors on new frames
@@ -53,10 +55,7 @@ public class FrameManager implements XEventListener {
 	private void installContextMenuEntries (XFrame frame) {
 
 		XController controller = frame.getController();
-		XContextMenuInterception contextMenuInterception =	(XContextMenuInterception) UnoRuntime.queryInterface (
-				XContextMenuInterception.class,
-				controller
-		);
+		XContextMenuInterception contextMenuInterception =	As.XContextMenuInterception (controller);
 
 		contextMenuInterception.registerContextMenuInterceptor (contextMenuInterceptor);
 
@@ -93,7 +92,7 @@ public class FrameManager implements XEventListener {
 
 		synchronized (this.knownFrames) {
 
-			XFrame frame = (XFrame) UnoRuntime.queryInterface (XFrame.class, event.Source);
+			XFrame frame = As.XFrame (event.Source);
 			this.knownFrames.remove (frame);
 
 		}

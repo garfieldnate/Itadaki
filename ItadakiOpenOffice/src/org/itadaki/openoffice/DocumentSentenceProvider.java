@@ -10,14 +10,14 @@ import net.java.sen.dictionary.Reading;
 
 import org.itadaki.client.furigana.SentenceListener;
 import org.itadaki.client.furigana.SentenceProvider;
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
 
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertyState;
 import com.sun.star.container.XEnumeration;
-import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.RubyAdjust;
 import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
@@ -26,7 +26,6 @@ import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextTable;
-import com.sun.star.uno.UnoRuntime;
 
 
 /**
@@ -114,11 +113,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 		public XTextContent next() throws NoSuchElementException {
 
 			try {
-				XTextContent nextParagraph = (XTextContent) UnoRuntime.queryInterface (
-						XTextContent.class,
-						this.paragraphEnumeration.nextElement()
-				);
-				return nextParagraph;
+				return As.XTextContent (this.paragraphEnumeration.nextElement());
 			} catch (WrappedTargetException e) {
 				// TODO throw appropriate unchecked exception
 				e.printStackTrace();
@@ -145,11 +140,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 		 */
 		public TextParagraphIterator (Object container) {
 
-			XEnumerationAccess paragraphEnumerationAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
-					XEnumerationAccess.class,
-					container
-			);
-			this.paragraphEnumeration = paragraphEnumerationAccess.createEnumeration();
+			this.paragraphEnumeration = OfficeUtil.enumerationFor(container);
 
 		}
 
@@ -189,10 +180,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 		 */
 		private void moveToNextCell() {
 
-			XText nextCellText = (XText) UnoRuntime.queryInterface (
-					XText.class,
-					this.table.getCellByName (this.cellNames[this.nextCellIndex])
-			);
+			XText nextCellText = As.XText (this.table.getCellByName (this.cellNames[this.nextCellIndex]));
 
 			this.currentCellIterator = new TextParagraphIterator (nextCellText);
 
@@ -245,27 +233,12 @@ public class DocumentSentenceProvider implements SentenceProvider {
 		 */
 		public TableParagraphIterator (XTextContent content) {
 
-			this.table = (XTextTable) UnoRuntime.queryInterface (XTextTable.class, content);
+			this.table = As.XTextTable (content);
 			this.cellNames = this.table.getCellNames();
 
 			moveToNextCell();
 
 		}
-
-	}
-
-
-	/**
-	 * Tests if a given object is a text table
-	 * 
-	 * @param textContent The object to be tested
-	 * @return <code>true</code> if the object is a text table, otherwise <code>false</code>
-	 */
-	private static boolean isTextTable (Object textContent) {
-
-		XServiceInfo textContentServiceInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, textContent);
-
-		return textContentServiceInfo.supportsService ("com.sun.star.text.TextTable");
 
 	}
 
@@ -287,11 +260,11 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 		if (this.currentIterator.hasNext()) {
 
-			while ((candidateTextContent == null) || isTextTable (candidateTextContent)) {
+			while ((candidateTextContent == null) || OfficeUtil.isTextTable (candidateTextContent)) {
 
 				candidateTextContent = this.currentIterator.next();
 
-				if (!isTextTable (candidateTextContent)) {
+				if (!OfficeUtil.isTextTable (candidateTextContent)) {
 					this.nextParagraph = candidateTextContent;
 					return;
 				}
@@ -316,10 +289,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 		try {
 
-			XParagraphCursor paragraphCursor = (XParagraphCursor) UnoRuntime.queryInterface (
-					XParagraphCursor.class,
-					this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor())
-			);
+			XParagraphCursor paragraphCursor = As.XParagraphCursor (this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor()));
 
 			paragraphCursor.gotoEndOfParagraph (true);
 
@@ -332,12 +302,12 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 				Object portion = iterator.next();
 
-				XPropertySet portionProperties = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, portion);
+				XPropertySet portionProperties = As.XPropertySet (portion);
 				String textPortionType = (String)portionProperties.getPropertyValue ("TextPortionType");
 
 				if (textPortionType.equals ("Text")) {
 
-					XTextRange textRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, portion);
+					XTextRange textRange = As.XTextRange (portion);
 					position += textRange.getString().length();
 
 				} else if (textPortionType.equals ("Ruby")) {
@@ -381,12 +351,12 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 				Object portion = iterator.next();
 
-				XPropertySet portionProperties = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, portion);
+				XPropertySet portionProperties = As.XPropertySet (portion);
 				String textPortionType = (String)portionProperties.getPropertyValue ("TextPortionType");
 
 				if (textPortionType.equals ("Text")) {
 
-					XTextRange textRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, portion);
+					XTextRange textRange = As.XTextRange (portion);
 					String content = textRange.getString();
 					builder.append (content);
 
@@ -442,10 +412,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 		this.nextParagraph = null;
 
 		if (this.providerListener != null) {
-			XParagraphCursor paragraphCursor = (XParagraphCursor) UnoRuntime.queryInterface (
-					XParagraphCursor.class,
-					this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor())
-			);
+			XParagraphCursor paragraphCursor = As.XParagraphCursor (this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor()));
 			paragraphCursor.gotoEndOfParagraph (true);
 			
 			this.providerListener.regionChanged (paragraphCursor);
@@ -476,20 +443,17 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 		try {
 
-			model = (XModel) UnoRuntime.queryInterface(XModel.class, this.textDocument); 
+			model = As.XModel (this.textDocument); 
 			model.lockControllers();
 
-			XParagraphCursor paragraphCursor = (XParagraphCursor) UnoRuntime.queryInterface (
-					XParagraphCursor.class,
-					this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor())
-			);
+			XParagraphCursor paragraphCursor = As.XParagraphCursor (this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor()));
 
 			paragraphCursor.gotoEndOfParagraph (true);
 
 			XTextCursor textCursor = paragraphCursor.getText().createTextCursorByRange (paragraphCursor);
-			XPropertySet propertySet = (XPropertySet)UnoRuntime.queryInterface (XPropertySet.class, textCursor);
+			XPropertySet propertySet = As.XPropertySet (textCursor);
 
-			XPropertyState propertyState = (com.sun.star.beans.XPropertyState) UnoRuntime.queryInterface (XPropertyState.class, textCursor);
+			XPropertyState propertyState = As.XPropertyState (textCursor);
 			propertyState.setPropertyToDefault ("RubyText");
 			propertyState.setPropertyToDefault ("RubyAdjust");
 
@@ -505,7 +469,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 				boolean startFound = false;
 				while (!startFound && (textPortion != null)) {
-					XTextRange textRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, textPortion);
+					XTextRange textRange = As.XTextRange (textPortion);
 					String content = textRange.getString();
 					if (reading.start < (index + content.length())) {
 						textCursor.gotoRange (textRange.getStart(), false);
@@ -522,7 +486,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 				// Find end
 				boolean endFound = false;
 				while (!endFound && (textPortion != null)) {
-					XTextRange textRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, textPortion);
+					XTextRange textRange = As.XTextRange (textPortion);
 					String content = textRange.getString();
 					if ((reading.start + reading.length - 1) < (index + content.length())) {
 						textCursor.gotoRange (textRange.getStart(), false);

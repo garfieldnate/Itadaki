@@ -27,18 +27,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.itadaki.client.dictionary.DictionaryService;
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
 
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XEnumeration;
-import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.container.XIndexAccess;
 import com.sun.star.frame.XFrame;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextRange;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.view.XSelectionChangeListener;
 import com.sun.star.view.XSelectionSupplier;
 
@@ -207,55 +207,40 @@ public class SelectionManager implements XSelectionChangeListener {
 
 		try {
 
-			XServiceInfo xServInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, selection);
+			XServiceInfo selectionServiceInfo = As.XServiceInfo (selection);
 
-			if (xServInfo.supportsService ("com.sun.star.text.TextRanges")) {
+			if (selectionServiceInfo.supportsService ("com.sun.star.text.TextRanges")) {
 
-				XIndexAccess indexAccess = (XIndexAccess) UnoRuntime.queryInterface (XIndexAccess.class, selection);
+				XIndexAccess indexAccess = As.XIndexAccess (selection);
 				XTextRange textRange = null;
 
 				for (int i = 0; i < indexAccess.getCount(); i++) {
 
-					textRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, indexAccess.getByIndex (i));
+					textRange = As.XTextRange (indexAccess.getByIndex (i));
 
 					try {
 
-						XEnumerationAccess paragraphEnumerationAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
-								XEnumerationAccess.class,
-								textRange
-						);
-						XEnumeration paragraphEnumeration = paragraphEnumerationAccess.createEnumeration();
+						XEnumeration paragraphEnumeration = OfficeUtil.enumerationFor (textRange);
 
 						while (paragraphEnumeration.hasMoreElements()) {
 
-							XTextContent textContent = (XTextContent) UnoRuntime.queryInterface (
-									XTextContent.class,
-									paragraphEnumeration.nextElement()
-							);
-							XServiceInfo serviceInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, textContent);
+							XTextContent textContent = As.XTextContent (paragraphEnumeration.nextElement());
+							XServiceInfo textContentServiceInfo = As.XServiceInfo (textContent);
 
-							if (serviceInfo.supportsService ("com.sun.star.text.Paragraph")) {
+							if (textContentServiceInfo.supportsService ("com.sun.star.text.Paragraph")) {
 
-								XEnumerationAccess portionAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
-										XEnumerationAccess.class,
-										textContent
-								);
-
-								XEnumeration portionEnumeration = portionAccess.createEnumeration();
-
+								XEnumeration portionEnumeration = OfficeUtil.enumerationFor (textContent);
+								
 								while (portionEnumeration.hasMoreElements()) {
 
 									Object portion = portionEnumeration.nextElement();
 
-									XPropertySet portionProperties = (XPropertySet) UnoRuntime.queryInterface (
-											XPropertySet.class,
-											portion
-									);
+									XPropertySet portionProperties = As.XPropertySet (portion);
 
 									String textPortionType = (String)portionProperties.getPropertyValue ("TextPortionType");
 
 									if (textPortionType.equals ("Text")) {
-										XTextRange portionTextRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, portion);
+										XTextRange portionTextRange = As.XTextRange (portion);
 										String content = portionTextRange.getString();
 										builder.append (content);
 										if (builder.length() > Commands.MAX_DICTIONARY_SEARCH_LENGTH) {
@@ -314,7 +299,7 @@ public class SelectionManager implements XSelectionChangeListener {
 
 		synchronized (this.knownSuppliers) {
 
-			XSelectionSupplier selectionSupplier = (XSelectionSupplier) UnoRuntime.queryInterface (XSelectionSupplier.class, frame.getController());
+			XSelectionSupplier selectionSupplier = As.XSelectionSupplier (frame.getController());
 
 			if (!this.knownSuppliers.contains (selectionSupplier)) {
 				selectionSupplier.addSelectionChangeListener (this);
@@ -336,7 +321,7 @@ public class SelectionManager implements XSelectionChangeListener {
 		// This notifier is called from a "funny" context - doing almost
 		// anything of interest with OpenOffice will result in a deadlock
 
-		XSelectionSupplier selectionSupplier = (XSelectionSupplier) UnoRuntime.queryInterface (XSelectionSupplier.class, event.Source);
+		XSelectionSupplier selectionSupplier = As.XSelectionSupplier (event.Source);
 
 		if (
 				   (selectionSupplier != null)
@@ -355,7 +340,7 @@ public class SelectionManager implements XSelectionChangeListener {
 	 */
 	public void disposing (EventObject event) {
 
-		XSelectionSupplier selectionSupplier = (XSelectionSupplier) UnoRuntime.queryInterface (XSelectionSupplier.class, event);
+		XSelectionSupplier selectionSupplier = As.XSelectionSupplier (event);
 		if (selectionSupplier != null) {
 			this.knownSuppliers.remove (selectionSupplier);
 			selectionSupplier.removeSelectionChangeListener (this);

@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.itadaki.client.dictionary.DictionaryService;
 import org.itadaki.client.furigana.FuriganaService;
+import org.itadaki.openoffice.util.As;
 
 import com.sun.star.awt.Key;
 import com.sun.star.awt.KeyEvent;
@@ -186,14 +187,11 @@ public class StartupJob extends WeakBase implements XServiceInfo, XJob {
 	
 			XMultiComponentFactory multiComponentFactory = componentContext.getServiceManager();
 
-			XMultiServiceFactory xMSF = (XMultiServiceFactory) UnoRuntime.queryInterface (
-					XMultiServiceFactory.class,
-					multiComponentFactory
-			);
+			XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (multiComponentFactory);
 			XModuleUIConfigurationManagerSupplier configurationManagerSupplier =
 					(XModuleUIConfigurationManagerSupplier) UnoRuntime.queryInterface (
 							XModuleUIConfigurationManagerSupplier.class,
-							xMSF.createInstance ("com.sun.star.ui.ModuleUIConfigurationManagerSupplier")
+							multiServiceFactory.createInstance ("com.sun.star.ui.ModuleUIConfigurationManagerSupplier")
 					);
 			XUIConfigurationManager configurationManager = configurationManagerSupplier.getUIConfigurationManager (
 					"com.sun.star.text.TextDocument"

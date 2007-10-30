@@ -1,16 +1,17 @@
 package org.itadaki.openoffice;
 
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
+
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XEnumeration;
-import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
-import com.sun.star.uno.UnoRuntime;
+
 
 /**
  * Iterates over the text portions of a single text paragraph
@@ -22,9 +23,6 @@ public class TextPortionIterator {
 	 * paragraph
 	 */
 	private XEnumeration portionEnumeration;
-
-
-
 
 
 	/**
@@ -66,7 +64,7 @@ public class TextPortionIterator {
 
 		while (this.portionEnumeration.hasMoreElements()) {
 			Object portion = this.portionEnumeration.nextElement();
-			XPropertySet portionProperties = (XPropertySet) UnoRuntime.queryInterface (XPropertySet.class, portion);
+			XPropertySet portionProperties = As.XPropertySet (portion);
 			String textPortionType = (String)portionProperties.getPropertyValue ("TextPortionType");
 
 			if (textPortionType.equals ("Text")) {
@@ -97,7 +95,7 @@ public class TextPortionIterator {
 
 		Object portion;
 		while (((portion = iterator.nextTextPortion()) != null) && (builder.length() < maxLength)) {
-			XTextRange textRange = (XTextRange) UnoRuntime.queryInterface (XTextRange.class, portion);
+			XTextRange textRange = As.XTextRange (portion);
 			builder.append (textRange.getString());
 		}
 
@@ -127,16 +125,11 @@ public class TextPortionIterator {
 	 */
 	public TextPortionIterator (XTextContent paragraph) {
 
-		XServiceInfo serviceInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, paragraph);
-		if (serviceInfo.supportsService ("com.sun.star.text.TextTable")) {
+		if (OfficeUtil.isTextTable (paragraph)) {
 			throw new IllegalArgumentException();
 		}
 
-		XEnumerationAccess portionEnumerationAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
-				XEnumerationAccess.class,
-				paragraph
-		);
-		this.portionEnumeration = portionEnumerationAccess.createEnumeration();
+		this.portionEnumeration = OfficeUtil.enumerationFor (paragraph);
 
 	}
 
@@ -150,24 +143,15 @@ public class TextPortionIterator {
 
 		try {
 
-			XEnumerationAccess paragraphEnumerationAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
-					XEnumerationAccess.class,
-					textCursor
-			);
-			XEnumeration paragraphEnumeration = paragraphEnumerationAccess.createEnumeration();
+			XEnumeration paragraphEnumeration = OfficeUtil.enumerationFor (textCursor);
 
 			if (paragraphEnumeration.hasMoreElements()) {
 
 				Object paragraph = paragraphEnumeration.nextElement();
-				XServiceInfo paragraphServiceInfo = (XServiceInfo) UnoRuntime.queryInterface (XServiceInfo.class, paragraph);
 	
-				if (!paragraphServiceInfo.supportsService ("com.sun.star.text.TextTable")) {
+				if (!OfficeUtil.isTextTable (paragraph)) {
 	
-					XEnumerationAccess portionEnumerationAccess = (XEnumerationAccess) UnoRuntime.queryInterface (
-							XEnumerationAccess.class,
-							paragraph
-					);
-					this.portionEnumeration = portionEnumerationAccess.createEnumeration();
+					this.portionEnumeration = OfficeUtil.enumerationFor (paragraph);
 	
 				}
 
