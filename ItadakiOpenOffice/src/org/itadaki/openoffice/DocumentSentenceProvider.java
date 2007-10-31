@@ -3,8 +3,6 @@ package org.itadaki.openoffice;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Stack;
 
 import net.java.sen.dictionary.Reading;
 
@@ -15,17 +13,12 @@ import org.itadaki.openoffice.util.OfficeUtil;
 
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertyState;
-import com.sun.star.container.XEnumeration;
-import com.sun.star.frame.XModel;
-import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.RubyAdjust;
 import com.sun.star.text.XParagraphCursor;
-import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
-import com.sun.star.text.XTextTable;
 
 
 /**
@@ -37,33 +30,14 @@ import com.sun.star.text.XTextTable;
 public class DocumentSentenceProvider implements SentenceProvider {
 
 	/**
-	 * The document being iterated over
+	 * The iterator used to retrieve text paragraphs
 	 */
-	private XTextDocument textDocument;
-
-	/**
-	 * A stack of text content iterators above the current iterator's context
-	 * in the document tree 
-	 */
-	private Stack<Iterator<XTextContent>> contextStack = new Stack<Iterator<XTextContent>>(); 
-
-	/**
-	 * A text content iterator for the context currently being examined
-	 */
-	private Iterator<XTextContent> currentIterator;
+	private Iterator<XTextContent> paragraphIterator = null;
 
 	/**
 	 * The text paragraph currently under the SentenceProvider's cursor
 	 */
 	private XTextContent currentParagraph = null;
-
-	/**
-	 * The next text paragraph that will be returned. Calculated ahead of
-	 * time to avoid duplicating work between {@link #hasNext} and
-	 * {@link #next}, as {@link #hasNext} needs to calculate the next
-	 * text paragraph in any case.
-	 */
-	private XTextContent nextParagraph = null;
 
 	/**
 	 * An OfficeSentenceProviderListener to notify of changes in the selected
@@ -85,200 +59,6 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	}
 
 
-	/**
-	 * An iterator for an {@link XEnumeration} of {@link XTextContent}s
-	 */
-	private static class TextParagraphIterator implements Iterator<XTextContent> {
-
-		/**
-		 * The enumeration currently being iterated over
-		 */
-		private XEnumeration paragraphEnumeration;
-
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
-		@Override
-		public boolean hasNext() {
-
-			return this.paragraphEnumeration.hasMoreElements();
-
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
-		@Override
-		public XTextContent next() throws NoSuchElementException {
-
-			try {
-				return As.XTextContent (this.paragraphEnumeration.nextElement());
-			} catch (WrappedTargetException e) {
-				// TODO throw appropriate unchecked exception
-				e.printStackTrace();
-			} catch (com.sun.star.container.NoSuchElementException e) {
-				throw new NoSuchElementException();
-			}
-
-			return null;
-
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
-		@Override
-		public void remove() {
-
-			throw new IllegalArgumentException();
-
-		}
-
-		/**
-		 * @param container An object implementing an enumeration of {@link XTextContent}s
-		 */
-		public TextParagraphIterator (Object container) {
-
-			this.paragraphEnumeration = OfficeUtil.enumerationFor(container);
-
-		}
-
-	}
-
-
-	/**
-	 * An iterator for the paragraphs contained in the cells of an
-	 * {@link XTextTable}. Proxy {@link TextParagraphIterator} are used to
-	 * supply paragraphs from each individual cell.  
-	 */
-	private static class TableParagraphIterator implements Iterator<XTextContent> {
-
-		/**
-		 * The table being iterated over
-		 */
-		private XTextTable table = null;
-
-		/**
-		 * The names of all the cells in the table
-		 */
-		private String[] cellNames = null;
-
-		/**
-		 * The index in {@link #cellNames} of the next cell to examine
-		 */
-		private int nextCellIndex = 0;
-
-		/**
-		 * The proxy {@link TextParagraphIterator} for the paragraphs of the current cell
-		 */
-		private TextParagraphIterator currentCellIterator = null;
-
-
-		/**
-		 * Sets up the next cell for iteration of its paragraphs
-		 */
-		private void moveToNextCell() {
-
-			XText nextCellText = As.XText (this.table.getCellByName (this.cellNames[this.nextCellIndex]));
-
-			this.currentCellIterator = new TextParagraphIterator (nextCellText);
-
-			this.nextCellIndex++;
-
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
-		@Override
-		public boolean hasNext() {
-
-			return ((this.nextCellIndex < this.cellNames.length) || this.currentCellIterator.hasNext());
-
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
-		@Override
-		public XTextContent next() {
-
-			if (!this.currentCellIterator.hasNext()) {
-				if (this.nextCellIndex < this.cellNames.length) {
-					moveToNextCell();
-				}
-			}
-
-			if (this.currentCellIterator.hasNext()) {
-				return this.currentCellIterator.next();
-			}
-
-			return null;
-
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
-		@Override
-		public void remove() {
-
-			throw new IllegalArgumentException();
-
-		}
-
-		/**
-		 * @param content The table to iterate over
-		 */
-		public TableParagraphIterator (XTextContent content) {
-
-			this.table = As.XTextTable (content);
-			this.cellNames = this.table.getCellNames();
-
-			moveToNextCell();
-
-		}
-
-	}
-
-
-	/**
-	 * Finds and caches the next available text paragraph
-	 */
-	private void findNext() {
-
-		this.nextParagraph = null;
-
-		// Wind back down the stack until we find an iterator with content left, or the bottom
-		while (!this.currentIterator.hasNext() && !this.contextStack.isEmpty()) {
-			this.currentIterator = this.contextStack.pop();
-		}
-
-		// Walk into the document tree (if necessary) until we find a text paragraph 
-		XTextContent candidateTextContent = null; 
-
-		if (this.currentIterator.hasNext()) {
-
-			while ((candidateTextContent == null) || OfficeUtil.isTextTable (candidateTextContent)) {
-
-				candidateTextContent = this.currentIterator.next();
-
-				if (!OfficeUtil.isTextTable (candidateTextContent)) {
-					this.nextParagraph = candidateTextContent;
-					return;
-				}
-	
-				this.contextStack.push (this.currentIterator);
-				this.currentIterator = new TableParagraphIterator (candidateTextContent);
-
-			}
-
-		}
-
-	}
-
-
 	/* (non-Javadoc)
 	 * @see org.itadaki.client.furigana.SentenceProvider#getReadings()
 	 */
@@ -289,7 +69,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 		try {
 
-			XParagraphCursor paragraphCursor = As.XParagraphCursor (this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor()));
+			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (this.currentParagraph.getAnchor());
 
 			paragraphCursor.gotoEndOfParagraph (true);
 
@@ -379,10 +159,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	@Override
 	public boolean hasNext() {
 
-		if (this.nextParagraph == null) {
-			findNext();
-		}
-		return (this.nextParagraph != null);
+		return this.paragraphIterator.hasNext();
 
 	}
 
@@ -405,14 +182,10 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	@Override
 	public void next() {
 
-		if (this.nextParagraph == null) {
-			findNext();
-		}
-		this.currentParagraph = this.nextParagraph;
-		this.nextParagraph = null;
+		this.currentParagraph = this.paragraphIterator.next();
 
 		if (this.providerListener != null) {
-			XParagraphCursor paragraphCursor = As.XParagraphCursor (this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor()));
+			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (this.currentParagraph.getAnchor());
 			paragraphCursor.gotoEndOfParagraph (true);
 			
 			this.providerListener.regionChanged (paragraphCursor);
@@ -439,25 +212,21 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	@Override
 	public void setReadings (List<Reading> readings) {
 
-		XModel model = null;
-
 		try {
 
-			model = As.XModel (this.textDocument); 
-			model.lockControllers();
-
-			XParagraphCursor paragraphCursor = As.XParagraphCursor (this.currentParagraph.getAnchor().getText().createTextCursorByRange (this.currentParagraph.getAnchor()));
+			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (this.currentParagraph.getAnchor());
 
 			paragraphCursor.gotoEndOfParagraph (true);
 
-			XTextCursor textCursor = paragraphCursor.getText().createTextCursorByRange (paragraphCursor);
+			XTextCursor textCursor = OfficeUtil.textCursorFor (paragraphCursor);
 			XPropertySet propertySet = As.XPropertySet (textCursor);
 
+			// Clear existing readings
 			XPropertyState propertyState = As.XPropertyState (textCursor);
 			propertyState.setPropertyToDefault ("RubyText");
 			propertyState.setPropertyToDefault ("RubyAdjust");
 
-
+			// Set new readings
 			int index = 0;
 			TextPortionIterator textPortionIterator = new TextPortionIterator (paragraphCursor);
 			Object textPortion = textPortionIterator.nextTextPortion();
@@ -500,7 +269,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 				}
 
 
-				// Set reading
+				// Set single reading
 				textCursor.gotoRange (readingStart, false);
 				textCursor.gotoRange (readingEnd, true);
 				propertySet.setPropertyValue ("RubyText", reading.text);
@@ -510,10 +279,6 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
         } catch (Throwable t) {
         	ExceptionHelper.dealWith (t);
-        } finally {
-        	if (model != null) {
-        		model.unlockControllers();
-        	}
         }
 
 
@@ -549,16 +314,8 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	 */
 	public DocumentSentenceProvider (XTextDocument textDocument) {
 
-		this.textDocument = textDocument;
-
-
 		// Set up cursor over first paragraph
-
-		XText text = textDocument.getText();
-
-		this.currentIterator = new TextParagraphIterator (text);
-
-		findNext();
+		this.paragraphIterator = new ParagraphIterator (textDocument);
 		next();
 
 	}

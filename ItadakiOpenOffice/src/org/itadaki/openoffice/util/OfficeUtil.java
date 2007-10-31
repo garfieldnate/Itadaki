@@ -10,6 +10,9 @@ import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.task.XStatusIndicator;
 import com.sun.star.task.XStatusIndicatorFactory;
+import com.sun.star.text.XParagraphCursor;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
 import com.sun.star.text.XTextViewCursorSupplier;
 import com.sun.star.uno.UnoRuntime;
@@ -36,6 +39,32 @@ public class OfficeUtil {
 		);
 
 		return viewCursorSupplier.getViewCursor();
+
+	}
+
+
+	/**
+	 * Creates a text cursor positioned at a given text range
+	 * 
+	 * @param textRange The text range to create the cursor for
+	 * @return The created paragraph cursor
+	 */
+	public static XTextCursor textCursorFor (XTextRange textRange) {
+
+		return textRange.getText().createTextCursorByRange (textRange);
+
+	}
+
+
+	/**
+	 * Creates a paragraph cursor positioned at a given text range
+	 * 
+	 * @param textRange The text range to create the cursor for
+	 * @return The created paragraph cursor
+	 */
+	public static XParagraphCursor paragraphCursorFor (XTextRange textRange) {
+
+		return As.XParagraphCursor (textRange.getText().createTextCursorByRange (textRange));
 
 	}
 
