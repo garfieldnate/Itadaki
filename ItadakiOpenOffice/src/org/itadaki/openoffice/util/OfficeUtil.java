@@ -6,6 +6,7 @@ import com.sun.star.container.XEnumeration;
 import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XDesktop;
+import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.task.XStatusIndicator;
@@ -13,6 +14,7 @@ import com.sun.star.task.XStatusIndicatorFactory;
 import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
+import com.sun.star.text.XTextRangeCompare;
 import com.sun.star.text.XTextViewCursor;
 import com.sun.star.text.XTextViewCursorSupplier;
 import com.sun.star.uno.UnoRuntime;
@@ -200,5 +202,22 @@ public class OfficeUtil {
 
 	}
 
+
+	/**
+	 * Compares the start points of two ranges
+	 * 
+	 * @param firstRange The first range to compare
+	 * @param secondRange The second range to compare
+	 * @return -1 if secondRange starts before firstRange, 0 if they are equal,
+	 *         and 1 if secondRange starts after firstRange
+	 * @throws IllegalArgumentException
+	 */
+	public static int compareRegionStarts (XTextRange firstRange, XTextRange secondRange) throws IllegalArgumentException {
+
+		XTextRangeCompare comparator = As.XTextRangeCompare (firstRange.getText());
+
+		return comparator.compareRegionStarts (firstRange, secondRange);
+
+	}
 
 }

@@ -2,49 +2,106 @@ package test;
 
 import static org.junit.Assert.*;
 
-import org.itadaki.client.furigana.SentenceProvider;
+import static test.util.DocumentUtil.*;
+
 import org.itadaki.openoffice.DocumentSentenceProvider;
 import org.itadaki.openoffice.util.As;
-import org.itadaki.openoffice.util.OfficeUtil;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.star.beans.PropertyValue;
-import com.sun.star.beans.XPropertySet;
-import com.sun.star.comp.helper.Bootstrap;
-import com.sun.star.container.XIndexAccess;
-import com.sun.star.frame.XComponentLoader;
-import com.sun.star.frame.XDesktop;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiServiceFactory;
-import com.sun.star.text.ControlCharacter;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextSection;
 import com.sun.star.text.XTextTable;
-import com.sun.star.uno.Any;
-import com.sun.star.uno.XComponentContext;
 
 
 /**
  * Test of DocumentSentenceProvider
+ * 
+ * Situations:
+ *   - Blank document
+ *   - Single text paragraph
+ *   - Multiple text paragraphs
+ *   - Single numbered paragraph
+ *   - Multiple numbered paragraphs
+ *   - Text section
+ *   - Single cell table
+ *   - Multiple cell table
+ *   - Complex table
+ *   - Table with embedded text section
+ *   - Frame (anchor to page)
+ *   - Frame (anchor to paragraph)
+ *   - Frame (anchor to character)
+ *   - Frame (anchor as character)
+ *   - Header
+ *   - Footer
+ *   
+ *   
+ * Tests that:
+ *   - Existing readings can be read correctly
+ *   - New readings can be written correctly
+ * 
+ * For text selections, tests that:
+ *   - Readings are correctly masked to the bounds of the selection
+ * 
+ * For table cell selections, tests that:
+ *   - The correct table cells are visited
+ * 
+ * ** Create document + readings
+ * --> list of paragraphs + readings
+ * ** Whole document test fixture (paragraphs, existing readings, readings to apply)
+ * ** Selection test fixture (paragraphs, existing readings, readings to apply, selection start paragraph/index, selection end paragraph/index)
+ *     - 
  */
 public class DocumentSentenceProviderTest {
 
 	/**
-	 * Reusable component context
+	 * If <code>true</code>, the test document will be displayed and left open
+	 * after each test is run
 	 */
-	private static XComponentContext context = null;
+	private static final boolean SHOW_DOCUMENTS = false;
+
+	/**
+	 * An text document automatically created for each test
+	 */
+	private XTextDocument textDocument = null;
 
 
 	/**
-	 * Tests the output of a sentence provider by moving from start to end
-	 * and end to start, checking the expected state at each point
+	 * Sets up the text document for each test
+	 * @throws Exception 
+	 */
+	@Before
+	public void setUp() throws Exception {
+
+		this.textDocument = createBlankDocument (SHOW_DOCUMENTS);
+
+	}
+
+
+	/**
+	 * Tears down the text document after each test
+	 */
+	@After
+	public void tearDown() {
+
+		if (!SHOW_DOCUMENTS) {
+			this.textDocument.dispose();
+		}
+
+	}
+
+
+	/**
+	 * Tests the output of the sentence provider by moving from start to end,
+	 * checking the expected state at each point
 	 *
 	 * @param sentenceProvider The sentence provider to test
 	 * @param expectedParagraphs The expected textual paragraph contents
 	 */
-	private void sentenceProviderTestFixture (SentenceProvider sentenceProvider, String[] expectedParagraphs) {
+	private void testFixture (DocumentSentenceProvider sentenceProvider, String[] expectedParagraphs) {
+
 		for (int i = 0; i < expectedParagraphs.length; i++) {
 			assertEquals (expectedParagraphs[i], sentenceProvider.getText());
 			assertFalse (sentenceProvider.hasPrevious());
@@ -57,180 +114,17 @@ public class DocumentSentenceProviderTest {
 
 
 	/**
-	 * Creates a blank document
-	 *
-	 * @param hidden If <code>true</code>, the document will be created hidden 
-	 * @return The XComponent of the blank document
-	 * @throws Exception
-	 */
-	private XComponent createBlankDocument (boolean hidden) throws Exception {
-		
-		if (context == null) {
-			context = Bootstrap.bootstrap();
-		}
-
-		XDesktop desktop = OfficeUtil.desktopFor (context);
-
-		PropertyValue[] properties = new PropertyValue[1];
-		properties[0] = new PropertyValue();
-		properties[0].Name = "Hidden";
-		properties[0].Value = new Boolean (hidden); 
-
-		XComponentLoader componentLoader = As.XComponentLoader (desktop);
-		XComponent component = componentLoader.loadComponentFromURL ("private:factory/swriter", "_blank", 0, properties);
-
-		return component;
-
-	}
-
-
-	/**
 	 * Creates a sentence provider for the given component
 	 *
-	 * @param component The component to create the sentence provider for
+	 * @param textDocument The text document to create the sentence provider for
 	 * @return The constructed sentence provider
 	 */
-	private DocumentSentenceProvider createSentenceProvider (XComponent component) {
+	private DocumentSentenceProvider createSentenceProvider (XTextDocument textDocument) {
 
-		XTextDocument textDocument = As.XTextDocument (component);
 
-		DocumentSentenceProvider sentenceProvider = new DocumentSentenceProvider (textDocument);
+		DocumentSentenceProvider sentenceProvider = new DocumentSentenceProvider (this.textDocument);
 
 		return sentenceProvider;
-
-	}
-
-
-	/**
-	 * Insert a blank paragraph
-	 * @param text The text to insert into
-	 * @param textCursor The text cursor to navigate with
-	 * @param appendNewParagraph If <code>true</code>, a new blank paragraph will be appended
-	 *
-	 * @throws Exception 
-	 */
-	private void insertBlankParagraph (XText text, XTextCursor textCursor, boolean appendNewParagraph) throws Exception {
-
-		XPropertySet propertySet = As.XPropertySet (textCursor);
-		textCursor.collapseToEnd();
-		propertySet.setPropertyValue ("NumberingRules", Any.VOID);
-
-		if (appendNewParagraph) {
-			text.insertControlCharacter (textCursor.getEnd(), ControlCharacter.PARAGRAPH_BREAK, false);
-		}
-
-	}
-
-
-	/**
-	 * Insert a plain text paragraph
-	 * @param text The text to insert into
-	 * @param textCursor The text cursor to navigate with
-	 * @param extraText Additional text to append
-	 * @param appendNewParagraph If <code>true</code>, a new blank paragraph will be appended
-	 *
-	 * @throws Exception 
-	 */
-	private void insertPlainParagraph (XText text, XTextCursor textCursor, String extraText, boolean appendNewParagraph) throws Exception {
-
-		XPropertySet propertySet = As.XPropertySet (textCursor);
-		textCursor.collapseToEnd();
-		propertySet.setPropertyValue ("NumberingRules", Any.VOID);
-		textCursor.setString ("This is a plain paragraph" + extraText);
-
-		if (appendNewParagraph) {
-			text.insertControlCharacter (textCursor.getEnd(), ControlCharacter.PARAGRAPH_BREAK, false);
-		}
-
-	}
-
-
-	/**
-	 * Insert a numbered text paragraph
-	 *
-	 * @param component The component to insert into
-	 * @param textDocument The document to insert into
- 	 * @param text The text to insert into
-	 * @param textCursor The text cursor to navigate with
-	 * @param extraText Additional text to append
-	 * @param appendNewParagraph If <code>true</code>, a new blank paragraph will be appended
-	 * @throws Exception
-	 */
-	private void insertNumberedParagraph (XComponent component, XTextDocument textDocument, XText text, XTextCursor textCursor, String extraText, boolean appendNewParagraph) throws Exception {
-
-		textCursor.collapseToEnd();
-		textCursor.setString ("This is a numbered paragraph" + extraText);
-
-		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
-
-		XIndexAccess rulesIndexAccess = As.XIndexAccess (multiServiceFactory.createInstance ("com.sun.star.text.NumberingRules"));
-
-		XPropertySet propertySet = As.XPropertySet (textCursor);
-		propertySet.setPropertyValue ("NumberingRules", rulesIndexAccess);
-
-		if (appendNewParagraph) {
-			text.insertControlCharacter (textCursor.getEnd(), ControlCharacter.PARAGRAPH_BREAK, false);
-		}
-
-	}
-
-
-	/**
-	 * Insert a table with textual content
-	 * 
-	 * @param textDocument The document to insert into
- 	 * @param text The text to insert into
-	 * @param textCursor The text cursor to navigate with
-	 * @param rows The number of rows to create in the table 
-	 * @param columns The number of columns to create in the table
-	 * @param cellContents An array of strings to insert into the table's cells
-	 * @return The created table
-	 * @throws Exception
-	 */
-	private XTextTable insertTable (XTextDocument textDocument, XText text, XTextCursor textCursor, int rows, int columns, String[] cellContents) throws Exception {
-
-		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
-
-		XTextTable textTable = As.XTextTable (multiServiceFactory.createInstance ("com.sun.star.text.TextTable"));
-
-		textTable.initialize (rows, columns);
-		text.insertTextContent (textCursor, textTable, false);
-
-		String[] cellNames = textTable.getCellNames();
-
-		for (int i = 0; i < cellContents.length; i++) {
-
-			XText cellText = As.XText (textTable.getCellByName (cellNames[i]));
-			cellText.setString (cellContents[i]);
-
-		}
-
-		return textTable;
-
-	}
-
-
-	/**
-	 * Insert a text section
-	 * 
-	 * @param textDocument The document to insert into
- 	 * @param text The text to insert into
-	 * @param textCursor The text cursor to navigate with
-	 * @param content Textual content to insert into the text section 
-	 * @return The created text section
-	 * @throws Exception
-	 */
-	private XTextSection insertTextSection (XTextDocument textDocument, XText text, XTextCursor textCursor, String content) throws Exception {
-
-		XMultiServiceFactory multiServiceFactory = As.XMultiServiceFactory (textDocument);
-
-		XTextSection textSection = As.XTextSection (multiServiceFactory.createInstance ("com.sun.star.text.TextSection"));
-		
-		text.insertTextContent (textCursor, textSection, false);
-
-		textSection.getAnchor().setString (content);
-
-		return textSection;
 
 	}
 
@@ -246,20 +140,15 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testBlank() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		assertEquals ("", sentenceProvider.getText());
 		assertFalse (sentenceProvider.hasPrevious());
 		assertFalse (sentenceProvider.hasNext());
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -273,28 +162,22 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testPlain() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		// Insert test data
 		insertPlainParagraph (text, textCursor, "", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
 				"This is a plain paragraph",
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -309,10 +192,7 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testPlainBlank() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		// Insert test data
@@ -320,7 +200,7 @@ public class DocumentSentenceProviderTest {
 		insertBlankParagraph (text, textCursor, false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -328,11 +208,8 @@ public class DocumentSentenceProviderTest {
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -347,10 +224,7 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testBlankPlain() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		// Insert test data
@@ -358,7 +232,7 @@ public class DocumentSentenceProviderTest {
 		insertPlainParagraph (text, textCursor, "", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -366,11 +240,8 @@ public class DocumentSentenceProviderTest {
 				"This is a plain paragraph"
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -385,10 +256,7 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testBlankPlainBlank() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		// Insert test data
@@ -397,7 +265,7 @@ public class DocumentSentenceProviderTest {
 		insertBlankParagraph (text, textCursor, false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -406,11 +274,8 @@ public class DocumentSentenceProviderTest {
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -426,10 +291,7 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testPlainBlankPlain() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		// Insert test data
@@ -438,7 +300,7 @@ public class DocumentSentenceProviderTest {
 		insertPlainParagraph (text, textCursor, "", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -447,11 +309,8 @@ public class DocumentSentenceProviderTest {
 				"This is a plain paragraph"
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -467,10 +326,7 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testPlainPlainPlain() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
 		// Insert test data
@@ -479,7 +335,7 @@ public class DocumentSentenceProviderTest {
 		insertPlainParagraph (text, textCursor, " 3", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -488,11 +344,8 @@ public class DocumentSentenceProviderTest {
 				"This is a plain paragraph 3"
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -506,28 +359,22 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testNumber() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
 		// Insert test data
-		insertNumberedParagraph (component, textDocument, text, textCursor, "", false);
+		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
 				"This is a numbered paragraph",
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -542,18 +389,15 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testNumberBlank() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
 		// Insert test data
-		insertNumberedParagraph (component, textDocument, text, textCursor, "", true);
+		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -561,11 +405,8 @@ public class DocumentSentenceProviderTest {
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -580,18 +421,15 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testBlankNumber() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
 		// Insert test data
 		insertBlankParagraph (text, textCursor, true);
-		insertNumberedParagraph (component, textDocument, text, textCursor, "", false);
+		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -599,11 +437,8 @@ public class DocumentSentenceProviderTest {
 				"This is a numbered paragraph"
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -619,19 +454,16 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testBlankNumberBlank() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
 		// Insert test data
 		insertBlankParagraph (text, textCursor, true);
-		insertNumberedParagraph (component, textDocument, text, textCursor, "", true);
+		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -640,11 +472,8 @@ public class DocumentSentenceProviderTest {
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -660,19 +489,16 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testNumberBlankNumber() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
 		// Insert test data
-		insertNumberedParagraph (component, textDocument, text, textCursor, "", true);
+		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, true);
-		insertNumberedParagraph (component, textDocument, text, textCursor, "", false);
+		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -681,11 +507,8 @@ public class DocumentSentenceProviderTest {
 				"This is a numbered paragraph"
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -701,19 +524,16 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testNumberNumberNumber() throws Exception {
 
-		// Create text document
-		XComponent component = createBlankDocument (true);
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 		
 		// Insert test data
-		insertNumberedParagraph (component, textDocument, text, textCursor, " 1", true);
-		insertNumberedParagraph (component, textDocument, text, textCursor, " 2", true);
-		insertNumberedParagraph (component, textDocument, text, textCursor, " 3", false);
+		insertNumberedParagraph (this.textDocument, text, textCursor, " 1", true);
+		insertNumberedParagraph (this.textDocument, text, textCursor, " 2", true);
+		insertNumberedParagraph (this.textDocument, text, textCursor, " 3", false);
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -722,10 +542,7 @@ public class DocumentSentenceProviderTest {
 				"This is a numbered paragraph 3"
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
-
-		// Discard and close document
-		component.dispose();
+		testFixture (sentenceProvider, expectedParagraphs);
 
 	}
 
@@ -738,30 +555,25 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testOneOneTable() throws Exception {
 
-		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
-		insertTable (textDocument, text, textCursor, 1, 1, new String[] {"Test"});
+		insertTable (this.textDocument, text, textCursor, 1, 1, "");
 
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
-				"Test",
+				"A1",
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -774,42 +586,33 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testThreeThreeTable() throws Exception {
 
-		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
-		insertTable (textDocument, text, textCursor, 3, 3, new String[] {
-					"Test 1", "Test 2", "Test 3",
-					"Test 4", "Test 5", "Test 6",
-					"Test 7", "Test 8", "Test 9"
-		});
+		insertTable (this.textDocument, text, textCursor, 3, 3, "");
 
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
-				"Test 1",
-				"Test 2",
-				"Test 3",
-				"Test 4",
-				"Test 5",
-				"Test 6",
-				"Test 7",
-				"Test 8",
-				"Test 9",
+				"A1",
+				"B1",
+				"C1",
+				"A2",
+				"B2",
+				"C2",
+				"A3",
+				"B3",
+				"C3",
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -822,47 +625,36 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testEmbeddedTable() throws Exception {
 
-		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
-		XTextTable outerTable = insertTable (textDocument, text, textCursor, 3, 3, new String[] {
-					"Test 1", "Test 2", "Test 3",
-					"Test 4", "", "Test 6",
-					"Test 7", "Test 8", "Test 9"
-		});
+		XTextTable outerTable = insertTable (this.textDocument, text, textCursor, 3, 3, "Outer ");
 
 		XText cellText = As.XText (outerTable.getCellByName ("B2"));
-		insertTable (textDocument, cellText, cellText.createTextCursor(), 1, 1, new String[] {
-				"Inner Test 1"
-		});
+		insertTable (this.textDocument, cellText, cellText.createTextCursor(), 1, 1, "Inner ");
 
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
-				"Test 1",
-				"Test 2",
-				"Test 3",
-				"Test 4",
-				"Inner Test 1",
-				"",
-				"Test 6",
-				"Test 7",
-				"Test 8",
-				"Test 9",
+				"Outer A1",
+				"Outer B1",
+				"Outer C1",
+				"Outer A2",
+				"Inner A1",
+				"Outer B2",
+				"Outer C2",
+				"Outer A3",
+				"Outer B3",
+				"Outer C3",
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -875,17 +667,15 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testTextSection() throws Exception {
 
-		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
-		insertTextSection (textDocument, text, textCursor, "Test");
+		insertTextSection (this.textDocument, text, textCursor, "Test");
 
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
@@ -893,11 +683,8 @@ public class DocumentSentenceProviderTest {
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 
@@ -910,33 +697,28 @@ public class DocumentSentenceProviderTest {
 	@Test
 	public void testOneOneTableTextSection() throws Exception {
 
-		XComponent component = createBlankDocument (true);
 
-		XTextDocument textDocument = As.XTextDocument (component);
-		XText text = textDocument.getText();
+		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
 
-		XTextTable textTable = insertTable (textDocument, text, textCursor, 1, 1, new String[] {""});
+		XTextTable textTable = insertTable (this.textDocument, text, textCursor, 1, 1, "");
 		XText cellText = As.XText (textTable.getCellByName ("A1"));
-		insertTextSection (textDocument, cellText, cellText.createTextCursor(), "Test");
+		insertTextSection (this.textDocument, cellText, cellText.createTextCursor(), "Test");
 
 
 		// Create sentence provider
-		DocumentSentenceProvider sentenceProvider = createSentenceProvider (component);
+		DocumentSentenceProvider sentenceProvider = createSentenceProvider (this.textDocument);
 
 
 		// Test sentence provider
 		String[] expectedParagraphs = {
 				"Test",
-				"",
+				"A1",
 				""
 		};
 
-		sentenceProviderTestFixture (sentenceProvider, expectedParagraphs);
+		testFixture (sentenceProvider, expectedParagraphs);
 
-
-		// Discard and close document
-		component.dispose();
 
 	}
 

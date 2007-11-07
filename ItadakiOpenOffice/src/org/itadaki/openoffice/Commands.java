@@ -268,6 +268,98 @@ public class Commands {
 
 
 	/**
+	 * Adds furigana to the given component's selection
+	 *
+	 * @param componentContext The UNO component context used to access services 
+	 * @param component The document's component
+	 */
+	public static void furiganaSelection (final XComponentContext componentContext, XComponent component) {
+
+		final XModel model = As.XModel (component);
+		final XController controller = model.getCurrentController();
+		final XFrame frame = controller.getFrame();
+
+		final XStatusIndicator statusIndicator = OfficeUtil.statusIndicatorFor (controller);
+
+		// Create a thread to process the document. Without using a thread, the
+		// OpenOffice menu sticks open
+		Runnable runnable = new Runnable() {
+
+			public void run() {
+
+				try {
+
+					try {
+
+						// Lock the document
+						frame.getComponentWindow().setEnable (false);
+						model.lockControllers();
+
+						// Fetch the selection
+						Object selection = OfficeUtil.selectionFor (controller);
+
+						// Start the progress indicator
+						int pageCount = getPageCount (model, controller);
+				  	    statusIndicator.start ("Adding furigana...", pageCount);
+				  	    statusIndicator.setValue (1);
+
+
+				  	    // Process the document
+
+
+						// TODO Temporary restriction to text selections
+						if (As.XServiceInfo(selection).supportsService ("com.sun.star.text.TextRanges")) {
+
+							DocumentSentenceProvider sentenceProvider = new DocumentSentenceProvider (selection);
+							sentenceProvider.setOfficeSentenceProviderListener (new OfficeSentenceProviderListener() {
+
+								private long lastUpdate = System.currentTimeMillis();
+
+								public void regionChanged (XTextRange newTextRange) {
+
+									try {
+										long now = System.currentTimeMillis();
+										if ((now - this.lastUpdate) > 2000) {
+											statusIndicator.setValue (getPageNumber (model, controller, newTextRange));
+											this.lastUpdate = now;
+										}
+									} catch (Throwable t) {
+										ExceptionHelper.dealWith (t);
+									}
+
+								}
+
+							});
+
+							FuriganaService.getInstance().processAll (sentenceProvider);
+
+						}
+
+					} catch (MissingDictionaryException e) {
+						missingFuriganaDictionaryMessage (componentContext);
+					} finally {
+						if (model != null) {
+							model.unlockControllers();
+						}
+						frame.getComponentWindow().setEnable (true);
+
+						statusIndicator.end();
+					}
+
+				} catch (Throwable t) {
+					ExceptionHelper.dealWith (t);
+				}
+
+			}
+			
+		};
+
+		new Thread (runnable).start();
+
+	}
+
+
+	/**
 	 * Adds furigana to the whole document represented by the given component
 	 *
 	 * @param componentContext The UNO component context used to access services 
@@ -293,10 +385,6 @@ public class Commands {
 					try {
 
 						frame.getComponentWindow().setEnable (false);
-
-						// Store the current view cursor position so we can put it back afterwards
-						XTextViewCursor viewCursor = OfficeUtil.viewCursorFor (controller);
-						XTextCursor temporaryCursor = viewCursor.getText().createTextCursorByRange (viewCursor);
 
 						// Start the progress indicator
 						int pageCount = getPageCount (model, controller);
@@ -330,10 +418,6 @@ public class Commands {
 
 						FuriganaService.getInstance().processAll (sentenceProvider);
 
-
-						// Restore the original view cursor position
-						viewCursor.gotoRange (temporaryCursor, false);
-
 					} catch (MissingDictionaryException e) {
 						missingFuriganaDictionaryMessage (componentContext);
 					} finally {
@@ -343,7 +427,6 @@ public class Commands {
 						frame.getComponentWindow().setEnable (true);
 
 						statusIndicator.end();
-
 					}
 
 				} catch (Throwable t) {

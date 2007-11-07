@@ -8,7 +8,9 @@ import org.itadaki.openoffice.util.As;
 import org.itadaki.openoffice.util.OfficeUtil;
 
 import com.sun.star.container.XEnumeration;
+import com.sun.star.container.XIndexAccess;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextDocument;
@@ -61,6 +63,7 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 
 		}
 
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
@@ -80,22 +83,128 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 
 		}
 
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#remove()
 		 */
 		@Override
 		public void remove() {
 
-			throw new IllegalArgumentException();
+			throw new UnsupportedOperationException();
 
 		}
+
 
 		/**
 		 * @param container An object implementing an enumeration of {@link XTextContent}s
 		 */
 		public TextParagraphIterator (Object container) {
 
-			this.paragraphEnumeration = OfficeUtil.enumerationFor(container);
+			this.paragraphEnumeration = OfficeUtil.enumerationFor (container);
+
+		}
+
+	}
+
+
+	/**
+	 * An iterator for an {@link XEnumeration} of {@link XTextContent}s.
+	 * This differs from TextParagraphIterator in that it works round
+	 * an apparent OOo bug that sometimes results in our paragraph
+	 * iteration wandering off into lala land
+	 */
+	private static class SelectionTextParagraphIterator implements Iterator<XTextContent> {
+
+		/**
+		 * The enumeration currently being iterated over
+		 */
+		private XEnumeration paragraphEnumeration;
+
+		/**
+		 * The next text paragraph that will be returned
+		 */
+		private XTextContent nextParagraph = null;
+
+
+		/**
+		 * Finds and caches the next paragraph that will be returned.
+		 */
+		private void findNext() {
+
+			this.nextParagraph = null;
+
+			if (this.paragraphEnumeration.hasMoreElements()) {
+				XTextContent candidateParagraph;
+				try {
+					 candidateParagraph = As.XTextContent (this.paragraphEnumeration.nextElement());
+				} catch (WrappedTargetException e) {
+					throw new NoSuchElementException();
+				} catch (com.sun.star.container.NoSuchElementException e) {
+					throw new NoSuchElementException();
+				}
+	
+				try {
+					if (!OfficeUtil.isTextTable (candidateParagraph)) {
+						OfficeUtil.compareRegionStarts (As.XTextRange (candidateParagraph), As.XTextRange (candidateParagraph));
+					}
+				} catch (com.sun.star.lang.IllegalArgumentException e) {
+					// If the above test fails, we have wandered off the end of
+					// the intended region into a non-sane area. We give up and
+					// stop iterating here.
+					// TODO submit OOo bug
+					return;
+				}
+	
+				this.nextParagraph = candidateParagraph;
+			}
+
+		}
+
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		@Override
+		public boolean hasNext() {
+
+			return (this.nextParagraph != null);
+
+		}
+
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		@Override
+		public XTextContent next() throws NoSuchElementException {
+
+			XTextContent nextParagraph = this.nextParagraph;
+			findNext();
+
+			return nextParagraph;
+
+		}
+
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
+		@Override
+		public void remove() {
+
+			throw new UnsupportedOperationException();
+
+		}
+
+
+		/**
+		 * @param container An object implementing an enumeration of {@link XTextContent}s
+		 */
+		public SelectionTextParagraphIterator (Object container) {
+
+			this.paragraphEnumeration = OfficeUtil.enumerationFor (container);
+
+			findNext();
 
 		}
 
@@ -143,6 +252,7 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 
 		}
 
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
 		 */
@@ -152,6 +262,7 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 			return ((this.nextCellIndex < this.cellNames.length) || this.currentCellIterator.hasNext());
 
 		}
+
 
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
@@ -173,15 +284,17 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 
 		}
 
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#remove()
 		 */
 		@Override
 		public void remove() {
 
-			throw new IllegalArgumentException();
+			throw new UnsupportedOperationException();
 
 		}
+
 
 		/**
 		 * @param content The table to iterate over
@@ -274,6 +387,42 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 
 		// We don't do that
 		throw new UnsupportedOperationException();
+
+	}
+
+
+	/**
+	 * @param selection The selection object to process
+	 */
+	public ParagraphIterator (Object selection) {
+
+		XServiceInfo serviceInfo = As.XServiceInfo (selection);
+
+		try {
+
+			if (serviceInfo.supportsService ("com.sun.star.text.TextRanges")) {
+
+				XIndexAccess indexAccess = As.XIndexAccess (selection);
+
+				for (int i = indexAccess.getCount() - 1; i >= 0; i--) {
+
+					this.contextStack.add (new SelectionTextParagraphIterator (OfficeUtil.paragraphCursorFor (As.XTextRange (indexAccess.getByIndex (i)))));
+
+				}
+
+			} else if (serviceInfo.supportsService ("com.sun.star.text.TextTableCursor")) {
+
+				// TODO Can't deal with table cell selections yet
+
+			}
+
+		} catch (Exception e) {
+
+			throw new IllegalArgumentException (e);
+
+		}
+
+		this.currentIterator = this.contextStack.pop();
 
 	}
 

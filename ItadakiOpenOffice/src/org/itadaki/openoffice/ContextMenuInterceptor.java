@@ -50,15 +50,22 @@ public class ContextMenuInterceptor implements XContextMenuInterceptor {
 
 
 			// Create furigana wizard entry
-			XPropertySet wizardMenuEntryPropertySet = As.XPropertySet (multiServiceFactory.createInstance ("com.sun.star.ui.ActionTrigger"));
-			wizardMenuEntryPropertySet.setPropertyValue ("Text", new String ("Furigana Wizard..."));
-			wizardMenuEntryPropertySet.setPropertyValue ("CommandURL", new String ("org.itadaki.openoffice:furigana wizard"));
+			XPropertySet furiganaWizardMenuEntryPropertySet = As.XPropertySet (multiServiceFactory.createInstance ("com.sun.star.ui.ActionTrigger"));
+			furiganaWizardMenuEntryPropertySet.setPropertyValue ("Text", new String ("Furigana Wizard..."));
+			furiganaWizardMenuEntryPropertySet.setPropertyValue ("CommandURL", new String ("org.itadaki.openoffice:furigana wizard"));
+
+
+			// Create furigana selection entry
+			XPropertySet furiganaSelectionMenuEntryPropertySet = As.XPropertySet (multiServiceFactory.createInstance ("com.sun.star.ui.ActionTrigger"));
+			furiganaSelectionMenuEntryPropertySet.setPropertyValue ("Text", new String ("Furigana Selection"));
+			furiganaSelectionMenuEntryPropertySet.setPropertyValue ("CommandURL", new String ("org.itadaki.openoffice:furigana selection"));
 
 
 			// Create sub menu
 			XIndexContainer subMenuIndexContainer = As.XIndexContainer (multiServiceFactory.createInstance ("com.sun.star.ui.ActionTriggerContainer" ));
 			subMenuIndexContainer.insertByIndex (0, dictionaryMenuEntryPropertySet);
-			subMenuIndexContainer.insertByIndex (1, wizardMenuEntryPropertySet);
+			subMenuIndexContainer.insertByIndex (1, furiganaWizardMenuEntryPropertySet);
+			subMenuIndexContainer.insertByIndex (2, furiganaSelectionMenuEntryPropertySet);
 
 
 			// Create a separator menu entry

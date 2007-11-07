@@ -14,6 +14,7 @@ import com.sun.star.frame.XModel;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.table.XCellRange;
 import com.sun.star.text.XPageCursor;
 import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
@@ -368,6 +369,19 @@ public class As {
 	public static XComponentLoader XComponentLoader (Object object) {
 
 		return (XComponentLoader) UnoRuntime.queryInterface (XComponentLoader.class, object);
+
+	}
+
+
+	/**
+	 * Performs a Uno cast to present the given object as an {@link XCellRange}
+	 * 
+	 * @param object The Uno object to cast
+	 * @return The supplied object as an {@link XCellRange}
+	 */
+	public static XCellRange XCellRange (Object object) {
+
+		return (XCellRange) UnoRuntime.queryInterface (XCellRange.class, object);
 
 	}
 

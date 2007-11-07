@@ -40,6 +40,18 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	private XTextContent currentParagraph = null;
 
 	/**
+	 * If set, a lower bound beneath which readings should not be set within
+	 * the current paragraph 
+	 */
+	private XTextRange paragraphLowerBound = null;
+
+	/**
+	 * If set, an upper bound above which readings should not be set within
+	 * the current paragraph 
+	 */
+	private XTextRange paragraphUpperBound = null;
+
+	/**
 	 * An OfficeSentenceProviderListener to notify of changes in the selected
 	 * region
 	 */
@@ -126,7 +138,10 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 		try {
 
-			TextPortionIterator iterator = new TextPortionIterator (this.currentParagraph);
+			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (this.currentParagraph.getAnchor());
+			paragraphCursor.gotoEndOfParagraph (true);
+
+			TextPortionIterator iterator = new TextPortionIterator (paragraphCursor);
 			while (iterator.hasNext()) {
 
 				Object portion = iterator.next();
@@ -182,10 +197,41 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	@Override
 	public void next() {
 
-		this.currentParagraph = this.paragraphIterator.next();
+		XTextContent nextParagraph = this.paragraphIterator.next();
+		this.paragraphLowerBound = null;
+		this.paragraphUpperBound = null;
+
+		try {
+
+			TextPortionIterator boundsIterator = null;
+			Object textPortion = null;
+
+			if ((this.currentParagraph == null) || !hasNext()) {
+				boundsIterator = new TextPortionIterator (nextParagraph);
+			}
+
+			// Set lower bound if we are at the first paragraph
+			if (this.currentParagraph == null) {
+				textPortion = boundsIterator.next();
+				this.paragraphLowerBound = As.XTextRange(textPortion).getStart();
+			}
+
+			// Set upper bound if we are at the last paragraph
+			if (!hasNext()) {
+				while (boundsIterator.hasNext()) {
+					textPortion = boundsIterator.next();
+				}
+				this.paragraphUpperBound = As.XTextRange(textPortion).getEnd();
+			}
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
+		this.currentParagraph = nextParagraph;
 
 		if (this.providerListener != null) {
-			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (this.currentParagraph.getAnchor());
+			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (As.XTextRange (this.currentParagraph.getAnchor()));
 			paragraphCursor.gotoEndOfParagraph (true);
 			
 			this.providerListener.regionChanged (paragraphCursor);
@@ -216,7 +262,15 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 			XParagraphCursor paragraphCursor = OfficeUtil.paragraphCursorFor (this.currentParagraph.getAnchor());
 
-			paragraphCursor.gotoEndOfParagraph (true);
+			if (this.paragraphLowerBound != null) {
+				paragraphCursor.gotoRange (this.paragraphLowerBound, false);
+			}
+
+			if (this.paragraphUpperBound != null) {
+				paragraphCursor.gotoRange (this.paragraphUpperBound, true);
+			} else {
+				paragraphCursor.gotoEndOfParagraph (true);
+			}
 
 			XTextCursor textCursor = OfficeUtil.textCursorFor (paragraphCursor);
 			XPropertySet propertySet = As.XPropertySet (textCursor);
@@ -228,6 +282,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 			// Set new readings
 			int index = 0;
+			paragraphCursor.gotoRange(this.currentParagraph.getAnchor(), false);
 			TextPortionIterator textPortionIterator = new TextPortionIterator (paragraphCursor);
 			Object textPortion = textPortionIterator.nextTextPortion();
 			for (Reading reading : readings) {
@@ -270,10 +325,18 @@ public class DocumentSentenceProvider implements SentenceProvider {
 
 
 				// Set single reading
-				textCursor.gotoRange (readingStart, false);
-				textCursor.gotoRange (readingEnd, true);
-				propertySet.setPropertyValue ("RubyText", reading.text);
-				propertySet.setPropertyValue ("RubyAdjust", new Short ((short)RubyAdjust.CENTER.getValue()));
+				if (
+						!(
+								   ((this.paragraphLowerBound != null) && (OfficeUtil.compareRegionStarts (this.paragraphLowerBound, readingStart.getStart()) < 0))
+								|| ((this.paragraphUpperBound != null) && (OfficeUtil.compareRegionStarts (this.paragraphUpperBound, readingEnd.getStart()) > 0))
+						 )
+				   )
+				{
+					textCursor.gotoRange (readingStart, false);
+					textCursor.gotoRange (readingEnd, true);
+					propertySet.setPropertyValue ("RubyText", reading.text);
+					propertySet.setPropertyValue ("RubyAdjust", new Short ((short)RubyAdjust.CENTER.getValue()));
+				}
 
 			}
 
@@ -305,6 +368,18 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	public void dispose() {
 
 		// Nothing to do
+
+	}
+
+
+	/**
+	 * @param selection A selection object implementing TextRanges or TableCellCursor
+	 */
+	public DocumentSentenceProvider (Object selection) {
+
+		// Set up cursor over first paragraph
+		this.paragraphIterator = new ParagraphIterator (selection);
+		next();
 
 	}
 

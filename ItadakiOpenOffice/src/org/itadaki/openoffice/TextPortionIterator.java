@@ -106,16 +106,32 @@ public class TextPortionIterator {
 			prefix = builder.substring (0, maxLength);
 		}
 
-		// TODO http://www.openoffice.org/issues/show_bug.cgi?id=74054
-		// Iterating over text sections inside table cells has some issues.
-		if (prefix.equals ("")) {
-			prefix = textCursor.getString();
-			if (prefix.length() > maxLength) {
-				prefix = prefix.substring (0, maxLength);
-			}
+		return prefix;
+
+	}
+
+
+	/**
+	 * Returns The complete text contained in the given paragraph
+	 *
+	 * @param paragraph The paragraph to read text from 
+	 * @return A string the complete text of the paragraph
+	 * @throws UnknownPropertyException 
+	 * @throws WrappedTargetException 
+	 * @throws NoSuchElementException 
+	 */
+	public static String getText (XTextContent paragraph) throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
+
+		TextPortionIterator iterator = new TextPortionIterator (paragraph);
+		StringBuilder builder = new StringBuilder();
+
+		Object portion;
+		while ((portion = iterator.nextTextPortion()) != null) {
+			XTextRange textRange = As.XTextRange (portion);
+			builder.append (textRange.getString());
 		}
 
-		return prefix;
+		return builder.toString();
 
 	}
 

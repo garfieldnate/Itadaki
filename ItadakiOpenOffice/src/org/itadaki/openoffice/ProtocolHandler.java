@@ -166,6 +166,10 @@ public class ProtocolHandler extends WeakBase
 
 					Commands.furiganaWizard (this.componentContext, component);
 
+				} else if (url.Path.equals ("furigana selection")) {
+
+					Commands.furiganaSelection (this.componentContext, component);
+
 				} else if (url.Path.equals ("furigana document")) {
 
 					Commands.furiganaWholeDocument (this.componentContext, component);
