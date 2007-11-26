@@ -73,13 +73,10 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 			try {
 				return As.XTextContent (this.paragraphEnumeration.nextElement());
 			} catch (WrappedTargetException e) {
-				// TODO throw appropriate unchecked exception
-				e.printStackTrace();
+				throw new IllegalStateException();
 			} catch (com.sun.star.container.NoSuchElementException e) {
 				throw new NoSuchElementException();
 			}
-
-			return null;
 
 		}
 
@@ -138,7 +135,7 @@ public class ParagraphIterator implements Iterator<XTextContent> {
 				try {
 					 candidateParagraph = As.XTextContent (this.paragraphEnumeration.nextElement());
 				} catch (WrappedTargetException e) {
-					throw new NoSuchElementException();
+					throw new IllegalStateException();
 				} catch (com.sun.star.container.NoSuchElementException e) {
 					throw new NoSuchElementException();
 				}

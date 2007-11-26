@@ -247,7 +247,7 @@ public class DocumentSentenceProvider implements SentenceProvider {
 	public void previous() {
 
 		// Can't
-		throw new IllegalArgumentException();
+		throw new UnsupportedOperationException();
 
 	}
 
