@@ -8,8 +8,8 @@
 
 -->
 <project name="ipadic" default="compile" basedir=".">
-  <property name="ipadic.home" value="http://chasen.aist-nara.ac.jp/stable/ipadic"/>
-  <property name="ipadic.version" value="2.6.0"/>
+  <property name="ipadic.home" value="http://jaist.dl.sourceforge.jp/ipadic/24435/"/>
+  <property name="ipadic.version" value="2.7.0"/>
   <property name="ipadic.archive"  value="ipadic-${ipadic.version}.tar.gz"/>
   <property name="ipadic.dir"  value="ipadic-${ipadic.version}"/>
 

@@ -99,6 +99,10 @@ public class Dictionary {
 	 */
 	private CToken results[] = new CToken[256];
 
+	/**
+	 * Default connection cost
+	 */
+	private static final short DEFAULT_COST = 10000;
 
 	/**
 	 * Map the connection cost matrix file (matrix.sen)
@@ -185,6 +189,9 @@ public class Dictionary {
 	 */
 	public int getCost(Node lNode2, Node lNode, Node rNode) {
 
+		if ( lNode2.ctoken.rcAttr2==-1 || lNode.ctoken.rcAttr1==-1 || rNode.ctoken.lcAttr==-1 ) {
+			return rNode.ctoken.cost + DEFAULT_COST;
+		}
 		int position = this.connectionSize3 * (this.connectionSize2 * lNode2.ctoken.rcAttr2 + lNode.ctoken.rcAttr1) + rNode.ctoken.lcAttr;
 		return this.connectionCostBuffer.get(position) + rNode.ctoken.cost;
 

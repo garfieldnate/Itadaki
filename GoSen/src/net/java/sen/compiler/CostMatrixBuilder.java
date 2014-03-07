@@ -216,13 +216,20 @@ class CostMatrixBuilder {
 	public int getDicId(String rule) {
 
 		String csv[] = rule.split(",");
+		for ( int i=0; i<csv.length; i++ ) {
+			if (csv[i].indexOf("&#x21;")>=0) {
+				csv[i] = csv[i].replaceAll("&#x21;",",");
+			}
+		}
 
 		String lex = csv[csv.length - 1];
 
 		if (this.lexicalized.contains(lex)) {
-
-			return getDicIdNoCache(csv);
-
+			try {
+				return getDicIdNoCache(csv);
+			} catch (IllegalArgumentException e ) {
+				return -1;
+			}
 		}
 
 		// Remove end field
@@ -236,11 +243,13 @@ class CostMatrixBuilder {
 
 		}
 
-		int rg = getDicIdNoCache(csv);
-
-		this.dicIndex.put(partOfSpeech, rg + 1);
-		return rg;
-
+		try {
+			int rg = getDicIdNoCache(csv);
+			this.dicIndex.put(partOfSpeech, rg + 1);
+			return rg;
+		} catch( IllegalArgumentException e ) {
+			return -1;
+		}
 	}
 
 

@@ -182,6 +182,22 @@ public class IpadicPreprocessor {
 
 
 	/**
+	* encode comma
+	*
+	* @param str the String
+	* @return comma encoded string if need
+	*/
+	String encodeComma( String str ) {
+		if ( str == null) {
+			return null;
+		}
+		if (str.indexOf(",")>=0) {
+			str = str.replaceAll(",","&#x21;");
+		}
+		return str;
+	}
+
+	/**
 	 * Builds a dictionary CSV file from an unpacked ipadic
 	 *
 	 * @param outputFilename The filename to use for the dictionary CSV file
@@ -245,7 +261,7 @@ public class IpadicPreprocessor {
 					throw new IOException("Parse error in file " + dictionaryFile.getName() + " line " + lineNumber);
 				}
 
-				String lex = matcher.group(5);
+				String lex = encodeComma( matcher.group(5) );
 				String score = matcher.group(6);
 				String pos1 = matcher.group(1);
 				String pos2 = matcher.group(2);
@@ -253,8 +269,8 @@ public class IpadicPreprocessor {
 				String pos4 = matcher.group(4);
 				String ctype = matcher.group(9);
 				String base = lex;
-				String reading = matcher.group(7);
-				String pronunciation = matcher.group(8);
+				String reading = encodeComma( matcher.group(7) );
+				String pronunciation = encodeComma( matcher.group(8) );
 
 				if (pos1 == null) pos1 = "*";
 				if (pos2 == null) pos2 = "*";

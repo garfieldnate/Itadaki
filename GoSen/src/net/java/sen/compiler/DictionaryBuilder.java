@@ -168,7 +168,7 @@ public class DictionaryBuilder {
 
 		List<String> splitFieldList;
 
-		if ((compoundField.length() == 0) || (compoundField.charAt(0) != '{')) {
+		if ((compoundField.length() <= 1) || (compoundField.charAt(0) != '{')) {
 
 			// No alternatives
 			splitFieldList = new ArrayList<String>(1);
@@ -238,6 +238,11 @@ public class DictionaryBuilder {
 				for (int i = partOfSpeechStart; i < (partOfSpeechStart + partOfSpeechSize); i++) {
 					key_b.append(csvValues[i]);
 					pos_b.append(csvValues[i]);
+				}
+				for ( int i=0; i<csvValues.length; i++ ) {
+					if (csvValues[i].indexOf("&#x21;")>=0) {
+						csvValues[i] = csvValues[i].replaceAll("&#x21;",",");
+					}
 				}
 
 				for (int i = partOfSpeechStart + partOfSpeechSize; i < csvValues.length; i++) {
