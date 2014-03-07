@@ -1,0 +1,5 @@
+**/bin
+**/*.jar
+GoSen/testdata/dictionary/ipadic-*
+GoSen/testdata/dictionary/*.sen
+GoSen/testdata/dictionary/*.csv
