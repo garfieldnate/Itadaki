@@ -60,15 +60,16 @@
 
     <!-- Run Tests -->
     <target name="test" depends="compile-tests">
-        <junit printSummary="yes">
+        <junit printSummary="withOutAndErr" haltOnError="yes">
             <classpath>
-                <pathelement location="${bin.dir}"/>
+                <path location="${bin.dir}"/>
             </classpath>
             <batchtest>
-               <fileset dir="${bin.dir}/test">
-                    <include name="**/*Test*" />
+               <fileset dir="${bin.dir}">
+                    <include name="test/*Test*" />
                </fileset>
             </batchtest>
+            <formatter type="plain" usefile="false"/>
         </junit>
     </target>
 
