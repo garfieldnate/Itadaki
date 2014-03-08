@@ -23,8 +23,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -362,15 +365,45 @@ public class EdictDictionary {
 		indexChannel.close();
 
 		File indexFile = new File (this.dictionaryFileName + ".iidx");
-		indexFile.delete();
+		if(indexFile.exists() && !indexFile.delete()){
+			throw new IOException ("Could not delete old index file");
+		}
 		if (!temporaryIndexFile.renameTo(indexFile)) {
-			throw new IOException ("Failed to move temporary index file to final position");
+			//renameTo often fails on Windows, so try copying and deleting instead
+			System.err.println("Renaming temporary index file failed; copying instead");
+			copyFile(temporaryIndexFile, indexFile);
+			if(!temporaryIndexFile.delete()){
+				System.err.println("Could not delete temporary index file (" + temporaryIndexFile + ")");
+			}
 		}
 
 		loadIndex();
 
 	}
-
+	
+	/**
+	 * Copy a file. This might work when {@link File#renameTo(File)} fails.
+	 * @param source File to copy from
+	 * @param dest File to copy to
+	 * @throws IOException if copying fails
+	 */
+	private static void copyFile(File source, File dest)
+			throws IOException {
+		InputStream input = null;
+		OutputStream output = null;
+		try {
+			input = new FileInputStream(source);
+			output = new FileOutputStream(dest);
+			byte[] buf = new byte[1024];
+			int bytesRead;
+			while ((bytesRead = input.read(buf)) > 0) {
+				output.write(buf, 0, bytesRead);
+			}
+		} finally {
+			input.close();
+			output.close();
+		}
+	}
 
 	/**
 	 * Loads an existing index file
