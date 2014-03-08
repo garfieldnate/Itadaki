@@ -46,6 +46,32 @@
 		</jar>
 	</target>
 
+    <!-- Compile Test Code -->
+    <target name="compile-tests" depends="compile">
+        <mkdir dir="${bin.dir}/test"/>
+        <javac srcdir="${src.dir}/test"
+               destdir="${bin.dir}/test"
+               includes="*.java"
+               classpath="${bin.dir}"
+               debug="true"
+               encoding="utf-8"
+               source="1.5"/>
+    </target>
+
+    <!-- Run Tests -->
+    <target name="test" depends="compile-tests">
+        <junit printSummary="yes">
+            <classpath>
+                <pathelement location="${bin.dir}"/>
+            </classpath>
+            <batchtest>
+               <fileset dir="${bin.dir}/test">
+                    <include name="**/*Test*" />
+               </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
 	<!-- Clean project -->
 	<target name="clean">
 		<delete dir="${bin.dir}"/>
