@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
 package test;
@@ -65,28 +65,28 @@ public class TestEdictSearcher {
 
 		EdictSearchResults results;
 		results = searcher.search ("あ");
-		assertEquals (3, results.getFirstMatch());
-		assertEquals (3, results.getLastMatch());
+		assertEquals (new Integer(3), results.getFirstMatch());
+		assertEquals (new Integer(3), results.getLastMatch());
 
 		results = searcher.search ("か");
-		assertEquals (4, results.getFirstMatch());
-		assertEquals (4, results.getLastMatch());
+		assertEquals (new Integer(4), results.getFirstMatch());
+		assertEquals (new Integer(4), results.getLastMatch());
 
 		results = searcher.search ("さ");
-		assertEquals (5, results.getFirstMatch());
-		assertEquals (5, results.getLastMatch());
+		assertEquals (new Integer(5), results.getFirstMatch());
+		assertEquals (new Integer(5), results.getLastMatch());
 
 		results = searcher.search ("a");
-		assertEquals (0, results.getFirstMatch());
-		assertEquals (0, results.getLastMatch());
+		assertEquals (new Integer(0), results.getFirstMatch());
+		assertEquals (new Integer(0), results.getLastMatch());
 
 		results = searcher.search ("k");
-		assertEquals (1, results.getFirstMatch());
-		assertEquals (1, results.getLastMatch());
+		assertEquals (new Integer(1), results.getFirstMatch());
+		assertEquals (new Integer(1), results.getLastMatch());
 
 		results = searcher.search ("s");
-		assertEquals (2, results.getFirstMatch());
-		assertEquals (2, results.getLastMatch());
+		assertEquals (new Integer(2), results.getFirstMatch());
+		assertEquals (new Integer(2), results.getLastMatch());
 
 		results = searcher.search ("t");
 		assertNull (results.getFirstMatch());
@@ -117,7 +117,7 @@ public class TestEdictSearcher {
 		EdictSearcher searcher = new EdictDictionary(testEdict, indexData).searcher();
 
 		Iterator<Integer> resultsIterator = searcher.search("か").iterator (SearchMode.ANY);
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
@@ -152,7 +152,7 @@ public class TestEdictSearcher {
 
 		resultsIterator = searcher.search("かかか").iterator (SearchMode.EXACT);
 		assertTrue (resultsIterator.hasNext());
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
@@ -184,13 +184,13 @@ public class TestEdictSearcher {
 
 		resultsIterator = searcher.search("か").iterator (SearchMode.START);
 		assertTrue (resultsIterator.hasNext());
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
 		resultsIterator = searcher.search("かか").iterator (SearchMode.START);
 		assertTrue (resultsIterator.hasNext());
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
@@ -233,13 +233,13 @@ public class TestEdictSearcher {
 
 		resultsIterator = searcher.search("は").iterator (SearchMode.END);
 		assertTrue (resultsIterator.hasNext());
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
 		resultsIterator = searcher.search("たは").iterator (SearchMode.END);
 		assertTrue (resultsIterator.hasNext());
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
@@ -283,7 +283,7 @@ public class TestEdictSearcher {
 
 		resultsIterator = searcher.search("た").iterator (SearchMode.MIDDLE);
 		assertTrue (resultsIterator.hasNext());
-		assertEquals (14, resultsIterator.next());
+		assertEquals (new Integer(14), resultsIterator.next());
 		assertFalse (resultsIterator.hasNext());
 		assertNull (resultsIterator.next());
 
