@@ -40,38 +40,7 @@ import org.itadaki.client.dictionary.SystemProvider;
  * Standalone dictionary service demo
  */
 public class DictionaryDemo {
-
-	/**
-	 * Do-nothing demo SystemProvider
-	 */
-	private static class DemoSystemProvider implements SystemProvider {
-
-		/* (non-Javadoc)
-		 * @see org.itadaki.client.dictionary.SystemProvider#getSystemDictionaries()
-		 */
-		public Map<String,String> getSystemDictionaries() {
-
-			Map<String,String> dictionaries = new TreeMap<String,String>();
-			dictionaries.put ("./testdata/nulldict", "Nulldict");
-			return dictionaries;
-
-		}
-
-
-		/* (non-Javadoc)
-		 * @see org.itadaki.client.dictionary.SystemProvider#setSystemListener(org.itadaki.client.dictionary.SystemListener)
-		 */
-		public void setSystemListener(SystemListener listener) {
-			// Do nothing
-		}
-
-
-		public void setSearchOnSelect(boolean searchOnSelect) {
-			// Do nothing
-		}
-		
-	}
-
+	
 	/**
 	 * Set a native-look Look-And-Feel appropriate to the system
 	 * (Dear Sun, printing unnecessary warnings to stderr is rude!)
@@ -103,9 +72,47 @@ public class DictionaryDemo {
 
 
 	/**
-	 * @param args Ignored
+	 * @param args Paths to any edict dictionaries to be loaded. If no dictionaries are provided, a test
+	 * dictionary containing a single entry, "Boring", will be loaded.
 	 */
-	public static void main (String[] args) {
+	public static void main (final String[] args) {
+		/**
+		 * Do-nothing demo SystemProvider
+		 */
+		class DemoSystemProvider implements SystemProvider {
+
+			/* (non-Javadoc)
+			 * @see org.itadaki.client.dictionary.SystemProvider#getSystemDictionaries()
+			 */
+			public Map<String,String> getSystemDictionaries() {
+
+				Map<String,String> dictionaries = new TreeMap<String,String>();
+				if(args.length == 0){
+					dictionaries.put ("./testdata/nulldict", "Nulldict");
+				}else{
+					for(int i = 0; i < args.length; i++){
+						dictionaries.put(args[0], args[0]);
+					}
+				}
+				return dictionaries;
+
+			}
+
+
+			/* (non-Javadoc)
+			 * @see org.itadaki.client.dictionary.SystemProvider#setSystemListener(org.itadaki.client.dictionary.SystemListener)
+			 */
+			public void setSystemListener(SystemListener listener) {
+				// Do nothing
+			}
+
+
+			public void setSearchOnSelect(boolean searchOnSelect) {
+				// Do nothing
+			}
+			
+		}
+
 
 		SwingUtilities.invokeLater (new Runnable() {
 			public void run() {
