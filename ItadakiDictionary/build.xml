@@ -9,7 +9,7 @@
 
 	<path id="project.class.path">
 		<pathelement path="../FastTextPane/bin"/>
-		<pathelement path="../Seashell/bin"/>		
+		<pathelement path="../Seashell/bin"/>
 	</path>
 
 	<!-- Create build directories -->
@@ -55,6 +55,31 @@
 		<jar jarfile="itadaki-dictionary-${version}.jar">
 			<fileset dir="${bin.dir}"/>
 		</jar>
+	</target>
+
+    <!-- Run the basic demo using the "boring" dictionary -->
+	<target name="demo" depends="compile">
+	    <java classname="examples.DictionaryDemo" fork="true">
+			<classpath>
+				<pathelement location="bin"/>
+				<pathelement location="../FastTextPane/fasttextpane-1.0beta.jar"/>
+				<pathelement location="../Seashell/seashell-1.0beta.jar"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+	    </java>
+	</target>
+
+    <!-- Run the basic demo using the edict dictionary -->
+	<target name="demo-edict" depends="compile">
+	    <java classname="examples.DictionaryDemo" fork="true">
+			<classpath>
+				<pathelement location="bin"/>
+				<pathelement location="../FastTextPane/fasttextpane-1.0beta.jar"/>
+				<pathelement location="../Seashell/seashell-1.0beta.jar"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+      		<arg line="../ItadakiDataEdict/edict" />
+	    </java>
 	</target>
 
 	<!-- Clean project -->
