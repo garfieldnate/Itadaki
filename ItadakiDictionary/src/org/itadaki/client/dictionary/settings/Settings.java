@@ -253,7 +253,6 @@ public class Settings {
 
 			File propertiesFile = new File (this.propertiesFilename);
 			File tempFile = new File (this.propertiesFilename + ".tmp." + new Random().nextInt(10000));
-
 			FileOutputStream outputStream = new FileOutputStream (tempFile);
 			this.properties.store (outputStream, "Dictionary settings");
 			outputStream.close();
@@ -545,11 +544,10 @@ public class Settings {
 		String userHome = System.getProperty ("user.home");
 		String propertiesDirectory;
 		if (osName.startsWith ("Windows")) {
-			String applicationDataName = System.getenv ("APPDATA");
-			if (applicationDataName == null) {
-				applicationDataName = "Application Data";
+			propertiesDirectory = System.getenv ("APPDATA");
+			if (propertiesDirectory == null) {
+				propertiesDirectory = userHome + File.separator + "Application Data";
 			}
-			propertiesDirectory = userHome + File.separator + applicationDataName + File.separator + "Itadaki";
 		} else {
 			propertiesDirectory = userHome + File.separator + ".itadaki";
 		}
@@ -557,8 +555,7 @@ public class Settings {
 		if (!propertiesDirectoryFile.exists()) {
 			propertiesDirectoryFile.mkdirs();
 		}
-		this.propertiesFilename = propertiesDirectory  + File.separator + "dictionary.properties";  
-
+		this.propertiesFilename = propertiesDirectory  + File.separator + "dictionary.properties";
 
 		// Load settings
 		try {
