@@ -21,19 +21,16 @@ package org.itadaki.client.dictionary.settings;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import org.itadaki.client.dictionary.DictionaryService;
 import org.itadaki.client.dictionary.utility.CloneUtil;
@@ -74,15 +71,15 @@ public class Settings {
 	 */
 	private Map<SettingsListener, Integer> listeners = Collections.synchronizedMap (new WeakHashMap<SettingsListener, Integer>());
 
+//	/**
+//	 * The Properties instance
+//	 */
+//	private Properties properties;
+	
 	/**
-	 * The Properties filename to store settings in
+	 * The Preferences instance
 	 */
-	private String propertiesFilename;
-
-	/**
-	 * The Properties instance
-	 */
-	private Properties properties;
+	private Preferences prefs;
 
 
 	/**
@@ -243,30 +240,6 @@ public class Settings {
 
 	}
 
-
-	/**
-	 * Stores the current settings to disk
-	 */
-	private void writePropertiesFile() {
-
-		try {
-
-			File propertiesFile = new File (this.propertiesFilename);
-			File tempFile = new File (this.propertiesFilename + ".tmp." + new Random().nextInt(10000));
-			FileOutputStream outputStream = new FileOutputStream (tempFile);
-			this.properties.store (outputStream, "Dictionary settings");
-			outputStream.close();
-
-			propertiesFile.delete();
-			tempFile.renameTo (propertiesFile);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-
 	/**
 	 * Returns the set of possible dictionary highlight colours
 	 *
@@ -366,24 +339,28 @@ public class Settings {
 			for (i = 0; i < this.dictionarySettings.size(); i++) {
 	
 				DictionarySettings settings = this.dictionarySettings.get (i);
-				this.properties.setProperty ("dictionary." + i + ".type", settings.getType().toString());
-				this.properties.setProperty ("dictionary." + i + ".filename", settings.getFileName());
-				this.properties.setProperty ("dictionary." + i + ".displayname", settings.getDisplayName());
+				this.prefs.put ("dictionary." + i + ".type", settings.getType().toString());
+				this.prefs.put ("dictionary." + i + ".filename", settings.getFileName());
+				this.prefs.put ("dictionary." + i + ".displayname", settings.getDisplayName());
 				String colourRGB = (settings.getHighlightBackgroundColour() == null) ? "" : "" + settings.getHighlightBackgroundColour().getRGB();
-				this.properties.setProperty ("dictionary." + i + ".colour", colourRGB);
+				this.prefs.put ("dictionary." + i + ".colour", colourRGB);
 	
 			}
 	
 			if (i <= previousDictionaryCount) {
 				for (; i < previousDictionaryCount; i++) {
-					this.properties.remove ("dictionary." + i + ".type");
-					this.properties.remove ("dictionary." + i + ".filename");
-					this.properties.remove ("dictionary." + i + ".displayname");
-					this.properties.remove ("dictionary." + i + ".colour");
+					this.prefs.remove ("dictionary." + i + ".type");
+					this.prefs.remove ("dictionary." + i + ".filename");
+					this.prefs.remove ("dictionary." + i + ".displayname");
+					this.prefs.remove ("dictionary." + i + ".colour");
 				}
 			}
 	
-			writePropertiesFile();
+			try {
+				this.prefs.flush();
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+			}
 
 			notifyListeners();
 
@@ -413,9 +390,13 @@ public class Settings {
 
 		this.alwaysOnTop = alwaysOnTop;
 
-		this.properties.setProperty ("alwaysOnTop", this.alwaysOnTop ? "1" : "0");
+		this.prefs.put ("alwaysOnTop", this.alwaysOnTop ? "1" : "0");
 
-		writePropertiesFile();
+		try {
+			this.prefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 
 		// Nobody is currently interested in listening to the always-on-top
 		// setting.
@@ -446,9 +427,13 @@ public class Settings {
 
 		this.searchOnSelect = searchOnSelect;
 
-		this.properties.setProperty ("searchOnSelect", this.searchOnSelect ? "1" : "0");
+		this.prefs.put ("searchOnSelect", this.searchOnSelect ? "1" : "0");
 
-		writePropertiesFile();
+		try {
+			this.prefs.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 
 		DictionaryService.getInstance().getSystemProvider().setSearchOnSelect (searchOnSelect);
 
@@ -537,45 +522,14 @@ public class Settings {
 	 */
 	private Settings() {
 
-		this.properties = new Properties();
-
-		// Set user data directory in a system dependent way (ick)
-		String osName = System.getProperty ("os.name");
-		String userHome = System.getProperty ("user.home");
-		String propertiesDirectory;
-		if (osName.startsWith ("Windows")) {
-			propertiesDirectory = System.getenv ("APPDATA");
-			if (propertiesDirectory == null) {
-				propertiesDirectory = userHome + File.separator + "Application Data";
-			}
-		} else {
-			propertiesDirectory = userHome + File.separator + ".itadaki";
-		}
-		File propertiesDirectoryFile = new File (propertiesDirectory);
-		if (!propertiesDirectoryFile.exists()) {
-			propertiesDirectoryFile.mkdirs();
-		}
-		this.propertiesFilename = propertiesDirectory  + File.separator + "dictionary.properties";
-
-		// Load settings
-		try {
-			FileInputStream inputStream = new FileInputStream (this.propertiesFilename);
-			this.properties.load (inputStream);
-			inputStream.close();
-		} catch (FileNotFoundException e) {
-			// Do nothing
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		this.prefs = Preferences.userNodeForPackage(Settings.class);
 
 		// Parse always-on-top setting
-		String alwaysOnTop = this.properties.getProperty ("alwaysOnTop", null);
+		String alwaysOnTop = this.prefs.get ("alwaysOnTop", null);
 		this.alwaysOnTop = ("1".equals (alwaysOnTop));
 
-
 		// Parse always-on-top setting
-		String searchOnSelect = this.properties.getProperty ("searchOnSelect", null);
+		String searchOnSelect = this.prefs.get ("searchOnSelect", null);
 		this.searchOnSelect = ("1".equals (searchOnSelect));
 
 
@@ -585,14 +539,13 @@ public class Settings {
 		boolean done = false;
 		while (!done) {
 
-			String dictionaryFileName = this.properties.getProperty ("dictionary." + i + ".filename", null);
+			String dictionaryFileName = this.prefs.get ("dictionary." + i + ".filename", null);
 			if (dictionaryFileName == null) {
 
 				done = true;
 
 			} else {
-
-				String dictionaryTypeName = this.properties.getProperty ("dictionary." + i + ".type", null);
+				String dictionaryTypeName = this.prefs.get ("dictionary." + i + ".type", null);
 				DictionaryType dictionaryType;
 				if ("SYSTEM".equals (dictionaryTypeName)) {
 					dictionaryType = DictionaryType.SYSTEM;
@@ -600,8 +553,8 @@ public class Settings {
 					dictionaryType = DictionaryType.LOCAL;
 				}
 
-				String dictionaryDisplayName = this.properties.getProperty ("dictionary." + i + ".displayname", "");
-				String colourString = this.properties.getProperty ("dictionary." + i + ".colour", "");
+				String dictionaryDisplayName = this.prefs.get ("dictionary." + i + ".displayname", "");
+				String colourString = this.prefs.get ("dictionary." + i + ".colour", "");
 				Color colour = null;
 				if (colourString.length() > 0) {
 					colour = new Color (new Integer (colourString));
