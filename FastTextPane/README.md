@@ -2,6 +2,8 @@
 
 FastTextPane is a read/append-only text display widget capable of displaying immense quantities of text almost instantaneously. It is used in Itadaki as a replacement for the snail-like built in Java text components. The display can only scroll by paragraphs (not wrapped paragraph lines). This allows it to be fast but prevents it from being usable with documents with very long paragraphs (it is just fine for the Edict dictionaries).
 
+To see a demo of FastTextPane, run the demo in the ItadakiDictionary project and search for a common word like "a".
+
 FastTextPane is distributed under the LGPL license.
 
 Features:
