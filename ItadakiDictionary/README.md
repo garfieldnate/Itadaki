@@ -59,3 +59,10 @@ The Options Window allows configuration of the available dictionaries.
 ##  Known Issues
 
 **UNIX:** Users of the SCIM input method may find that the search entry field can become unresponsive. In this state, searches started from an OpenOffice document by menu command, key shortcut, or through search-on-select will work, but typing searches directly into the dictionary becomes impossible; this is caused by bugs in Sun Java's integration with SCIM. Sometimes, closing the dictionary window and re-opening it will cure this issue. If it does not, the only solution is to restart OpenOffice.
+
+## Building
+
+Using the dictionary tool requires that the Seashell and FastTextPane projects be compiled first.
+
+To see a demo of the dictionary tool, first build the Seashell, FastTextPane, and ItadakiDataEdict projects (cd into their directories and run `ant`). Then run `ant` to build the project, and `demo-edict` to run a demo using the Edict dictionary.
+
