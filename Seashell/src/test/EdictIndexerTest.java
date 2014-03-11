@@ -39,7 +39,7 @@ import org.itadaki.seashell.edict.EdictIndexer;
 /**
  * Tests org.itadaki.seashell.edict.EdictIndexer
  */
-public class TestEdictIndexer {
+public class EdictIndexerTest {
 
 	/**
 	 * Visually show diagram of indices for each tested entry (debug setting)
@@ -184,13 +184,13 @@ public class TestEdictIndexer {
 		EdictIndexer indexer = new EdictIndexer (testEdict, new EUCJPHandler(), false);
 		IntBuffer indexData = indexer.getIndexData();
 
-		if (TestEdictIndexer.debugShowEntryDiagram) {
+		if (EdictIndexerTest.debugShowEntryDiagram) {
 			debugShowIndices (testEdict, indexData);
 			debugListIndices (indexData, true);
 			System.out.println();
 		}
 
-		if (TestEdictIndexer.debugIndices) {
+		if (EdictIndexerTest.debugIndices) {
 			debugPrintDictionaryTerms (testEdict, indexData);
 			System.out.println();
 		}

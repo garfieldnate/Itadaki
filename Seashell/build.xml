@@ -46,6 +46,21 @@
 		</jar>
 	</target>
 
+    <!-- Run Tests -->
+    <target name="test" depends="compile">
+        <junit printSummary="withOutAndErr" haltOnError="yes">
+            <classpath>
+                <path location="${bin.dir}"/>
+            </classpath>
+            <batchtest>
+               <fileset dir="${bin.dir}">
+                    <include name="test/*Test.class" />
+               </fileset>
+            </batchtest>
+            <formatter type="plain" usefile="false"/>
+        </junit>
+    </target>
+
 	<!-- Clean project -->
 	<target name="clean">
 		<delete dir="${bin.dir}"/>

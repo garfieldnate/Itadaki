@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 /**
  * Tests org.itadaki.seashell.edict.UTF8Handler
  */
-public class TestUTF8Handler {
+public class UTF8HandlerTest {
 
 	/**
 	 * Test that decoding a UTF-8 encoded String returns the original String 

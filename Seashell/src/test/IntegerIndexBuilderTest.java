@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests org.itadaki.seashell.edict.IntegerIndexBuilder
  */
-public class TestIntegerIndexBuilder {
+public class IntegerIndexBuilderTest {
 
 	/**
 	 * Asserts the equality in length, contents and order of two int[] arrays

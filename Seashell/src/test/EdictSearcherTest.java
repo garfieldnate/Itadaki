@@ -40,7 +40,7 @@ import org.itadaki.seashell.edict.EUCJPHandler;
 /**
  * Tests org.itadaki.seashell.edict.EdictSearcher
  */
-public class TestEdictSearcher {
+public class EdictSearcherTest {
 
 	/**
 	 * Test basic search matcher functionality
