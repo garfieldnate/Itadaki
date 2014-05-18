@@ -9,13 +9,20 @@
 	<property name="openoffice.home" location="/usr/lib/openoffice.org2.0"/>
 
 	<path id="itadaki.class.path">
-		<pathelement location="libs/gosen-1.0.jar"/>
+		<pathelement location="libs/gosen-1.0beta.jar"/>
 		<pathelement location="libs/itadaki-dictionary-1.0beta.jar"/>
 		<pathelement location="libs/itadaki-furigana-1.0beta.jar"/>
+		<!-- Paths for Apache OpenOffice installation under Linux -->
 		<pathelement location="${openoffice.home}/program/classes/juh.jar"/>
 		<pathelement location="${openoffice.home}/program/classes/jurt.jar"/>
 		<pathelement location="${openoffice.home}/program/classes/ridl.jar"/>
 		<pathelement location="${openoffice.home}/program/classes/unoil.jar"/>
+		<!-- Paths for LibreOffice installation under Ubuntu -->
+		<pathelement location="/usr/share/java/juh.jar"/>
+		<pathelement location="/usr/share/java/jurt.jar"/>
+		<pathelement location="/usr/share/java/ridl.jar"/>
+		<pathelement location="/usr/share/libreoffice/program/classes/unoil.jar"/>
+		<!-- TODO Handle this OS-dependent -->
 	</path>
 
 	<!-- Create build directories -->
