@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<project name="ItadakiDataWadoku" default="uno-package" basedir=".">
+
+	<property name="version" value="20140518" />
+
+	<path id="project.class.path">
+		<pathelement path="../Seashell/bin" />
+	</path>
+
+	<!-- Download dictionary file -->
+	<target name="downloadDictionary" depends="" description="Downloads the Wadoku dictionary.">
+		<get dest="wadoku.dict.tar.bz2" src="http://www.wadoku.de/downloads/wadokudict_20140105.tar.bz2" />
+		<untar src="wadoku.dict.tar.bz2" dest="." compression="bzip2">
+			<patternset>
+				<include name="**/wadokudict" />
+			</patternset>
+		</untar>
+		<copy file="wadokudict_20140105/wadokudict" todir="." />
+	</target>
+
+
+	<!-- Create dictionary index -->
+	<target name="index" depends="downloadDictionary">
+		<java classname="org.itadaki.seashell.tools.Indexer" classpathref="project.class.path" failonerror="true">
+			<arg line="wadokudict" />
+		</java>
+	</target>
+
+	<!-- Build OOo extension Uno package -->
+	<target name="uno-package" depends="index">
+		<zip destfile="itadaki-data-wadoku-${version}.uno.pkg">
+			<zipfileset dir="." includes="itadaki-data.properties" />
+			<zipfileset dir="." includes="wadokudict" />
+			<zipfileset dir="." includes="wadokudict.iidx" />
+			<zipfileset dir="." includes="LICENSE" />
+			<zipfileset dir="." includes="README" />
+			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml" />
+		</zip>
+	</target>
+
+	<!-- Clean project -->
+	<target name="clean">
+		<delete dir="wadokudict_20140105" />
+		<delete file="wadokudict" />
+		<delete file="wadoku.dict.tar.bz2" />
+		<delete file="wadoku.dict.iidx" />
+		<delete file="wadoku.dict.iidx.tmp" />
+		<delete file="itadaki-data-wadoku-${version}.uno.pkg" />
+	</target>
+
+</project>
+
