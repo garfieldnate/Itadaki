@@ -75,6 +75,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#getReadings()
 		 */
+		@Override
 		public List<Reading> getReadings() {
 
 			if (this.readingCache[this.sentenceIndex] != null) {
@@ -89,6 +90,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#getText()
 		 */
+		@Override
 		public String getText() {
 
 			return this.sentences[this.sentenceIndex];
@@ -99,6 +101,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#hasNext()
 		 */
+		@Override
 		public boolean hasNext() {
 
 			if (this.sentenceIndex < (this.sentences.length - 1)) {
@@ -113,6 +116,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#hasPrevious()
 		 */
+		@Override
 		public boolean hasPrevious() {
 
 			if (this.sentenceIndex > 0) {
@@ -127,6 +131,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#next()
 		 */
+		@Override
 		public void next() {
 
 			this.sentenceIndex++;
@@ -137,6 +142,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#previous()
 		 */
+		@Override
 		public void previous() {
 
 			this.sentenceIndex--;
@@ -147,6 +153,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#setReadings(java.util.List)
 		 */
+		@Override
 		public void setReadings (List<Reading> readings) {
 
 			this.readingCache[this.sentenceIndex] = readings;
@@ -162,6 +169,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#setSentenceListener(org.itadaki.client.furigana.SentenceListener)
 		 */
+		@Override
 		public void setSentenceListener (SentenceListener listener) {
 			// Do nothing
 		}
@@ -170,6 +178,7 @@ public class FuriganaDemo {
 		/* (non-Javadoc)
 		 * @see org.itadaki.client.furigana.SentenceProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// Do nothing
 		}
@@ -246,6 +255,7 @@ public class FuriganaDemo {
 
 		analyseButton.addActionListener (new ActionListener() {
 
+			@Override
 			public void actionPerformed (ActionEvent event) {
 
 				try {
@@ -278,6 +288,7 @@ public class FuriganaDemo {
 	public FuriganaDemo (final String configFilename) {
 
 		SwingUtilities.invokeLater (new Runnable() {
+			@Override
 			public void run() {
 
 				setSystemLookAndFeel();
@@ -302,9 +313,9 @@ public class FuriganaDemo {
 		if (args.length != 1) {
 			System.out.println ("Syntax: java FuriganaDemo <config file>");
 		}
-
-		new FuriganaDemo (args[0]);
-
+		else {
+			new FuriganaDemo (args[0]);
+		}
 	}
 
 }

@@ -2,49 +2,45 @@
 
 <project name="ItadakiFurigana" default="jar" basedir=".">
 
-	<property name="version" value="1.0beta"/>
-	<property name="src.dir" location="src/"/>
-	<property name="bin.dir" location="bin/"/>
-	<property name="javadoc.dir" location="docs/api"/>
+	<property name="version" value="1.0beta" />
+	<property name="src.dir" location="src/" />
+	<property name="bin.dir" location="bin/" />
+	<property name="javadoc.dir" location="docs/api" />
+	<property name="gosen.dir" location="../GoSen/" />
+	<property name="gosen.bin" location="../GoSen/bin" />
 
 	<path id="project.class.path">
-		<pathelement path="../GoSen/bin"/>
+		<pathelement location="${gosen.bin}" />
+		<pathelement location="${bin.dir}" />
 	</path>
 
 	<!-- Create build directories -->
 	<target name="prepare-directories">
-		<mkdir dir="${bin.dir}"/>
-		<mkdir dir="${javadoc.dir}"/>
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${javadoc.dir}" />
 	</target>
 
 	<!-- Build javadocs -->
 	<target name="javadoc">
-		<javadoc sourcepath="${src.dir}"
-		         destdir="${javadoc.dir}"
-		         author="true"
-		         version="true"
-		         use="true"
-		         windowtitle="Itadaki Furigana Wizard API"
-		         doctitle="Sen"
-		         source="1.5">
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}"
+			author="true" version="true" use="true"
+			windowtitle="Itadaki Furigana Wizard API"
+			doctitle="Sen" source="1.5">
 			<fileset dir="${src.dir}">
-				<include name="org/**/*.java"/>
+				<include name="org/**/*.java" />
 			</fileset>
 		</javadoc>
 	</target>
 
 	<!-- Compile source -->
 	<target name="compile" depends="prepare-directories">
-		<javac srcdir="${src.dir}"
-		       destdir="${bin.dir}"
-		       classpathref="project.class.path"
-		       includes="**/*.java"
-		       debug="true"
-		       encoding="utf-8"
-		       source="1.5" />
+		<javac srcdir="${src.dir}" destdir="${bin.dir}"
+			classpathref="project.class.path"
+			includes="**/*.java" debug="true"
+			encoding="utf-8" source="1.5" />
 		<copy todir="${bin.dir}">
 			<fileset dir="${src.dir}">
-				<include name="*.png"/>
+				<include name="*.png" />
 			</fileset>
 		</copy>
 	</target>
@@ -52,15 +48,24 @@
 	<!-- Create library jar -->
 	<target name="jar" depends="compile">
 		<jar jarfile="itadaki-furigana-${version}.jar">
-			<fileset dir="${bin.dir}"/>
+			<fileset dir="${bin.dir}" />
 		</jar>
 	</target>
 
+	<!-- Run Furigana demo -->
+	<target name="run_demo" depends="compile" description="Runs Furigana demo application.">
+		<java dir="${bin.dir}" classname="examples.FuriganaDemo" fork="true" failonerror="true">
+			<arg value="../../ItadakiDataIpadic/dictionary/dictionary.xml" />
+			<classpath refid="project.class.path" />
+		</java>
+	</target>
+
+
 	<!-- Clean project -->
 	<target name="clean">
-		<delete dir="${bin.dir}"/>
-		<delete dir="${javadoc.dir}"/>
-		<delete file="itadaki-furigana-${version}.jar"/>
+		<delete dir="${bin.dir}" />
+		<delete dir="${javadoc.dir}" />
+		<delete file="itadaki-furigana-${version}.jar" />
 	</target>
 
 </project>
