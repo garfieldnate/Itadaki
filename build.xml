@@ -127,7 +127,7 @@
 		
 		<ant dir="${ItadakiDataEdict.dir}" target="uno-package" />
 		<ant dir="${ItadakiDataEnamdict.dir}" target="uno-package" />
-		<!--ant dir="${ItadakiDataWadoku.dir}" target="uno-package" /-->
+		<ant dir="${ItadakiDataWadoku.dir}" target="uno-package" />
 		<ant dir="${ItadakiDataIpadic.dir}" target="uno-package" />
 		
 	</target>
