@@ -2,23 +2,24 @@
 
 <project name="ItadakiDataEnamdict" default="uno-package" basedir=".">
 
-	<property name="version" value="20070228"/>
+	<property name="dict.version" value="20070228"/>
 
 	<path id="project.class.path">
 		<pathelement path="../Seashell/bin"/>
+		<pathelement path="${Seashell.dir}/seashell-${version}.jar"/>
 	</path>
 
 	<!-- Create dictionary index -->
 	<target name="index">
 		<java classname="org.itadaki.seashell.tools.Indexer"
 		      classpathref="project.class.path">
-			<arg line="enamdict"/>
+			<arg line="${basedir}/enamdict"/>
 		</java>
 	</target>
 
 	<!-- Build OOo extension Uno package -->
 	<target name="uno-package" depends="index">
-		<zip destfile="itadaki-data-enamdict-${version}.uno.pkg">
+		<zip destfile="itadaki-data-enamdict-${dict.version}.uno.pkg">
 			<zipfileset dir="." includes="itadaki-data.properties"/>
 			<zipfileset dir="." includes="enamdict"/>
 			<zipfileset dir="." includes="enamdict.iidx"/>
@@ -31,7 +32,7 @@
 	<!-- Clean project -->
 	<target name="clean">
 		<delete file="enamdict.iidx"/>
-		<delete file="itadaki-data-enamdict-${version}.uno.pkg"/>
+		<delete file="itadaki-data-enamdict-${dict.version}.uno.pkg"/>
 	</target>
 
 </project>

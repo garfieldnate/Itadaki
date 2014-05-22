@@ -2,10 +2,11 @@
 
 <project name="ItadakiDataEdict" default="uno-package" basedir=".">
 
-	<property name="version" value="20070228"/>
+	<property name="dict.version" value="20070228"/>
 
 	<path id="project.class.path">
 		<pathelement path="../Seashell/bin"/>
+		<pathelement path="${Seashell.dir}/seashell-${version}.jar"/>
 	</path>
 
 	<!-- Create dictionary index -->
@@ -13,13 +14,13 @@
 		<java classname="org.itadaki.seashell.tools.Indexer"
 		      classpathref="project.class.path"
 		      failonerror="true">
-			<arg line="edict"/>
+			<arg line="${basedir}/edict"/>
 		</java>
 	</target>
 
 	<!-- Build OOo extension Uno package -->
 	<target name="uno-package" depends="index">
-		<zip destfile="itadaki-data-edict-${version}.uno.pkg">
+		<zip destfile="itadaki-data-edict-${dict.version}.uno.pkg">
 			<zipfileset dir="." includes="itadaki-data.properties"/>
 			<zipfileset dir="." includes="edict"/>
 			<zipfileset dir="." includes="edict.iidx"/>
@@ -33,7 +34,7 @@
 	<target name="clean">
 		<delete file="edict.iidx"/>
 		<delete file="edict.iidx.tmp"/>
-		<delete file="itadaki-data-edict-${version}.uno.pkg"/>
+		<delete file="itadaki-data-edict-${dict.version}.uno.pkg"/>
 	</target>
 
 </project>

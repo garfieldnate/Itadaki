@@ -8,5 +8,5 @@
   <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data"
                        manifest:full-path="ProtocolHandler.xcu"/>
   <manifest:file-entry manifest:media-type="application/vnd.sun.star.uno-component;type=Java"
-                       manifest:full-path="itadaki-1.0alpha2.uno.jar"/>
+                       manifest:full-path="itadaki-1.1.uno.jar"/>
 </manifest:manifest>

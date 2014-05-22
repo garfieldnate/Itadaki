@@ -2,16 +2,16 @@
 
 <project name="Itadaki" default="uno-package" basedir=".">
 
-	<property name="version" value="1.0alpha2"/>
+	<property name="version" value="1.1"/>
 	<property name="src.dir" location="src/"/>
 	<property name="bin.dir" location="bin/"/>
 	<property name="javadoc.dir" location="docs/api"/>
 	<property name="openoffice.home" location="/usr/lib/openoffice.org2.0"/>
 
 	<path id="itadaki.class.path">
-		<pathelement location="libs/gosen-1.0beta.jar"/>
-		<pathelement location="libs/itadaki-dictionary-1.0beta.jar"/>
-		<pathelement location="libs/itadaki-furigana-1.0beta.jar"/>
+		<pathelement location="libs/gosen-${version}.jar"/>
+		<pathelement location="libs/itadaki-dictionary-${version}.jar"/>
+		<pathelement location="libs/itadaki-furigana-${version}.jar"/>
 		<!-- Paths for Apache OpenOffice installation under Linux -->
 		<pathelement location="${openoffice.home}/program/classes/juh.jar"/>
 		<pathelement location="${openoffice.home}/program/classes/jurt.jar"/>
@@ -81,6 +81,7 @@
 	<target name="clean">
 		<delete dir="${bin.dir}"/>
 		<delete dir="${javadoc.dir}"/>
+		<delete dir="docs"/>
 		<delete file="itadaki-${version}.uno.jar"/>
 		<delete file="itadaki-${version}.uno.pkg"/>
 	</target>
