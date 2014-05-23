@@ -75,6 +75,7 @@ public class IntegerIndexBuilderTest {
 
 		return new Comparator<Integer>() {
 
+			@Override
 			public int compare(Integer term1Address, Integer term2Address) {
 				return dictionary[term1Address].compareTo (dictionary[term2Address]);
 			}

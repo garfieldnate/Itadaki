@@ -39,7 +39,6 @@ import java.nio.charset.CharsetDecoder;
 import org.itadaki.seashell.CharacterHandler;
 import org.itadaki.seashell.DictionaryException;
 
-
 /**
  * Wrapper for an EDICT format dictionary
  */
@@ -54,7 +53,7 @@ public class EdictDictionary {
 	 * The dictionary data
 	 */
 	private ByteBuffer dictionary;
-	
+
 	/**
 	 * The term index
 	 */
@@ -65,10 +64,9 @@ public class EdictDictionary {
 	 */
 	private CharacterHandler characterHandler;
 
-
 	/**
 	 * Returns the dictionary's filename
-	 *
+	 * 
 	 * @return The dictionary's filename
 	 */
 	public String getFilename() {
@@ -77,62 +75,58 @@ public class EdictDictionary {
 
 	}
 
-
 	/**
 	 * Accessor for characterHandler
-	 *
+	 * 
 	 * @return The characterHandler
 	 */
 	public CharacterHandler getCharacterHandler() {
 		return this.characterHandler;
 	}
 
-	
 	/**
 	 * Create a searcher for this dictionary
-	 *
+	 * 
 	 * @return An EdictSearcher instance
-	 * @throws DictionaryException 
+	 * @throws DictionaryException
 	 */
 	public EdictSearcher searcher() throws DictionaryException {
 
 		if (this.index != null) {
-			return new EdictSearcher (this);
+			return new EdictSearcher(this);
 		}
 
 		throw new DictionaryException();
 
 	}
 
-
 	/**
 	 * Supply a comparator for term positions within the dictionary
-	 *
+	 * 
 	 * @return The comparator
 	 */
 	public EdictComparator comparator() {
 
-		return new EdictComparator (this.dictionary, this.characterHandler);
+		return new EdictComparator(this.dictionary, this.characterHandler);
 
 	}
-
 
 	/**
 	 * Retrieves the term position referred to by an index entry
-	 *
-	 * @param indexPosition The index position
+	 * 
+	 * @param indexPosition
+	 *            The index position
 	 * @return The term position
 	 */
-	public Integer getIndexEntry (Integer indexPosition) {
+	public Integer getIndexEntry(Integer indexPosition) {
 
-		return this.index.get (indexPosition);
+		return this.index.get(indexPosition);
 
 	}
 
-
 	/**
 	 * Retrieves the size of the index
-	 *
+	 * 
 	 * @return The size of the index
 	 */
 	public Integer getIndexSize() {
@@ -141,35 +135,37 @@ public class EdictDictionary {
 
 	}
 
-
 	/**
 	 * Read an entry from the dictionary
-	 *
-	 * @param position The entry position
+	 * 
+	 * @param position
+	 *            The entry position
 	 * @return The entry as a String
-	 * @throws CharacterCodingException 
+	 * @throws CharacterCodingException
 	 */
-	public String readEntry (Integer position) throws CharacterCodingException {
+	public String readEntry(Integer position) throws CharacterCodingException {
 
 		int end;
-		for (end = position; this.dictionary.get (end) != '\n'; end++);
+		for (end = position; this.dictionary.get(end) != '\n'; end++)
+			;
 
 		CharsetDecoder decoder = this.characterHandler.getCharsetDecoder();
-		this.dictionary.position (position);
+		this.dictionary.position(position);
 		ByteBuffer copy = this.dictionary.slice();
-		copy.limit (end - position);
-		return decoder.decode (copy).toString();
+		copy.limit(end - position);
+		return decoder.decode(copy).toString();
 
 	}
 
-
 	/**
-	 * Search backwards from a dictionary position to find the start of the entry
-	 *
-	 * @param position The position from which to start searching
+	 * Search backwards from a dictionary position to find the start of the
+	 * entry
+	 * 
+	 * @param position
+	 *            The position from which to start searching
 	 * @return The start of the entry
 	 */
-	public int findStartOfEntry (int position) {
+	public int findStartOfEntry(int position) {
 
 		byte character;
 
@@ -178,66 +174,66 @@ public class EdictDictionary {
 				return 0;
 			}
 			position--;
-			character = this.dictionary.get (position);
+			character = this.dictionary.get(position);
 		} while (character != '\n');
 
 		return position + 1;
 
 	}
 
-
 	/**
 	 * Test if the given dictionary position is the start of a word
-	 *
-	 * @param position The position to test
+	 * 
+	 * @param position
+	 *            The position to test
 	 * @return true if at the start of a word
 	 */
-	public boolean isWordStart (int position) {
+	public boolean isWordStart(int position) {
 		if (position == 0) {
 			return true;
 		}
-		byte character = this.dictionary.get (position - 1);
+		byte character = this.dictionary.get(position - 1);
 		switch (character) {
-			case '\n':
-			case ' ':
-			case '-':
-			case '[':
-			case '/':
-				return true;
+		case '\n':
+		case ' ':
+		case '-':
+		case '[':
+		case '/':
+			return true;
 		}
 		return false;
 	}
-
 
 	/**
 	 * Test if the given dictionary position is the end of a word
-	 *
-	 * @param position The position to test
+	 * 
+	 * @param position
+	 *            The position to test
 	 * @return true if at the end of a word
 	 */
-	public boolean isWordEnd (int position) {
+	public boolean isWordEnd(int position) {
 		if (position >= this.dictionary.limit()) {
 			return true;
 		}
-		byte character = this.dictionary.get (position + 1);
+		byte character = this.dictionary.get(position + 1);
 		switch (character) {
-			case ' ':
-			case '-':
-			case ']':
-			case '/':
-				return true;
+		case ' ':
+		case '-':
+		case ']':
+		case '/':
+			return true;
 		}
 		return false;
 	}
 
-
 	/**
 	 * Guess the encoding of an EDICT format dictionary
-	 *
-	 * @param buffer The dictionary data
+	 * 
+	 * @param buffer
+	 *            The dictionary data
 	 * @return A CharacterHandler appropriate for the dictionary's encoding
 	 */
-	private static CharacterHandler guessEncoding (ByteBuffer buffer) {
+	private static CharacterHandler guessEncoding(ByteBuffer buffer) {
 
 		CharacterHandler handler = null;
 
@@ -271,74 +267,84 @@ public class EdictDictionary {
 
 	}
 
-
 	/**
 	 * Check if a file appears to be in EDICT format
-	 *
-	 * @param dictionaryFileName File to test
-	 * @param decoder Charset decoder to use
+	 * 
+	 * @param dictionaryFileName
+	 *            File to test
+	 * @param decoder
+	 *            Charset decoder to use
 	 * @return true if the file format seems correct; false otherwise
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private static boolean testFileFormat (String dictionaryFileName, CharsetDecoder decoder) throws FileNotFoundException, IOException {
+	private static boolean testFileFormat(String dictionaryFileName,
+			CharsetDecoder decoder) throws FileNotFoundException, IOException {
 
-		BufferedReader formatTestReader = new BufferedReader (new InputStreamReader (new FileInputStream (dictionaryFileName), decoder));
+		BufferedReader formatTestReader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(dictionaryFileName),
+						decoder));
 
 		int i = 0;
 		String line = null;
 		do {
 			line = formatTestReader.readLine();
-			if ((line != null) && !line.matches ("^[^ ]{1,} ?(\\[[^]]*\\] )?/.*/$")) {
+			if ((line != null)
+					&& !line.matches("^[^ ]{1,} ?(\\[[^]]*\\] )?/.*/$")) {
+				formatTestReader.close();
 				return false;
 			}
 			i++;
 		} while ((i < 10) && (line != null));
 
+		formatTestReader.close();
 		return true;
-
 	}
-
 
 	/**
 	 * Check if a file appears to be in EDICT format
-	 *
-	 * @param dictionaryFileName File to test
+	 * 
+	 * @param dictionaryFileName
+	 *            File to test
 	 * @return true if the file format seems correct; false otherwise
 	 */
-	public static boolean testFileFormat (String dictionaryFileName) {
+	public static boolean testFileFormat(String dictionaryFileName) {
 
 		FileChannel dictionaryChannel;
-		try {
 
-			dictionaryChannel = new RandomAccessFile (dictionaryFileName, "r").getChannel();
-			ByteBuffer dictionary = dictionaryChannel.map (FileChannel.MapMode.READ_ONLY, 0, (int)dictionaryChannel.size());
-			CharacterHandler handler = guessEncoding (dictionary);
-			testFileFormat (dictionaryFileName, handler.getCharsetDecoder());
+		try {
+			RandomAccessFile dictionaryFile = new RandomAccessFile(
+					dictionaryFileName, "r");
+			dictionaryChannel = dictionaryFile.getChannel();
+			ByteBuffer dictionary = dictionaryChannel.map(
+					FileChannel.MapMode.READ_ONLY, 0,
+					(int) dictionaryChannel.size());
+			CharacterHandler handler = guessEncoding(dictionary);
+			testFileFormat(dictionaryFileName, handler.getCharsetDecoder());
+			dictionaryFile.close();
 		} catch (Exception e) {
 			return false;
 		}
+
 		return true;
 
 	}
 
-
 	/**
 	 * Indicates if the dictionary has an index file
-	 *
+	 * 
 	 * @return True if the index file exists, false otherwise
 	 */
 	private boolean indexExists() {
 
-		File indexFile = new File (this.dictionaryFileName + ".iidx");
+		File indexFile = new File(this.dictionaryFileName + ".iidx");
 		return indexFile.exists();
 
 	}
 
-
 	/**
 	 * Indicates if the dictionary's index is loaded
-	 *
+	 * 
 	 * @return True if the index is loaded, false otherwise
 	 */
 	public boolean hasIndex() {
@@ -347,48 +353,59 @@ public class EdictDictionary {
 
 	}
 
-
 	/**
 	 * Creates a new index file and attaches it to the dictionary
-	 *
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
 	public void createIndex() throws FileNotFoundException, IOException {
 
-		File temporaryIndexFile = new File (this.dictionaryFileName + ".iidx.tmp");
-		EdictIndexer indexer = new EdictIndexer (this.dictionary, this.characterHandler);
+		File temporaryIndexFile = new File(this.dictionaryFileName
+				+ ".iidx.tmp");
+		EdictIndexer indexer = new EdictIndexer(this.dictionary,
+				this.characterHandler);
 		IntBuffer indexBuffer = indexer.getIndexData();
-		FileChannel indexChannel = new RandomAccessFile (temporaryIndexFile, "rw").getChannel();
-		IntBuffer fileIndexBuffer = indexChannel.map (FileChannel.MapMode.READ_WRITE, 0, indexBuffer.limit() * 4).asIntBuffer();
-		fileIndexBuffer.put (indexBuffer);
+		RandomAccessFile tempIndexFile = new RandomAccessFile(temporaryIndexFile, "rw");
+		FileChannel indexChannel = tempIndexFile.getChannel();
+		IntBuffer fileIndexBuffer = indexChannel.map(
+				FileChannel.MapMode.READ_WRITE, 0, indexBuffer.limit() * 4)
+				.asIntBuffer();
+		fileIndexBuffer.put(indexBuffer);
 		indexChannel.close();
+		tempIndexFile.close();
 
-		File indexFile = new File (this.dictionaryFileName + ".iidx");
-		if(indexFile.exists() && !indexFile.delete()){
-			throw new IOException ("Could not delete old index file");
+		File indexFile = new File(this.dictionaryFileName + ".iidx");
+		if (indexFile.exists() && !indexFile.delete()) {
+			throw new IOException("Could not delete old index file");
 		}
 		if (!temporaryIndexFile.renameTo(indexFile)) {
-			//renameTo often fails on Windows, so try copying and deleting instead
-			System.err.println("Renaming temporary index file failed; copying instead");
+			// renameTo often fails on Windows, so try copying and deleting
+			// instead
+			System.err
+					.println("Renaming temporary index file failed; copying instead");
 			copyFile(temporaryIndexFile, indexFile);
-			if(!temporaryIndexFile.delete()){
-				System.err.println("Could not delete temporary index file (" + temporaryIndexFile + ")");
+			if (!temporaryIndexFile.delete()) {
+				System.err.println("Could not delete temporary index file ("
+						+ temporaryIndexFile + ")");
 			}
 		}
 
 		loadIndex();
 
 	}
-	
+
 	/**
 	 * Copy a file. This might work when {@link File#renameTo(File)} fails.
-	 * @param source File to copy from
-	 * @param dest File to copy to
-	 * @throws IOException if copying fails
+	 * 
+	 * @param source
+	 *            File to copy from
+	 * @param dest
+	 *            File to copy to
+	 * @throws IOException
+	 *             if copying fails
 	 */
-	private static void copyFile(File source, File dest)
-			throws IOException {
+	private static void copyFile(File source, File dest) throws IOException {
 		InputStream input = null;
 		OutputStream output = null;
 		try {
@@ -407,26 +424,30 @@ public class EdictDictionary {
 
 	/**
 	 * Loads an existing index file
-	 *
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
 	private void loadIndex() throws FileNotFoundException, IOException {
 
-		File indexFile = new File (this.dictionaryFileName + ".iidx");
-		FileChannel indexChannel = new RandomAccessFile (indexFile, "r").getChannel();			
-		this.index = indexChannel.map (FileChannel.MapMode.READ_ONLY, 0, (int)indexChannel.size()).asIntBuffer();
+		RandomAccessFile indexFile = new RandomAccessFile(new File(
+				this.dictionaryFileName + ".iidx"), "r");
+		FileChannel indexChannel = indexFile.getChannel();
+		this.index = indexChannel.map(FileChannel.MapMode.READ_ONLY, 0,
+				(int) indexChannel.size()).asIntBuffer();
+		indexFile.close();
 
 	}
-
 
 	/**
 	 * Wraps existing dictionary and index buffers
 	 * 
-	 * @param dictionary The dictionary data
-	 * @param index The term index data
+	 * @param dictionary
+	 *            The dictionary data
+	 * @param index
+	 *            The term index data
 	 */
-	public EdictDictionary (ByteBuffer dictionary, IntBuffer index) {
+	public EdictDictionary(ByteBuffer dictionary, IntBuffer index) {
 
 		this.characterHandler = new EUCJPHandler();
 
@@ -435,30 +456,35 @@ public class EdictDictionary {
 
 	}
 
-
 	/**
 	 * Load the EDICT EUC-JP or UTF8 format dictionary with the given filename
 	 * 
-	 * @param dictionaryFileName The dictionary to load
+	 * @param dictionaryFileName
+	 *            The dictionary to load
 	 * 
-	 * @throws DictionaryException 
+	 * @throws DictionaryException
 	 */
-	public EdictDictionary (String dictionaryFileName) throws DictionaryException {
+	public EdictDictionary(String dictionaryFileName)
+			throws DictionaryException {
 
 		FileChannel dictionaryChannel;
 		try {
 
 			this.dictionaryFileName = dictionaryFileName;
 
-			dictionaryChannel = new RandomAccessFile (dictionaryFileName, "r").getChannel();
-			this.dictionary = dictionaryChannel.map (FileChannel.MapMode.READ_ONLY, 0, (int)dictionaryChannel.size());
+			dictionaryChannel = new RandomAccessFile(dictionaryFileName, "r")
+					.getChannel();
+			this.dictionary = dictionaryChannel.map(
+					FileChannel.MapMode.READ_ONLY, 0,
+					(int) dictionaryChannel.size());
 
-			this.characterHandler = guessEncoding (this.dictionary);
+			this.characterHandler = guessEncoding(this.dictionary);
 			if (this.characterHandler == null) {
 				throw new DictionaryException();
 			}
 
-			if (!testFileFormat (dictionaryFileName, this.characterHandler.getCharsetDecoder())) {
+			if (!testFileFormat(dictionaryFileName,
+					this.characterHandler.getCharsetDecoder())) {
 				throw new DictionaryException();
 			}
 
@@ -468,7 +494,7 @@ public class EdictDictionary {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new DictionaryException (e);
+			throw new DictionaryException(e);
 		}
 
 	}

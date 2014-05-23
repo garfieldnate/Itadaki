@@ -157,6 +157,7 @@ public class EdictComparator implements Comparator<Integer> {
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare (Integer position1, Integer position2) {
 
 		try {

@@ -35,6 +35,7 @@ public class EUCJPHandler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#foldCharacterCase(int)
 	 */
+	@Override
 	public int foldCharacterCase (int character) {
 	
 		if ((character >= 'A') && (character <= 'Z')) {
@@ -53,6 +54,7 @@ public class EUCJPHandler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#readCharacter(java.nio.ByteBuffer)
 	 */
+	@Override
 	public int readCharacter (ByteBuffer buffer) {
 	
 		int character = buffer.get() & 0xff;
@@ -72,6 +74,7 @@ public class EUCJPHandler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#getCharsetDecoder()
 	 */
+	@Override
 	public CharsetDecoder getCharsetDecoder() {
 		return Charset.forName("EUC-JP").newDecoder();
 	}
@@ -80,6 +83,7 @@ public class EUCJPHandler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#getCharsetEncoder()
 	 */
+	@Override
 	public CharsetEncoder getCharsetEncoder() {
 		return Charset.forName("EUC-JP").newEncoder();
 	}

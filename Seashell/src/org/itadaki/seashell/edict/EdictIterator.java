@@ -122,6 +122,7 @@ public class EdictIterator implements Iterator<Integer> {
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 
 		return this.nextResult != null;
@@ -132,6 +133,7 @@ public class EdictIterator implements Iterator<Integer> {
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	public Integer next() {
 
 		Integer result = this.nextResult;
@@ -146,6 +148,7 @@ public class EdictIterator implements Iterator<Integer> {
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 
 		throw new UnsupportedOperationException();

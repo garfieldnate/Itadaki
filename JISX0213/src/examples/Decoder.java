@@ -33,7 +33,7 @@ public class Decoder {
 		CharBuffer output = decoder.decode (buffer);
 
 		System.out.print (output);
-
+		stream.close();
 	}
 
 }

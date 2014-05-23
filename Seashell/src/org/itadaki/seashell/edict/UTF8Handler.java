@@ -36,6 +36,7 @@ public class UTF8Handler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#foldCharacterCase(int)
 	 */
+	@Override
 	public int foldCharacterCase (int character) {
 
 		if ((character >= 'A') && (character <= 'Z')) {
@@ -54,6 +55,7 @@ public class UTF8Handler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#readCharacter(java.nio.ByteBuffer)
 	 */
+	@Override
 	public int readCharacter (ByteBuffer buffer) throws CharacterCodingException {
 
 		int character = buffer.get() & 0xff;
@@ -115,6 +117,7 @@ public class UTF8Handler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#getCharsetDecoder()
 	 */
+	@Override
 	public CharsetDecoder getCharsetDecoder() {
 		return Charset.forName("UTF8").newDecoder();
 	}
@@ -123,6 +126,7 @@ public class UTF8Handler implements CharacterHandler {
 	/* (non-Javadoc)
 	 * @see org.takadb.itadaki.dictionary.CharacterHandler#getCharsetEncoder()
 	 */
+	@Override
 	public CharsetEncoder getCharsetEncoder() {
 		return Charset.forName("UTF8").newEncoder();
 	}
