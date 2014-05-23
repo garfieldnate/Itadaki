@@ -41,6 +41,7 @@ public class SelectionTransferable implements Transferable {
 	/* (non-Javadoc)
 	 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
 	 */
+	@Override
 	public Object getTransferData (DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 
 		StringBuilder selectionStringBuilder = new StringBuilder();
@@ -102,6 +103,7 @@ public class SelectionTransferable implements Transferable {
 	/* (non-Javadoc)
 	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 	 */
+	@Override
 	public DataFlavor[] getTransferDataFlavors() {
 
 		DataFlavor[] supportedFlavours = {
@@ -116,6 +118,7 @@ public class SelectionTransferable implements Transferable {
 	/* (non-Javadoc)
 	 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
 	 */
+	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 
 		if (DataFlavor.stringFlavor.equals(flavor)) {

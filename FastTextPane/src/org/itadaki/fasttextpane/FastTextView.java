@@ -1592,6 +1592,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * 
 	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public void documentExpanded (int oldSize, int newSize) {
 
 		notifyViewListenersDocumentSizeChanged (newSize);
@@ -1606,6 +1607,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 	 */
+	@Override
 	public void mouseClicked (MouseEvent e) {
 
 		Object hyperlinkValue = this.layout.get().getHyperlinkValue (e.getX(), e.getY());
@@ -1619,6 +1621,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 	 */
+	@Override
 	public void mouseEntered (MouseEvent e) {
 		// Do nothing
 	}
@@ -1627,6 +1630,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 	 */
+	@Override
 	public void mouseExited (MouseEvent e) {
 		// Do nothing
 	}
@@ -1638,6 +1642,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * Thread safety: This method is thread safe, but should only be called by
 	 * Swing from the Event Dispatch Thread
 	 */
+	@Override
 	public void mousePressed (MouseEvent e) {
 
 		showPopupMenuIfNeeded (e);
@@ -1673,6 +1678,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * Thread safety: This method is thread safe, but should only be called by
 	 * Swing from the Event Dispatch Thread
 	 */
+	@Override
 	public void mouseReleased (MouseEvent e) {
 
 		showPopupMenuIfNeeded (e);
@@ -1707,6 +1713,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * Thread safety: This method is thread safe, but should only be called by
 	 * Swing from the Event Dispatch Thread
 	 */
+	@Override
 	public void mouseDragged (MouseEvent e) {
 
 		int x = e.getX();
@@ -1733,6 +1740,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 	 */
+	@Override
 	public void mouseMoved (MouseEvent e) {
 
 		Object hyperlinkValue = this.layout.get().getHyperlinkValue (e.getX(), e.getY());

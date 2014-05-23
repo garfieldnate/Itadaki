@@ -50,6 +50,7 @@ public class CopyAction extends AbstractAction implements SelectionListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		String selectedText = this.fastTextView.getSelectedText();
@@ -66,6 +67,7 @@ public class CopyAction extends AbstractAction implements SelectionListener {
 	/* (non-Javadoc)
 	 * @see org.itadaki.fasttextpane.SelectionListener#selectionChanged()
 	 */
+	@Override
 	public void selectionChanged() {
 
 		setEnabled (this.fastTextView.hasSelection());

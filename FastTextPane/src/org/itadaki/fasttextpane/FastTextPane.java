@@ -81,6 +81,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 
 		Runnable scrollbarUpdater = new Runnable() {
 
+			@Override
 			public void run() {
 
 				FastTextPane.this.ignoreAdjustmentChange = true;
@@ -134,6 +135,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 	 * 
 	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public void adjustmentValueChanged (AdjustmentEvent e) {
 
 		if (!this.ignoreAdjustmentChange) {
@@ -148,6 +150,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 	 * 
 	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public boolean displayOverflowing (final boolean isOverflowing) {
 
 		// FIXME not Swing threadsafe
@@ -158,6 +161,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 
 		Runnable scrollbarUpdater = new Runnable() {
 
+			@Override
 			public void run() {
 
 				FastTextPane.this.ignoreAdjustmentChange = true;
@@ -185,6 +189,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 	 * 
  	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public void positionChanged (int paragraphIndex, int lineIndex) {
 
 		updateScrollBar ();
@@ -196,6 +201,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 	 * @see org.itadaki.fasttextpane.FastTextViewListener#documentSizeChanged(int)
 	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public void documentSizeChanged (int newSize) {
 
 		this.documentSize.set (newSize);
@@ -210,6 +216,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 	 * 
 	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public void mouseWheelMoved (MouseWheelEvent e) {
 
 		int lines = e.getWheelRotation();

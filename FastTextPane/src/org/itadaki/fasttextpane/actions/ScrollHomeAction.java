@@ -43,6 +43,7 @@ public class ScrollHomeAction extends AbstractAction implements Action {
 	private FastTextView fastTextView;
 
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		this.fastTextView.setParagraph (0);

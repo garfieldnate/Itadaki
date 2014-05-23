@@ -210,6 +210,7 @@ class LayoutThread extends Thread implements ComponentListener {
 	 * 
 	 * Thread safety: This method is thread safe
 	 */
+	@Override
 	public void componentResized(ComponentEvent e) {
 
 		long currentTime = System.currentTimeMillis();
@@ -246,6 +247,7 @@ class LayoutThread extends Thread implements ComponentListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ComponentAdapter#componentHidden(java.awt.event.ComponentEvent)
 	 */
+	@Override
 	public void componentHidden(ComponentEvent e) {
 		// Do nothing
 	}
@@ -254,6 +256,7 @@ class LayoutThread extends Thread implements ComponentListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ComponentAdapter#componentMoved(java.awt.event.ComponentEvent)
 	 */
+	@Override
 	public void componentMoved(ComponentEvent e) {
 		// Do nothing
 	}
@@ -262,6 +265,7 @@ class LayoutThread extends Thread implements ComponentListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ComponentAdapter#componentShown(java.awt.event.ComponentEvent)
 	 */
+	@Override
 	public void componentShown(ComponentEvent e) {
 		// Do nothing
 	}

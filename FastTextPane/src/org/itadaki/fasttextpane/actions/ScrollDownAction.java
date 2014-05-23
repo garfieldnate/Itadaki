@@ -43,6 +43,7 @@ public class ScrollDownAction extends AbstractAction implements Action {
 	private FastTextView fastTextView;
 
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		this.fastTextView.scrollLines (1);
