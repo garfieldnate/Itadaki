@@ -115,6 +115,7 @@ public class CommentFilter implements StreamFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.dictionary.Filter#preProcess(net.java.sen.dictionary.Sentence)
 	 */
+	@Override
 	public void preProcess(Sentence sentence) {
 
 		Iterator itr = this.ruleList.iterator();
@@ -176,6 +177,7 @@ public class CommentFilter implements StreamFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.dictionary.Filter#postProcess(net.java.sen.dictionary.Token[])
 	 */
+	@Override
 	public List<Token> postProcess(List<Token> tokens) {
 
 		if ((this.commentTokens.size() == 0) || (tokens.size() == 0)) {

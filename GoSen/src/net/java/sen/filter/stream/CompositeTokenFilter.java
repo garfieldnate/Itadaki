@@ -218,6 +218,7 @@ public class CompositeTokenFilter implements StreamFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.dictionary.Filter#preProcess(net.java.sen.dictionary.Sentence)
 	 */
+	@Override
 	public void preProcess(Sentence sentence) {
 
 		// Do nothing
@@ -228,6 +229,7 @@ public class CompositeTokenFilter implements StreamFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.dictionary.Filter#postProcess(net.java.sen.dictionary.Token[])
 	 */
+	@Override
 	public List<Token> postProcess(List<Token> tokens) {
 
 		if (tokens.size() == 0) {

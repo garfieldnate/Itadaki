@@ -57,10 +57,10 @@ import examples.ui.MorphemeListModel;
 import examples.ui.Selection;
 import examples.ui.SelectionListener;
 import examples.ui.TokenTableModel;
-
 import net.java.sen.ReadingProcessor;
 import net.java.sen.SenFactory;
 import net.java.sen.ReadingProcessor.ReadingResult;
+import net.java.sen.dictionary.Morpheme;
 import net.java.sen.dictionary.Reading;
 import net.java.sen.dictionary.Token;
 import net.java.sen.filter.reading.NumberFilter;
@@ -105,7 +105,7 @@ public class ReadingProcessorDemo {
 	/**
 	 * The morpheme reading list
 	 */
-	private JList morphemeList;
+	private JList<Morpheme> morphemeList;
 
 	/**
 	 * The currently displayed reading processor result
@@ -138,6 +138,7 @@ public class ReadingProcessorDemo {
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 		
 			Selection selection = ReadingProcessorDemo.this.analysisPanel.getSelection();
@@ -174,6 +175,7 @@ public class ReadingProcessorDemo {
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 		
 			Selection selection = ReadingProcessorDemo.this.analysisPanel.getSelection();
@@ -210,6 +212,7 @@ public class ReadingProcessorDemo {
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			int selectedIndex = ReadingProcessorDemo.this.morphemeList.getSelectedIndex();
@@ -239,6 +242,7 @@ public class ReadingProcessorDemo {
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			int selectedIndex = ReadingProcessorDemo.this.morphemeList.getSelectedIndex();
@@ -267,6 +271,7 @@ public class ReadingProcessorDemo {
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			ReadingProcessorDemo.this.manualReadingTextField.requestFocusInWindow();
@@ -302,6 +307,7 @@ public class ReadingProcessorDemo {
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			Selection selection = ReadingProcessorDemo.this.analysisPanel.getSelection();
@@ -509,7 +515,7 @@ public class ReadingProcessorDemo {
 	public void createUI() {
 
 		this.morphemeListModel = new MorphemeListModel();
-		this.morphemeList = new JList(this.morphemeListModel);
+		this.morphemeList = new JList<Morpheme>(this.morphemeListModel);
 
 
 		// Set look and feel
@@ -615,6 +621,7 @@ public class ReadingProcessorDemo {
 
 		ActionListener analyseListener = new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				setNewSentence(ReadingProcessorDemo.this.inputTextField.getText());				
 			}
@@ -626,6 +633,7 @@ public class ReadingProcessorDemo {
 
 		clearButton.addActionListener(new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				setNewSentence("");
 				ReadingProcessorDemo.this.inputTextField.setText("");
@@ -659,6 +667,7 @@ public class ReadingProcessorDemo {
 
 		this.tokenDetailTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
+			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting() && !ReadingProcessorDemo.this.selectionChanging) {
 					int selectionStart = ReadingProcessorDemo.this.tokenDetailTable.getSelectionModel().getMinSelectionIndex();
@@ -675,6 +684,7 @@ public class ReadingProcessorDemo {
 
 		this.analysisPanel.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void selectionChanged(Selection selection) {
 				if (selection != null) {
 
@@ -717,6 +727,7 @@ public class ReadingProcessorDemo {
 
 		this.morphemeList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
+			@Override
 			public void valueChanged(ListSelectionEvent e) {
 
 				if (!e.getValueIsAdjusting()) {
@@ -746,6 +757,7 @@ public class ReadingProcessorDemo {
 
 		ActionListener manualReadingActionListener = new ActionListener() {
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
 
 				Selection selection = ReadingProcessorDemo.this.analysisPanel.getSelection();
@@ -855,6 +867,7 @@ public class ReadingProcessorDemo {
 
 		SwingUtilities.invokeLater(new Runnable() {
 
+			@Override
 			public void run() {
 
 				createUI();

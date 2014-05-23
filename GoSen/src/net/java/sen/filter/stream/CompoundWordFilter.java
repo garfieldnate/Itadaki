@@ -21,6 +21,7 @@
 package net.java.sen.filter.stream;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +98,7 @@ public class CompoundWordFilter implements StreamFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.dictionary.Filter#preProcess(net.java.sen.dictionary.Sentence)
 	 */
+	@Override
 	public void preProcess(Sentence sentence) {
 
 		// Do nothing
@@ -107,6 +109,7 @@ public class CompoundWordFilter implements StreamFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.dictionary.Filter#postProcess(net.java.sen.dictionary.Token[])
 	 */
+	@Override
 	public List<Token> postProcess(List<Token> tokens) {
 
 		if (tokens.size() == 0) {
@@ -182,7 +185,7 @@ public class CompoundWordFilter implements StreamFilter {
 	/**
 	 * Creates a CompoundWordFilter from the given file
 	 * 
-	 * @param compoundFile The compiled compound file
+	 * @param compoundFile The compiled compound file 
 	 */
 	/* Unchecked warnings are suppressed because there is no type safe way to
 	 * read a parameterised type from an ObjectInputStream
@@ -190,18 +193,26 @@ public class CompoundWordFilter implements StreamFilter {
 	@SuppressWarnings("unchecked")
 	public CompoundWordFilter(String compoundFile) {
 
+		ObjectInputStream is = null;
+		
 		try {
 
-			ObjectInputStream is = new ObjectInputStream(new FileInputStream(compoundFile));
+			is = new ObjectInputStream(new FileInputStream(compoundFile));
 			this.compoundTable = (HashMap) is.readObject();
 
 		} catch (Exception e) {
 
 			throw new RuntimeException(e);
 
+		} finally {
+			
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
 		}
 
 	}
-
 
 }

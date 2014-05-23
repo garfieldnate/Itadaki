@@ -86,10 +86,12 @@ public class TrieSearcherTest {
 
 			int i = 0;
 
+			@Override
 			public boolean hasNext() {
 				return this.i < testString.length();
 			}
 
+			@Override
 			public char next() throws NoSuchElementException {
 				char nextChar = testString.charAt(this.i);
 				this.i++;

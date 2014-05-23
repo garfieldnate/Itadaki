@@ -169,6 +169,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#current()
 		 */
+		@Override
 		public char current() {
 
 			return Sentence.this.characters[this.nextIndex];
@@ -178,6 +179,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#hasNextOrigin()
 		 */
+		@Override
 		public boolean hasNextOrigin() {
 
 			if (this.nextOrigin == -1) {
@@ -192,6 +194,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#length()
 		 */
+		@Override
 		public int length() {
 
 			return Sentence.this.characters.length;
@@ -202,6 +205,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#nextOrigin()
 		 */
+		@Override
 		public int nextOrigin() {
 
 			if (this.nextOrigin == -1) {
@@ -222,6 +226,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#origin()
 		 */
+		@Override
 		public int origin() {
 
 			return this.origin;
@@ -232,6 +237,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#rewindToOrigin()
 		 */
+		@Override
 		public void rewindToOrigin() {
 
 			this.nextIndex = this.origin;
@@ -242,6 +248,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#skippedCharCount()
 		 */
+		@Override
 		public int skippedCharCount() {
 
 			return this.skipped;
@@ -254,6 +261,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.trie.CharIterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext() {
 
 			boolean nextIndexValid;
@@ -286,6 +294,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.trie.CharIterator#next()
 		 */
+		@Override
 		public char next() throws NoSuchElementException {
 
 			// Check validity of next index
@@ -339,6 +348,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#current()
 		 */
+		@Override
 		public char current() {
 
 			return Sentence.this.characters[this.nextIndex];
@@ -348,6 +358,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#hasNextOrigin()
 		 */
+		@Override
 		public boolean hasNextOrigin() {
 
 			return false;
@@ -358,6 +369,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#length()
 		 */
+		@Override
 		public int length() {
 
 			return Sentence.this.characters.length;
@@ -368,6 +380,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#nextOrigin()
 		 */
+		@Override
 		public int nextOrigin() {
 
 			throw new IllegalStateException();
@@ -378,6 +391,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#origin()
 		 */
+		@Override
 		public int origin() {
 
 			return this.origin;
@@ -388,6 +402,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#rewindToOrigin()
 		 */
+		@Override
 		public void rewindToOrigin() {
 
 			this.nextIndex = this.origin;
@@ -398,6 +413,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.dictionary.SentenceIterator#skippedCharCount()
 		 */
+		@Override
 		public int skippedCharCount() {
 
 			return 0;
@@ -410,6 +426,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.trie.CharIterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext() {
 
 			boolean nextIndexValid;
@@ -440,6 +457,7 @@ public class Sentence {
 		/* (non-Javadoc)
 		 * @see net.java.sen.trie.CharIterator#next()
 		 */
+		@Override
 		public char next() throws NoSuchElementException {
 
 			// Check validity of next index

@@ -129,6 +129,7 @@ public class IpadicPreprocessor {
 
 		}
 		writer.close();
+		reader.close();
 
 	}
 
@@ -176,6 +177,8 @@ public class IpadicPreprocessor {
 			cforms.put(head, entries);
 		}
 
+		reader.close();
+		
 		return cforms;
 
 	}
@@ -224,6 +227,7 @@ public class IpadicPreprocessor {
 		File directory = new File(this.inputDirectory);
 		File[] dictionaryFiles = directory.listFiles(new FilenameFilter() {
 
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.matches("^.*\\.dic$");
 			}
@@ -258,6 +262,7 @@ public class IpadicPreprocessor {
 				}
 
 				if (!found) {
+					reader.close();
 					throw new IOException("Parse error in file " + dictionaryFile.getName() + " line " + lineNumber);
 				}
 
@@ -319,6 +324,8 @@ public class IpadicPreprocessor {
 					}
 				}
 			}
+			
+			reader.close();
 		}
 
 		writer.close();

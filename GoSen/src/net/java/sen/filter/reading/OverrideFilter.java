@@ -46,6 +46,7 @@ public class OverrideFilter implements ReadingFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.filter.ReadingFilter#filterReadings(java.util.List, net.java.sen.filter.ReadingNode)
 	 */
+	@Override
 	public void filterReadings(List<Token> tokens, ReadingNode readingNode) {
 
 		for (ReadingNode node = readingNode; node != null; node = node.next) {
@@ -63,6 +64,7 @@ public class OverrideFilter implements ReadingFilter {
 	/* (non-Javadoc)
 	 * @see net.java.sen.filter.ReadingFilter#reset()
 	 */
+	@Override
 	public void reset() {
 
 		this.visibility.clear();

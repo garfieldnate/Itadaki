@@ -131,6 +131,7 @@ public class MorphemeListModel extends AbstractListModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.ListModel#getElementAt(int)
 	 */
+	@Override
 	public Object getElementAt(int index) {
 
 		MorphemeListEntry entry = this.readingList.get(index);
@@ -148,6 +149,7 @@ public class MorphemeListModel extends AbstractListModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.ListModel#getSize()
 	 */
+	@Override
 	public int getSize() {
 
 		return this.readingList.size();
@@ -165,6 +167,7 @@ public class MorphemeListModel extends AbstractListModel {
 		// Sort by len(src), src, reading
 		Comparator<MorphemeListEntry> readingComparator = new Comparator<MorphemeListEntry>() {
 
+			@Override
 			public int compare(MorphemeListEntry o1, MorphemeListEntry o2) {
 
 				if (o1.token.getSurface().length() != o2.token.getSurface().length()) {

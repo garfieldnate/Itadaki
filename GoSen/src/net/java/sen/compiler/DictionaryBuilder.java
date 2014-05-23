@@ -430,6 +430,8 @@ public class DictionaryBuilder {
 		}
 
 		buffer.force();
+		
+		file.close();
 
 		return matrixBuilders;
 
