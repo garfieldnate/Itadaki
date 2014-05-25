@@ -9,6 +9,7 @@
 		<zip destfile="itadaki-data-ipadic-${dict.version}.uno.pkg">
 			<zipfileset dir="." includes="COPYING"/>
 			<zipfileset dir="dictionary" prefix="dictionary"/>
+			<zipfileset dir="unopackage" includes="description.xml"/>
 			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml"/>
 		</zip>
 	</target>

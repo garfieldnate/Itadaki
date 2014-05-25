@@ -26,6 +26,7 @@
 			<zipfileset dir="." includes="edict.iidx"/>
 			<zipfileset dir="." includes="LICENSE"/>
 			<zipfileset dir="." includes="README"/>
+			<zipfileset dir="unopackage" includes="description.xml"/>
 			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml"/>
 		</zip>
 	</target>
