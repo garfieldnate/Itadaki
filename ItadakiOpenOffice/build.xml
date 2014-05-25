@@ -77,6 +77,22 @@
 		</zip>
 	</target>
 
+	<!-- Build OOo extension Uno package -->
+	<target name="deploy-extension" depends="uno-package">
+		<!-- Remove old version of extension -->
+		<exec executable="unopkg">
+		    <arg value="remove"/>
+			<!--arg value="- -shared"/-->
+		    <arg value="itadaki-${version}.uno.pkg"/>
+		</exec>
+		<!-- Add newly build version of extension -->
+		<exec executable="unopkg">
+			<arg value="add"/>
+			<!--arg value="- -shared"/-->
+		    <arg value="./itadaki-${version}.uno.pkg"/>
+		</exec>
+	</target>
+	
 	<!-- Clean project -->
 	<target name="clean">
 		<delete dir="${bin.dir}"/>

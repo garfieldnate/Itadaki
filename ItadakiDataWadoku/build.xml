@@ -20,7 +20,7 @@
 		</untar>
 		<copy file="wadokudict_20140105/wadokudict" todir="." />
 		<!-- Remove a single symbol that Seashell can not handle from dict file. -->
-		<exec executable="sed">
+		<exec executable="sed" os="Linux">
 			<arg value="-i" />
 			<arg value="s/\xF0\x9D\x84\x87//g" />
 			<arg value="wadokudict" />
