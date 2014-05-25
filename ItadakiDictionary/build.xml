@@ -62,8 +62,10 @@
 	    <java classname="examples.DictionaryDemo" fork="true">
 			<classpath>
 				<pathelement location="bin"/>
-				<pathelement location="../FastTextPane/fasttextpane-1.0beta.jar"/>
-				<pathelement location="../Seashell/seashell-1.0beta.jar"/>
+				<pathelement location="../FastTextPane/fasttextpane-${version}.jar"/>
+				<pathelement location="../FastTextPane/bin"/>
+				<pathelement location="../Seashell/seashell-${version}.jar"/>
+				<pathelement location="../Seashell/bin"/>
 				<pathelement path="${java.class.path}"/>
 			</classpath>
 	    </java>
@@ -74,8 +76,10 @@
 	    <java classname="examples.DictionaryDemo" fork="true">
 			<classpath>
 				<pathelement location="bin"/>
-				<pathelement location="../FastTextPane/fasttextpane-1.0beta.jar"/>
-				<pathelement location="../Seashell/seashell-1.0beta.jar"/>
+				<pathelement location="../FastTextPane/fasttextpane-${version}.jar"/>
+				<pathelement location="../FastTextPane/bin"/>
+				<pathelement location="../Seashell/seashell-${version}.jar"/>
+				<pathelement location="../Seashell/bin"/>
 				<pathelement path="${java.class.path}"/>
 			</classpath>
       		<arg line="../ItadakiDataEdict/edict" />
