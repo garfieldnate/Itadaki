@@ -71,8 +71,11 @@
 	<target name="uno-package" depends="jar">
 		<zip destfile="itadaki-${version}.uno.pkg">
 			<zipfileset dir="." includes="itadaki-${version}.uno.jar"/>
+			<zipfileset dir="" includes="COPYING.LGPL"/>
 			<zipfileset dir="libs" includes="*.jar"/>
 			<zipfileset dir="unopackage" includes="*.xcu"/>
+			<zipfileset dir="unopackage" includes="description.xml"/>
+			<zipfileset dir="unopackage" includes="description.txt"/>
 			<zipfileset dir="unopackage" includes="manifest.xml" fullpath="META-INF/manifest.xml"/>
 		</zip>
 	</target>
@@ -88,6 +91,7 @@
 		<!-- Add newly build version of extension -->
 		<exec executable="unopkg">
 			<arg value="add"/>
+			<!--arg value="-f"/-->
 			<!--arg value="- -shared"/-->
 		    <arg value="./itadaki-${version}.uno.pkg"/>
 		</exec>

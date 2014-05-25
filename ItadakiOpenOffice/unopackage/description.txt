@@ -1,0 +1,3 @@
+Itadaki is a Japanese language toolset integrated with OpenOffice, providing tools intended for students and translators of Japanese. Itadaki is comprised of a number of individual code modules.
+
+The Dictionary Tool service that provides the dictionary dialog. The Furigana Wizard service, providing both the furigana wizard dialog and the possibility to add furigana to the current paragraph or a whole document.
