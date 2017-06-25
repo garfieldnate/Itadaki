@@ -10,14 +10,15 @@ sourceSets {
             srcDir 'src/main'
             srcDir 'src/benchmark'
             srcDir 'src/examples'
-            resources { srcDir 'src/main/resources' }
         }
     }
     test {
         java { srcDir 'src/test' }
+        resources { srcDir 'src/test/resources' }
     }
 }
 
 dependencies {
+    compile project(':FastTextPane')
     testCompile 'junit:junit:4.12'
 }

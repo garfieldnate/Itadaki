@@ -36,7 +36,10 @@ import net.java.sen.dictionary.Viterbi;
  */
 public class TestUtil {
 
-	/**
+    public static final String DIC_PATH = TestUtil.class.getClassLoader()
+                                                    .getResource("dictionary/dictionary.xml")
+                                                    .getPath();
+    /**
 	 * A StringTagger for testing
 	 */
 	private static StringTagger stringTagger = null;
@@ -60,8 +63,7 @@ public class TestUtil {
 	public static StringTagger getStringTagger() {
 
 		if (stringTagger == null) {
-            String dictPath = SenFactory.class.getClassLoader().getResource("dictionary/dictionary.xml").getPath();
-			stringTagger = SenFactory.getStringTagger(dictPath);
+			stringTagger = SenFactory.getStringTagger(DIC_PATH);
 
 		}
 
@@ -81,7 +83,7 @@ public class TestUtil {
 
 		if (viterbi == null) {
 
-			viterbi = SenFactory.getViterbi("testdata/dictionary/dictionary.xml");
+			viterbi = SenFactory.getViterbi(DIC_PATH);
 
 		}
 
@@ -99,7 +101,7 @@ public class TestUtil {
 
 		if (readingProcessor == null) {
 
-			readingProcessor = SenFactory.getReadingProcessor("testdata/dictionary/dictionary.xml");
+			readingProcessor = SenFactory.getReadingProcessor(DIC_PATH);
 
 		}
 
