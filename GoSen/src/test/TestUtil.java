@@ -60,8 +60,8 @@ public class TestUtil {
 	public static StringTagger getStringTagger() {
 
 		if (stringTagger == null) {
-
-			stringTagger = SenFactory.getStringTagger("testdata/dictionary/dictionary.xml");
+            String dictPath = SenFactory.class.getClassLoader().getResource("dictionary/dictionary.xml").getPath();
+			stringTagger = SenFactory.getStringTagger(dictPath);
 
 		}
 

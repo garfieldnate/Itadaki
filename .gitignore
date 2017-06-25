@@ -17,6 +17,7 @@ out/
 .idea/
 
 #Eclipse
+.project
 .classpath
 .settings/
 
