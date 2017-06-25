@@ -6,8 +6,17 @@ GoSen/testdata/dictionary/*.csv
 *.iidx
 *.iidx.tmp
 *.uno.pkg
+
+# Gradle
 .gradle/
 gradle/
 build/
 out/
+
+# IntelliJ
 .idea/
+
+#Eclipse
+.classpath
+.settings/
+
