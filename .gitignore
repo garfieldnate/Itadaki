@@ -6,3 +6,8 @@ GoSen/testdata/dictionary/*.csv
 *.iidx
 *.iidx.tmp
 *.uno.pkg
+.gradle/
+gradle/
+build/
+out/
+.idea/
