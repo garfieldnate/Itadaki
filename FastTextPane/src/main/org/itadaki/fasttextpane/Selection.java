@@ -114,13 +114,13 @@ class Selection implements Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	protected Selection clone() {
+	protected final Selection clone() {
 
 		try {
 			Selection cloneSelectionState = (Selection) super.clone();
 			cloneSelectionState.selectionStart = (this.selectionStart == null) ? null : this.selectionStart.clone();
-			cloneSelectionState.selectionEnd = (this.selectionEnd == null) ? null : (SelectionAddress) this.selectionEnd.clone();
-			cloneSelectionState.selectionRange = (this.selectionRange == null) ? null : (SelectionRange) this.selectionRange.clone();
+			cloneSelectionState.selectionEnd = (this.selectionEnd == null) ? null : this.selectionEnd.clone();
+			cloneSelectionState.selectionRange = (this.selectionRange == null) ? null : this.selectionRange.clone();
 			return cloneSelectionState;
 		} catch (CloneNotSupportedException e) {
 			// Can't happen

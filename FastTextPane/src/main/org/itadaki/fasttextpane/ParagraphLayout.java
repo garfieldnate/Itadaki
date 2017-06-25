@@ -109,16 +109,16 @@ public class ParagraphLayout {
 	@Override
 	public String toString() {
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append ("ParagraphLayout:{\n");
-		buffer.append ("  .paragraphIndex=" + this.paragraphIndex + "\n");
-		buffer.append ("  .background=" + this.background + "\n");
-		buffer.append ("  .validWidth=" + this.validWidth + "\n");
-		buffer.append ("  .height=" + this.height + "\n");
+		buffer.append("  .paragraphIndex=").append(this.paragraphIndex).append("\n");
+		buffer.append("  .background=").append(this.background).append("\n");
+		buffer.append("  .validWidth=").append(this.validWidth).append("\n");
+		buffer.append("  .height=").append(this.height).append("\n");
 		buffer.append ("  .lines={\n");
 		for (LineLayout line : this.lines) {
 			for (TextLayout textLayout : line.textLayouts) {
-				buffer.append (textLayout.getCharacterCount() + " ");
+				buffer.append(textLayout.getCharacterCount()).append(" ");
 			}
 			buffer.append ("\n");
 		}

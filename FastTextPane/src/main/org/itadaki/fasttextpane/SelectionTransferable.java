@@ -106,11 +106,9 @@ public class SelectionTransferable implements Transferable {
 	@Override
 	public DataFlavor[] getTransferDataFlavors() {
 
-		DataFlavor[] supportedFlavours = {
-			DataFlavor.stringFlavor
-		};
-
-		return supportedFlavours;
+        return new DataFlavor[]{
+            DataFlavor.stringFlavor
+        };
 
 	}
 
@@ -121,13 +119,9 @@ public class SelectionTransferable implements Transferable {
 	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 
-		if (DataFlavor.stringFlavor.equals(flavor)) {
-			return true;
-		}
+        return DataFlavor.stringFlavor.equals(flavor);
 
-		return false;
-
-	}
+    }
 
 
 	/**

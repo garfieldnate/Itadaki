@@ -30,6 +30,6 @@ public interface HyperlinkListener {
 	 *
 	 * @param value The hyperlink's payload
 	 */
-	public void hyperlinkInvoked (Object value);
+    void hyperlinkInvoked(Object value);
 
 }

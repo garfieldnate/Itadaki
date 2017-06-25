@@ -221,7 +221,7 @@ public class FastTextPane extends JPanel implements AdjustmentListener, FastText
 
 		int lines = e.getWheelRotation();
 		if (e.isControlDown()) {
-			this.fastTextView.scrollPage ((lines < 0) ? true : false);
+			this.fastTextView.scrollPage (lines < 0);
 		} else {
 			this.fastTextView.scrollLines (2 * lines);
 		}

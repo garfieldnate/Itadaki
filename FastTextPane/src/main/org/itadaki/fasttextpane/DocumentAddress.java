@@ -103,9 +103,8 @@ public class DocumentAddress implements Cloneable, Comparable<DocumentAddress> {
 							float endX = startX + textLayout.getAdvance();
 							if ((x >= startX) && (x < endX)) {
 								TextHitInfo characterHitInfo = textLayout.hitTestChar (x - startX, y - lineY1);
-								
-								DocumentAddress address = new DocumentAddress (paragraphLayout.paragraphIndex, startCharacterIndex + characterHitInfo.getCharIndex());
-								return address;
+
+                                return new DocumentAddress (paragraphLayout.paragraphIndex, startCharacterIndex + characterHitInfo.getCharIndex());
 							}
 							startCharacterIndex += textLayout.getCharacterCount();
 							startX = endX;
@@ -170,10 +169,16 @@ public class DocumentAddress implements Cloneable, Comparable<DocumentAddress> {
 
 	}
 
+    @Override
+    public int hashCode() {
+        int result = paragraphIndex;
+        result = 31 * result + characterIndex;
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+    /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
 	@Override
 	public String toString() {
 		return "DocumentAddress:{" + this.paragraphIndex + ":" + this.characterIndex + "}";

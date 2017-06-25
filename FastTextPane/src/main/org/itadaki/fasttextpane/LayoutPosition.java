@@ -51,10 +51,9 @@ public class LayoutPosition {
 		return this.paragraphIndex;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+    /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
 	@Override
 	public boolean equals (Object other) {
 
@@ -69,6 +68,13 @@ public class LayoutPosition {
 		return false;
 
 	}
+
+    @Override
+    public int hashCode() {
+        int result = paragraphIndex;
+        result = 31 * result + lineIndex;
+        return result;
+    }
 
 
 	/* (non-Javadoc)

@@ -33,7 +33,7 @@ public interface FastTextViewListener {
 	 * @param isOverflowing true if the FastTextView is overflowing its bounds, false otherwise
 	 * @return true if the FastTextView's bounds may have changed
 	 */
-	public boolean displayOverflowing (boolean isOverflowing);
+    boolean displayOverflowing(boolean isOverflowing);
 
 
 	/**
@@ -42,7 +42,7 @@ public interface FastTextViewListener {
 	 * @param paragraphIndex The new paragraph index
 	 * @param lineIndex The new line index within the paragraph
 	 */
-	public void positionChanged (int paragraphIndex, int lineIndex);
+    void positionChanged(int paragraphIndex, int lineIndex);
 
 
 	/**
@@ -50,7 +50,7 @@ public interface FastTextViewListener {
 	 *
 	 * @param newSize The new Document size
 	 */
-	public void documentSizeChanged (int newSize);
+    void documentSizeChanged(int newSize);
 
 
 }

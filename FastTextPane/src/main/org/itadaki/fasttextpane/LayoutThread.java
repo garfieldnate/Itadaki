@@ -67,7 +67,7 @@ class LayoutThread extends Thread implements ComponentListener {
 	 * Signals when a layout due to resize is required
 	 * Inherently thread safe
 	 */
-	private BlockingQueue<Integer> queue = new ArrayBlockingQueue<Integer>(1);
+	private BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(1);
 
 	/**
 	 * Causes the resize delay period to be waived for one cycle. Used to allow

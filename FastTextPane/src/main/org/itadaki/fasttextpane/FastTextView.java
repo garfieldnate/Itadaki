@@ -195,7 +195,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * A suitable pre-calculated FontRenderContext for text layout 
 	 * Thread safe by virtue of AtomicReference. Set only once but late - after the component is realised
 	 */
-	private AtomicReference<FontRenderContext> fontRenderContext = new AtomicReference<FontRenderContext>();
+	private AtomicReference<FontRenderContext> fontRenderContext = new AtomicReference<>();
 
 	/**
 	 * Cache of previously created paragraph layouts
@@ -207,7 +207,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * Unified layout state
 	 * Thread safe by virtue of AtomicStampedReference
 	 */
-	private AtomicReference<Layout> layout = new AtomicReference<Layout> (new Layout());
+	private AtomicReference<Layout> layout = new AtomicReference<>(new Layout());
 
 
 	/* Rendering state */
@@ -216,7 +216,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * Persistent double buffer. We manage this ourselves to avoid sucking during resize
 	 * Thread safe by virtue of AtomicReference
 	 */
-	private AtomicReference<BufferedImage> bufferImage = new AtomicReference<BufferedImage>();
+	private AtomicReference<BufferedImage> bufferImage = new AtomicReference<>();
 
 
 	/* Selection state */
@@ -225,7 +225,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * Unified selection state
 	 * Thread safe by virtue of AtomicReference
 	 */
-	private AtomicReference<Selection> selection = new AtomicReference<Selection> (new Selection());
+	private AtomicReference<Selection> selection = new AtomicReference<>(new Selection());
 
 
 	/* Document state */
@@ -234,13 +234,18 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 * The current Document
 	 * Internally thread safe
 	 */
-	private AtomicReference<Document> document = new AtomicReference<Document> (new NullDocument());
+	private AtomicReference<Document> document = new AtomicReference<Document>(new NullDocument());
 
 	/**
 	 * Current first visible position
 	 * Thread safe by virtue of AtomicReference
 	 */
-	private AtomicReference<DocumentPosition> position = new AtomicReference<DocumentPosition> (new DocumentPosition (new NullDocument(), 0, new LayoutPosition (0, 0)));
+	private AtomicReference<DocumentPosition> position = new AtomicReference<>(new DocumentPosition(new NullDocument(),
+                                                                                                    0,
+                                                                                                    new LayoutPosition(0,
+                                                                                                                       0
+                                                                                                    )
+    ));
 
 
 	/**
@@ -364,8 +369,8 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 			return;
 		}
 
-		float drawPosX = 0;
-		float drawPosY = 0;
+		float drawPosX;
+		float drawPosY;
 
 		Graphics2D g2d = bufferImage.createGraphics();
 		
@@ -487,7 +492,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 	 */
 	private ParagraphLayout createParagraphLayout (Document document, int documentIndex, Dimension size) {
 
-		List<LineLayout> lines = new ArrayList<LineLayout>();
+		List<LineLayout> lines = new ArrayList<>();
 
 		AttributedString attributedString = document.getParagraph (documentIndex);
 		if (attributedString == null) {
@@ -498,7 +503,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 		Color background = document.getBackground (documentIndex);
 		background = (background != null) ? background : Color.WHITE;
 
-		List<ParagraphLayout.Hyperlink> hyperlinks = new ArrayList<ParagraphLayout.Hyperlink>();
+		List<ParagraphLayout.Hyperlink> hyperlinks = new ArrayList<>();
 		int hyperlinkRunStart = iterator.getRunStart (DocumentAttribute.HYPERLINK);
 		do {
 			iterator.setIndex (hyperlinkRunStart);
@@ -510,9 +515,8 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 			hyperlinkRunStart = hyperlinkRunLimit;
 		} while (hyperlinkRunStart < iterator.getEndIndex());
 
-		LineBreakMeasurer measurer = new LineBreakMeasurer (iterator, this.fontRenderContext.get());
-		List<TextLayout> textLayouts = new ArrayList<TextLayout>();
-		List<Color> foregrounds = new ArrayList<Color>();
+		List<TextLayout> textLayouts = new ArrayList<>();
+		List<Color> foregrounds = new ArrayList<>();
 
 		int endIndex = iterator.getEndIndex();
 		int runStart = iterator.getBeginIndex();
@@ -547,7 +551,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 			TextLayout layout;
 			int position = runStart;
 
-			measurer = new LineBreakMeasurer (iterator, this.fontRenderContext.get());
+            LineBreakMeasurer measurer = new LineBreakMeasurer (iterator, this.fontRenderContext.get());
 			measurer.setPosition (position);
 
 			while (position < runLimit) {
@@ -580,8 +584,8 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 
 					// New line
 					requireNextWord = false;
-					textLayouts = new ArrayList<TextLayout>();
-					foregrounds = new ArrayList<Color>();
+					textLayouts = new ArrayList<>();
+					foregrounds = new ArrayList<>();
 					
 					// Set indent and width for first line
 					indent = SUBSEQUENT_INDENT;
@@ -636,7 +640,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 
 		if (paragraphLayout == null) {
 			paragraphLayout = createParagraphLayout (document, documentIndex, size);
-			this.paragraphLayoutCache.put (documentIndex, new SoftReference<ParagraphLayout>(paragraphLayout));
+			this.paragraphLayoutCache.put (documentIndex, new SoftReference<>(paragraphLayout));
 		}
 
 		return paragraphLayout;
@@ -663,7 +667,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 			return null;
 		}
 	
-		ArrayList<ParagraphLayout> paragraphLayoutList = new ArrayList<ParagraphLayout>();
+		ArrayList<ParagraphLayout> paragraphLayoutList = new ArrayList<>();
 
 		float posY = INSIDE_BORDER;
 		ParagraphLayout paragraphLayout = getParagraphLayout (document, position.getParagraphIndex(), size);
@@ -732,7 +736,7 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 		// TODO thread safety
 		Dimension newSize = getSize();
 
-		Layout newLayout = null;
+		Layout newLayout;
 
 		boolean signalResize = false;
 
@@ -740,8 +744,6 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 
 			BufferedImage bufferImage = this.bufferImage.get();
 	
-			t0 = System.currentTimeMillis();
-
 			Document document = this.document.get();
 			Layout previousLayout = this.layout.get();
 			DocumentPosition position = getValidDocumentPosition (document, newSize);
@@ -753,17 +755,11 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 
 				signalResize = (newLayout.isOverflowing() != previousLayout.isOverflowing());
 	
-				t1 = System.currentTimeMillis();
-		
 				if (!signalResize) {
 		
 					BufferedImage newBufferImage = createOrUpdateBackBuffer (bufferImage);
 		
-					t2 = System.currentTimeMillis();
-		
 					renderParagraphBackgrounds (newBufferImage, newLayout, selection);
-		
-					t3 = System.currentTimeMillis();
 		
 					renderText (newBufferImage, newLayout, selection);
 					paintSelection (newBufferImage, newLayout, selection);
@@ -792,8 +788,6 @@ public class FastTextView extends JComponent implements DocumentListener, MouseL
 
 		}
 
-		t4 = System.currentTimeMillis();
-		
 		if (DEBUG) {
 			System.out.print ("Rendering Time: " + (t4 - t0) + " (");
 			// Overflow check is approximate...

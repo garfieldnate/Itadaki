@@ -28,6 +28,6 @@ public interface SelectionListener {
 	/**
 	 * Indicates the selection has changed
 	 */
-	public void selectionChanged();
+    void selectionChanged();
 
 }

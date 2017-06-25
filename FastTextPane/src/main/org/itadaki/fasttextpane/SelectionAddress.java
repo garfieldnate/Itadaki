@@ -118,8 +118,7 @@ public class SelectionAddress implements Cloneable, Comparable<SelectionAddress>
 					for (TextLayout textLayout : lineLayout.textLayouts) {
 						if ((x >= textX) && (x < (textX + textLayout.getAdvance()))) {
 							TextHitInfo characterHitInfo = textLayout.hitTestChar (x - textX, y - lineY1);
-							SelectionAddress address = new SelectionAddress (paragraphIndex, Math.min (lineLayout.endCharacterIndex, characterIndex + characterHitInfo.getCharIndex()), characterHitInfo.isLeadingEdge());
-							return address;
+                            return new SelectionAddress (paragraphIndex, Math.min (lineLayout.endCharacterIndex, characterIndex + characterHitInfo.getCharIndex()), characterHitInfo.isLeadingEdge());
 						}
 						textX += textLayout.getAdvance();
 						characterIndex += textLayout.getCharacterCount();
@@ -192,10 +191,17 @@ public class SelectionAddress implements Cloneable, Comparable<SelectionAddress>
 
 	}
 
+    @Override
+    public int hashCode() {
+        int result = paragraphIndex;
+        result = 31 * result + characterIndex;
+        result = 31 * result + (leading ? 1 : 0);
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+    /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
 	@Override
 	public String toString() {
 		return "SelectionAddress:{" + this.paragraphIndex + ":" + this.characterIndex + ":" + (this.leading ? 0 : 1) + "}";

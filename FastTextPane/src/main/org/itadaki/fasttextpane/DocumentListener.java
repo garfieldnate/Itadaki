@@ -32,6 +32,6 @@ public interface DocumentListener {
 	 * @param oldSize The previous declared size of the Document
 	 * @param newSize The new declared size of the Document
 	 */
-	public void documentExpanded (int oldSize, int newSize);
+    void documentExpanded(int oldSize, int newSize);
 
 }
