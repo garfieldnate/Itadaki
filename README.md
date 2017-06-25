@@ -247,6 +247,11 @@ Itadaki is built on ideas from a great number of other projects. Special thanks 
   * [JGloss][10] for the idea of using morphological analysis to apply furigana, and indirectly for several ideas concerning dictionary interfaces in Java
   * [Sen][11] for the basis of a pure Java morphological analysis library (see [GoSen][12] for more information about the fork/upgrade of Sen used within Itadaki)
 
+## TODO
+
+* description.xml files should have correct version numbers.
+* de-duplicate Gradle builds used for dictionaries
+
    [3]: http://openoffice.org/ (http://openoffice.org/)
    [4]: www.gnu.org/licenses/lgpl.html (http://www.gnu.org/licenses/lgpl.html)
    [5]: creativecommons.org/licenses/by-sa/2.5/ (http://creativecommons.org/licenses/by-sa/2.5/)

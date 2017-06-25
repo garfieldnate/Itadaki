@@ -1,0 +1,105 @@
+plugins {
+    id "de.undercouch.download" version "3.2.0"
+}
+apply plugin: 'base'
+
+defaultTasks 'unoPackage'
+
+import de.undercouch.gradle.tasks.download.Download
+
+dependencies {
+    project(':Seashell')
+}
+
+task download (type: Download) {
+    src "http://ftp.monash.edu/pub/nihongo/${dic}.gz"
+    dest buildDir
+    onlyIfNewer true
+}
+
+task unpack {
+    dependsOn 'download'
+    doLast {
+        unpackFile("${buildDir}/${dic}.gz")
+    }
+}
+
+def unpackFile(source) {
+    def target = source - '.gz'
+    if (fileExists(target)) {
+        println "Already unpacked " + target + "; skipping"
+    } else {
+        file(target).text = resources.gzip(source).read().text
+    }
+}
+
+def fileExists(path) {
+    File file = project.file(path)
+    return file.exists()
+}
+
+task compile {
+    // getTasksByName was the only way to depend on a child project task
+    dependsOn 'unpack', getTasksByName('jar', true)
+    doLast {
+        compileDic("${buildDir}/${dic}")
+    }
+}
+
+def compileDic(path) {
+    if(!file(path + ".iidx").exists()) {
+        javaexec {
+            classpath project(":Seashell").jar.outputs.files.getFiles()
+            main = "org.itadaki.seashell.tools.Indexer"
+            args path
+        }
+    } else {
+            println "already compiled " + path + "; skipping"
+    }
+}
+
+// uno packaging had to be split in two tasks to use a version number generated at execution time
+// I think that setting the archiveName allows the task to run immediately;
+// instead, we set it from unoPackage
+task packageHelper(type: Zip) {
+    inputs.files "${buildDir}/${dic}.iidx"
+    from (projectDir) {
+        include ([
+            "itadaki-data.properties",
+            "${dic}",
+            "${dic}.iidx",
+            "LICENSE",
+            "README"])
+    }
+    from ("unopackage") {
+        include(["description.xml"])
+        filter {line -> line.replace("YYYYMMDD", project.version)}
+    }
+    from ("unopackage") {
+        include([
+            "manifest.xml"])
+        into "META-INF"
+    }
+}
+
+task unoPackage {
+    dependsOn 'compile'
+    finalizedBy packageHelper
+    doLast {
+        project.version = getDictVersion("${buildDir}/${dic}")
+        packageHelper.archiveName = "itadaki-data-${dic}-${project.version}.uno.pkg"
+   }
+}
+
+def getDictVersion(path) {
+    file(path).withReader { r ->
+        def line = r.readLine();
+        def version = line.find(/Created: ?(.*)\//) { fullMatch, date ->
+            return date.replaceAll(/-/, "");
+        }
+        if(version?.trim()){
+            return version;
+        }
+        throw new IllegalStateException("Couldn't find version in dictionary file");
+    }
+}
