@@ -88,7 +88,8 @@ public class DictionaryDemo {
 
 				Map<String,String> dictionaries = new TreeMap<String,String>();
 				if(args.length == 0){
-					dictionaries.put ("./testdata/nulldict", "Nulldict");
+				    String dictPath = DictionaryDemo.class.getClassLoader().getResource("nulldict").getPath();
+					dictionaries.put (dictPath, "Nulldict");
 				}else{
 					for(int i = 0; i < args.length; i++){
 						dictionaries.put(args[0], args[0]);
