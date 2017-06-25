@@ -251,6 +251,8 @@ Itadaki is built on ideas from a great number of other projects. Special thanks 
 
 * description.xml files should have correct version numbers.
 * de-duplicate Gradle builds used for dictionaries
+* use NAICT dictionary
+* unify ItadakiDataIpadic and the copy in Gosen's source folder
 
    [3]: http://openoffice.org/ (http://openoffice.org/)
    [4]: www.gnu.org/licenses/lgpl.html (http://www.gnu.org/licenses/lgpl.html)

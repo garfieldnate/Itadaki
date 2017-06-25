@@ -1,0 +1,22 @@
+apply plugin: 'base'
+
+defaultTasks 'unoPackage'
+
+task unoPackage(type: Zip) {
+    project.version = "20070228"
+    from (projectDir) {
+        include ([
+            "COPYING",
+            "README.md"])
+    }
+    from ('dictionary')
+    from ("unopackage") {
+        include(["description.xml"])
+    }
+    from ("unopackage") {
+        include([
+            "manifest.xml"])
+        into "META-INF"
+    }
+    archiveName = "itadaki-data-${dic}-${project.version}.uno.pkg"
+}
