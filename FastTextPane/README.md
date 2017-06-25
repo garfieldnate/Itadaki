@@ -6,7 +6,7 @@ To see a demo of FastTextPane, run the demo in the ItadakiDictionary project and
 
 FastTextPane is distributed under the LGPL license.
 
-Features:
+##Features:
 
 * Thread safe
 * Essentially O(1) append speed
@@ -23,16 +23,19 @@ Features:
 * Action-based line scrolling
 * Action-based page scrolling
 
-Todo items:
+##Building
 
-* Keyboard selection
+    gradle build
 
-Design:
+##Design:
 
-* The "main" class (which contains most of this documentation) is FastTextView
+* The "main" class (which contains most of this documentation) is `FastTextView`
 * The principle state is stored in
     * document
     * layout
     * selection
     * position
 
+##Todo items:
+
+* Keyboard selection

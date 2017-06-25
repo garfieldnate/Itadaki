@@ -20,14 +20,15 @@
 package org.itadaki.fasttextpane;
 
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Transparency;
+import org.itadaki.fasttextpane.actions.CopyAction;
+import org.itadaki.fasttextpane.actions.ScrollDownAction;
+import org.itadaki.fasttextpane.actions.ScrollEndAction;
+import org.itadaki.fasttextpane.actions.ScrollHomeAction;
+import org.itadaki.fasttextpane.actions.ScrollPageDownAction;
+import org.itadaki.fasttextpane.actions.ScrollPageUpAction;
+import org.itadaki.fasttextpane.actions.ScrollUpAction;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -50,18 +51,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
-
-import org.itadaki.fasttextpane.actions.CopyAction;
-import org.itadaki.fasttextpane.actions.ScrollDownAction;
-import org.itadaki.fasttextpane.actions.ScrollEndAction;
-import org.itadaki.fasttextpane.actions.ScrollHomeAction;
-import org.itadaki.fasttextpane.actions.ScrollPageDownAction;
-import org.itadaki.fasttextpane.actions.ScrollPageUpAction;
-import org.itadaki.fasttextpane.actions.ScrollUpAction;
+import javax.swing.*;
 
 
 /**
