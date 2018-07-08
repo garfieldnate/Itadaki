@@ -39,3 +39,4 @@ FastTextPane is distributed under the LGPL license.
 ##Todo items:
 
 * Keyboard selection
+* Unit tests
