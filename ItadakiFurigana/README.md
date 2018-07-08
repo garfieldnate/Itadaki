@@ -35,3 +35,7 @@ The **Cancel** button closes the window without applying furigana
 ##  Known Issues
 
   * Changing or deleting text while it is being edited in the Furigana Wizard window will cause problems, including but not necessarily limited to furigana being applied to the wrong text.
+
+## TODOs
+
+ * Add unit tests
