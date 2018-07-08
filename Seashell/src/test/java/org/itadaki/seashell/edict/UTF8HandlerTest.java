@@ -1,23 +1,23 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
-package test;
+package org.itadaki.seashell.edict;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -36,10 +36,10 @@ import static org.junit.Assert.*;
 public class UTF8HandlerTest {
 
 	/**
-	 * Test that decoding a UTF-8 encoded String returns the original String 
+	 * Test that decoding a UTF-8 encoded String returns the original String
 	 *
 	 * @param testString The String to test
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void utf8TestSuccessFixture (String testString) throws Exception {
 
@@ -61,9 +61,9 @@ public class UTF8HandlerTest {
 
 	/**
 	 * Decode the contents of a ByteBuffer as UTF-8 (where expected to fail)
-	 * 
-	 * @param testStringUTF8Buffer 
-	 * @throws Exception 
+	 *
+	 * @param testStringUTF8Buffer
+	 * @throws Exception
 	 */
 	private void utf8TestFailureFixture (ByteBuffer testStringUTF8Buffer) throws Exception {
 
@@ -78,8 +78,8 @@ public class UTF8HandlerTest {
 
 	/**
 	 * Test encoding of plain boring 7-bit ASCII
-	 * 
-	 * @throws Exception 
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testOneByte() throws Exception {
@@ -99,10 +99,10 @@ public class UTF8HandlerTest {
 
 	}
 
-	
+
 	/**
 	 * Test expected failure of decoding 2-byte sequence that could fit in a 1-byte sequence
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected=CharacterCodingException.class)
@@ -117,7 +117,7 @@ public class UTF8HandlerTest {
 
 	/**
 	 * Test expected failure of decoding 3-byte sequence that could fit in a 2-byte sequence
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test(expected=CharacterCodingException.class)

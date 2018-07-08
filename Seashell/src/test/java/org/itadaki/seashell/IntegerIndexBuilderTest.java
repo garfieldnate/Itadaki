@@ -1,23 +1,23 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
-package test;
+package org.itadaki.seashell;
 import java.nio.IntBuffer;
 import java.util.Comparator;
 
@@ -33,7 +33,7 @@ public class IntegerIndexBuilderTest {
 
 	/**
 	 * Asserts the equality in length, contents and order of two int[] arrays
-	 * 
+	 *
 	 * @param expected The expected array
 	 * @param actual The actual array
 	 */
@@ -50,7 +50,7 @@ public class IntegerIndexBuilderTest {
 
 	/**
 	 * Converts indices 0..limit() of an IntBuffer to an int[] array
-	 * 
+	 *
 	 * @param buffer The buffer to convert
 	 * @return The buffer's contents as an int[] array
 	 */
@@ -79,14 +79,14 @@ public class IntegerIndexBuilderTest {
 			public int compare(Integer term1Address, Integer term2Address) {
 				return dictionary[term1Address].compareTo (dictionary[term2Address]);
 			}
-			
+
 		};
 
 	}
 
 
 	/**
-	 * Test fixture for testing standard Integer-indexed String dictionaries 
+	 * Test fixture for testing standard Integer-indexed String dictionaries
 	 *
 	 * @param dictionary The String dictionary
 	 * @param intExpectedIndex The expected sorted index
@@ -95,7 +95,7 @@ public class IntegerIndexBuilderTest {
 	private void indexBuilderTestFixture (final String[] dictionary, int[] intExpectedIndex, int[] intIndex) {
 
 		Comparator<Integer> comparator = createIntegerComparator (dictionary);
-		
+
 		IntegerIndexBuilder builder = new IntegerIndexBuilder(comparator);
 		builder.add (intIndex);
 		int[] intSortedIndex = exactArrayFromIntBuffer (builder.getSortedIndex());

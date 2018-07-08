@@ -1,25 +1,26 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
-package test;
+package org.itadaki.seashell.edict;
 
-import static org.junit.Assert.assertEquals;
+import org.itadaki.seashell.CharacterHandler;
+import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -30,10 +31,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.itadaki.seashell.CharacterHandler;
-import org.itadaki.seashell.edict.EUCJPHandler;
-import org.itadaki.seashell.edict.EdictIndexer;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -45,7 +43,7 @@ public class EdictIndexerTest {
 	 * Visually show diagram of indices for each tested entry (debug setting)
 	 */
 	private final static boolean debugShowEntryDiagram = false;
-	
+
 	/**
 	 * List indices for the tested dictionary (debug setting)
 	 */
@@ -150,18 +148,18 @@ public class EdictIndexerTest {
 			testEdict.position (start);
 
 			CharacterHandler handler = new EUCJPHandler();
-	
+
 			int character;
 			do {
 				end = testEdict.position();
 				character = handler.readCharacter (testEdict);
 			} while ((character != ']') && (character != ' ') && (character != '/'));
-	
+
 			testEdict.position (start);
 			ByteBuffer termBuffer = testEdict.slice();
 			termBuffer.limit (end - start);
 			CharsetDecoder decoder = Charset.forName("EUC-JP").newDecoder();
-	
+
 			System.out.println ("" + start + " " + decoder.decode (termBuffer).toString());
 		}
 
@@ -169,7 +167,7 @@ public class EdictIndexerTest {
 
 
 	/**
-	 * Test fixture for dictionary term decomposition 
+	 * Test fixture for dictionary term decomposition
 	 *
 	 * @param testDictionaryString The test dictionary as a Java String
 	 * @param expectedIndices The expected EUC-JP byte indices (NOTE: NOT String character indices) of the indexed terms
@@ -371,7 +369,7 @@ public class EdictIndexerTest {
 		int[] expectedIndices = { 0 };
 
 		indexerTestFixture (testEntry, expectedIndices, false);
-		
+
 	}
 
 
@@ -387,7 +385,7 @@ public class EdictIndexerTest {
 		int[] expectedIndices = { 10, 16, 22, 30, 2, 4, 0 };
 
 		indexerTestFixture (testEntry, expectedIndices, false);
-		
+
 	}
 
 
@@ -403,7 +401,7 @@ public class EdictIndexerTest {
 		int[] expectedIndices = { 0, 8, 16, 24 };
 
 		indexerTestFixture (testEntry, expectedIndices, false);
-		
+
 	}
 
 }

@@ -17,7 +17,7 @@
  *
  */
 
-package test;
+package org.itadaki.seashell.edict;
 
 import static org.junit.Assert.*;
 
