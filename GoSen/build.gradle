@@ -7,14 +7,9 @@ repositories {
 sourceSets {
     main {
         java {
-            srcDir 'src/main'
-            srcDir 'src/benchmark'
-            srcDir 'src/examples'
+            srcDir 'src/benchmark/java'
+            srcDir 'src/examples/java'
         }
-    }
-    test {
-        java { srcDir 'src/test' }
-        resources { srcDir 'src/test/resources' }
     }
 }
 

@@ -1,23 +1,23 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
-package examples.ui;
+package net.java.sen.examples.ui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,7 +47,7 @@ public class MorphemeListModel extends AbstractListModel {
 
 
 	/**
-	 * An entry in the potential morpheme list 
+	 * An entry in the potential morpheme list
 	 */
 	private static class MorphemeListEntry {
 
@@ -136,7 +136,7 @@ public class MorphemeListModel extends AbstractListModel {
 
 		MorphemeListEntry entry = this.readingList.get(index);
 
-		String elementText = entry.token.getSurface() 
+		String elementText = entry.token.getSurface()
 				+ "　（"
 				+ TextUtil.invertKanaCase(entry.token.getMorpheme().getReadings().get(entry.readingIndex))
 				+ "）";
@@ -159,7 +159,7 @@ public class MorphemeListModel extends AbstractListModel {
 
 	/**
 	 * Sets the current token set to display readings for
-	 * 
+	 *
 	 * @param tokens The tokens to set
 	 */
 	public void setTokens(List<Token> tokens) {
@@ -182,7 +182,7 @@ public class MorphemeListModel extends AbstractListModel {
 				return o1.token.getMorpheme().getReadings().get(o1.readingIndex).compareTo(o2.token.getMorpheme().getReadings().get(o2.readingIndex));
 
 			}
-			
+
 		};
 
 		TreeSet<MorphemeListEntry> listEntrySet = new TreeSet<MorphemeListEntry>(readingComparator);

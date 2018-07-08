@@ -1,30 +1,37 @@
-/*
+package net.java.sen.examples;/*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
-package examples;
+import net.java.sen.ReadingProcessor;
+import net.java.sen.ReadingProcessor.ReadingResult;
+import net.java.sen.SenFactory;
+import net.java.sen.dictionary.Morpheme;
+import net.java.sen.dictionary.Reading;
+import net.java.sen.dictionary.Token;
+import net.java.sen.examples.ui.AnalysisPanel;
+import net.java.sen.examples.ui.MorphemeListModel;
+import net.java.sen.examples.ui.Selection;
+import net.java.sen.examples.ui.SelectionListener;
+import net.java.sen.examples.ui.TokenTableModel;
+import net.java.sen.filter.reading.NumberFilter;
+import net.java.sen.util.TextUtil;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -35,36 +42,11 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
-
-import examples.ui.AnalysisPanel;
-import examples.ui.MorphemeListModel;
-import examples.ui.Selection;
-import examples.ui.SelectionListener;
-import examples.ui.TokenTableModel;
-import net.java.sen.ReadingProcessor;
-import net.java.sen.SenFactory;
-import net.java.sen.ReadingProcessor.ReadingResult;
-import net.java.sen.dictionary.Morpheme;
-import net.java.sen.dictionary.Reading;
-import net.java.sen.dictionary.Token;
-import net.java.sen.filter.reading.NumberFilter;
-import net.java.sen.util.TextUtil;
 
 
 /**
@@ -140,11 +122,11 @@ public class ReadingProcessorDemo {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		
+
 			Selection selection = ReadingProcessorDemo.this.analysisPanel.getSelection();
 			List<Token> tokens = ReadingProcessorDemo.this.readingResult.getTokens();
 			BitSet visibleTokens = ReadingProcessorDemo.this.readingResult.getVisibleTokens();
-		
+
 			if (selection != null) {
 				for (int i = selection.startTokenIndex - 1; i >= 0; i--) {
 					if (visibleTokens.get(i)) {
@@ -177,11 +159,11 @@ public class ReadingProcessorDemo {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		
+
 			Selection selection = ReadingProcessorDemo.this.analysisPanel.getSelection();
 			List<Token> tokens = ReadingProcessorDemo.this.readingResult.getTokens();
 			BitSet visibleTokens = ReadingProcessorDemo.this.readingResult.getVisibleTokens();
-		
+
 			if (selection != null) {
 				for (int i = selection.startTokenIndex + 1; i < tokens.size(); i++) {
 					if (visibleTokens.get(i)) {
@@ -299,7 +281,7 @@ public class ReadingProcessorDemo {
 		private final boolean moveStart;
 
 		/**
-		 * <code>true</code> to move left, <code>false</code> right 
+		 * <code>true</code> to move left, <code>false</code> right
 		 */
 		private final boolean moveLeft;
 
@@ -366,7 +348,7 @@ public class ReadingProcessorDemo {
 				{
 					selection.startTokenIndex = selection.endTokenIndex;
 					selection.startCharacterIndex = selection.endCharacterIndex;
-				}				
+				}
 			}
 
 			ReadingProcessorDemo.this.analysisPanel.setSelection(selection);
@@ -400,13 +382,13 @@ public class ReadingProcessorDemo {
 		this.readingProcessor.setText(text);
 		this.readingResult = this.readingProcessor.process();
 		List<Token> tokens = this.readingResult.getTokens();
-		
+
 		this.tokenDetailTableModel.setTokens(tokens);
 		this.analysisPanel.setReadingResult(this.readingResult, text);
 		this.morphemeListModel.setTokens(new ArrayList<Token>());
 		this.morphemeList.getSelectionModel().clearSelection();
 		this.manualReadingTextField.setText("");
-		
+
 		if (tokens.size() > 0) {
 			this.tokenDetailTable.getSelectionModel().setSelectionInterval(0, 0);
 		}
@@ -416,8 +398,8 @@ public class ReadingProcessorDemo {
 
 	/**
 	 * Update the analysed tokens of the current sentence
-	 * 
-	 * @param newSelectionLength The new length of the selection 
+	 *
+	 * @param newSelectionLength The new length of the selection
 	 */
 	private void updateTokens(int newSelectionLength) {
 
@@ -557,7 +539,7 @@ public class ReadingProcessorDemo {
 			public void mouseClicked(MouseEvent e) {
 				ReadingProcessorDemo.this.analysisPanel.requestFocusInWindow();
 			}
-			
+
 		});
 
 		this.analysisPanel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "previousTokenWithReading");
@@ -623,7 +605,7 @@ public class ReadingProcessorDemo {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setNewSentence(ReadingProcessorDemo.this.inputTextField.getText());				
+				setNewSentence(ReadingProcessorDemo.this.inputTextField.getText());
 			}
 
 		};
@@ -638,7 +620,7 @@ public class ReadingProcessorDemo {
 				setNewSentence("");
 				ReadingProcessorDemo.this.inputTextField.setText("");
 			}
-			
+
 		});
 
 		inputPanel.setBorder(new TitledBorder("Input"));
@@ -658,7 +640,7 @@ public class ReadingProcessorDemo {
 				}
 				return c;
 			}
-			
+
 		};
 		this.tokenDetailTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		JScrollPane tokenDetailScrollPane = new JScrollPane(this.tokenDetailTable);
@@ -679,7 +661,7 @@ public class ReadingProcessorDemo {
 					}
 				}
 			}
-			
+
 		});
 
 		this.analysisPanel.addSelectionListener(new SelectionListener() {
@@ -699,7 +681,7 @@ public class ReadingProcessorDemo {
 					);
 
 					int selectionStart = startToken.getStart() + selection.startCharacterIndex;
-					String readingText = getFullReadingTextAt(selectionStart); 
+					String readingText = getFullReadingTextAt(selectionStart);
 					ReadingProcessorDemo.this.manualReadingTextField.setText(readingText);
 
 					int selectionLength = getSelectionLength(selection);
@@ -714,7 +696,7 @@ public class ReadingProcessorDemo {
 					ReadingProcessorDemo.this.selectionChanging = false;
 				}
 			}
-			
+
 		});
 
 
@@ -739,7 +721,7 @@ public class ReadingProcessorDemo {
 						int selectionStart = startToken.getStart() + selection.startCharacterIndex;
 						String readingText = TextUtil.invertKanaCase(ReadingProcessorDemo.this.morphemeListModel.getReadingAt(selectedReading));
 						int surfaceLength = ReadingProcessorDemo.this.morphemeListModel.getSurfaceLengthAt(selectedReading);
-	
+
 						ReadingProcessorDemo.this.readingProcessor.setReadingConstraint(new Reading(selectionStart, surfaceLength, readingText));
 						updateTokens(surfaceLength);
 
@@ -748,7 +730,7 @@ public class ReadingProcessorDemo {
 					}
 
 				}
-				
+
 			}
 
 		});
@@ -774,7 +756,7 @@ public class ReadingProcessorDemo {
 				ReadingProcessorDemo.this.analysisPanel.requestFocusInWindow();
 
 			}
-			
+
 		};
 
 		this.manualReadingTextField = new JTextField();
@@ -819,7 +801,7 @@ public class ReadingProcessorDemo {
 		windowConstraints.weighty = 0.0;
 		windowConstraints.fill = GridBagConstraints.HORIZONTAL;
 		frame.add(inputPanel, windowConstraints);
-		
+
 		windowConstraints.gridy = 1;
 		windowConstraints.weightx = 1.0;
 		windowConstraints.weighty = 0.0;
@@ -857,8 +839,8 @@ public class ReadingProcessorDemo {
 
 	/**
 	 * Constructor
-	 * 
-	 * @param configFilename The dictionary configuration filename to use 
+	 *
+	 * @param configFilename The dictionary configuration filename to use
 	 */
 	public ReadingProcessorDemo(String configFilename) {
 
@@ -873,7 +855,7 @@ public class ReadingProcessorDemo {
 				createUI();
 
 			}
-			
+
 		});
 
 	}

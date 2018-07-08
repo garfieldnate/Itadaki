@@ -18,5 +18,4 @@ include 'services:webservice'
 
 rootProject.name = 'GoSen'
 include ':FastTextPane'
-project(':FastTextPane').projectDir = new File(settingsDir, '../FastTextPane')
 

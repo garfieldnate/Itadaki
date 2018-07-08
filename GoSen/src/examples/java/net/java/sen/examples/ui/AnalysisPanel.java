@@ -1,32 +1,29 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
-package examples.ui;
+package net.java.sen.examples.ui;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import net.java.sen.ReadingProcessor.ReadingResult;
+import net.java.sen.dictionary.Reading;
+import net.java.sen.dictionary.Token;
+
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -38,12 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JPanel;
-
-import net.java.sen.ReadingProcessor.ReadingResult;
-import net.java.sen.dictionary.Reading;
-import net.java.sen.dictionary.Token;
-
+import javax.swing.*;
 
 /**
  * Token analysis display panel
@@ -88,7 +80,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 	/**
 	 * The current selection
 	 */
-	private Selection selection = null;
+	private net.java.sen.examples.ui.Selection selection = null;
 
 	/**
 	 * Length of time in milliseconds after which we are assumed to be
@@ -148,9 +140,9 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 		 * @param x The token's x origin
 		 * @param width The token's width
 		 * @param startSegmentIndex The segment index at the start of the token
-		 * @param startSegmentCharIndex The segment character index at the start of the token 
-		 * @param endSegmentIndex The segment index at the end of the token 
-		 * @param endSegmentCharIndex The segment character index at the end of the token 
+		 * @param startSegmentCharIndex The segment character index at the start of the token
+		 * @param endSegmentIndex The segment index at the end of the token
+		 * @param endSegmentCharIndex The segment character index at the end of the token
 		 */
 		public TokenExtent (int x, int width, int startSegmentIndex, int startSegmentCharIndex, int endSegmentIndex, int endSegmentCharIndex) {
 
@@ -233,7 +225,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 	 *
 	 * @param selection The selection to set
 	 */
-	public void setSelection (Selection selection) {
+	public void setSelection (net.java.sen.examples.ui.Selection selection) {
 
 		if (selection.equals(this.selection)) {
 			return;
@@ -259,7 +251,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 	 *
 	 * @return The current selection
 	 */
-	public Selection getSelection() {
+	public net.java.sen.examples.ui.Selection getSelection() {
 
 		if (this.selection == null) {
 			return null;
@@ -272,8 +264,8 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 
 	/**
 	 * Set the reading processor result to be displayed
-	 * 
-	 * @param readingResult The reading processor result to be displayed 
+	 *
+	 * @param readingResult The reading processor result to be displayed
 	 * @param text The text to be displayed
 	 */
 	public void setReadingResult (ReadingResult readingResult, String text) {
@@ -293,11 +285,11 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 
 	/**
 	 * Set the tokens and selection to be displayed
-	 * 
-	 * @param readingResult The reading processor result to be displayed 
+	 *
+	 * @param readingResult The reading processor result to be displayed
 	 * @param selection The selection to be displayed
 	 */
-	public void setReadingResultAndSelection (ReadingResult readingResult, Selection selection) {
+	public void setReadingResultAndSelection (ReadingResult readingResult, net.java.sen.examples.ui.Selection selection) {
 
 		this.readingResult = readingResult;
 		this.selection = selection.clone();
@@ -324,9 +316,9 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 			int segmentIndex = 0;
 			int segmentCharacterIndex = 0;
 			int characterIndex = 0;
-	
+
 			for (Token token : this.readingResult.getTokens()) {
-	
+
 				// Advance to start of token
 				while (characterIndex < token.getStart()) {
 					characterIndex++;
@@ -341,7 +333,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 				int x = segment.x + segment.mainTextOffset.width + startBounds.x;
 				int startSegmentIndex = segmentIndex;
 				int startSegmentCharacterIndex = segmentCharacterIndex;
-	
+
 				// Find end of token
 				while (characterIndex < (token.getStart() + token.getLength() - 1)) {
 					characterIndex++;
@@ -358,10 +350,10 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 				int width = segment.x + segment.mainTextOffset.width + endBounds.x + endBounds.width - x;
 				int endSegmentIndex = segmentIndex;
 				int endSegmentCharacterIndex = segmentCharacterIndex;
-	
+
 				TokenExtent extent = new TokenExtent(x, width, startSegmentIndex, startSegmentCharacterIndex, endSegmentIndex, endSegmentCharacterIndex);
 				extents.add(extent);
-	
+
 			}
 
 		}
@@ -373,8 +365,8 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 
 	/**
 	 * Creates the text layout
-	 * 
-	 * @param g2d The graphics to render against 
+	 *
+	 * @param g2d The graphics to render against
 	 */
 	public void createLayout (Graphics2D g2d) {
 
@@ -402,7 +394,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 				TextLayout mainLayout = new TextLayout(mainText, mainFont, fontRenderContext);
 				SegmentLayout segmentLayout = new SegmentLayout();
 				segmentLayout.x = x;
-				segmentLayout.width = (int) mainLayout.getAdvance(); 
+				segmentLayout.width = (int) mainLayout.getAdvance();
 				segmentLayout.mainLayout = mainLayout;
 				segmentLayout.mainTextOffset = new Dimension(2, 63);
 				layout.add(segmentLayout);
@@ -437,7 +429,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 			TextLayout mainLayout = new TextLayout(mainText, mainFont, fontRenderContext);
 			SegmentLayout tokenLayout = new SegmentLayout();
 			tokenLayout.x = x;
-			tokenLayout.width = (int) mainLayout.getAdvance(); 
+			tokenLayout.width = (int) mainLayout.getAdvance();
 			tokenLayout.mainLayout = mainLayout;
 			tokenLayout.mainTextOffset = new Dimension(2, 63);
 			layout.add(tokenLayout);
@@ -494,7 +486,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 	 * Finds the starting and ending X indices of a character within a token
 	 * from the segment layouts
 	 *
-	 * @param tokenIndex The token's index 
+	 * @param tokenIndex The token's index
 	 * @param tokenCharIndex The index of the character within the token
 	 * @return A two member array containing the start and end X coordinates,
 	 *         or null if no match was found
@@ -543,7 +535,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 			int[] characterIndex = findCharacter(this.pressEvent.getX());
 			if (characterIndex != null) {
 
-				Selection selection = new Selection(characterIndex[0], 0, characterIndex[0], this.readingResult.getTokens().get(characterIndex[0]).getLength() - 1);				
+                net.java.sen.examples.ui.Selection selection = new net.java.sen.examples.ui.Selection(characterIndex[0], 0, characterIndex[0], this.readingResult.getTokens().get(characterIndex[0]).getLength() - 1);
 
 				setSelection (selection);
 
@@ -566,7 +558,7 @@ public class AnalysisPanel extends JPanel implements MouseListener, MouseMotionL
 			}
 
 			if ((startIndex != null) && (endIndex != null)) {
-				Selection selection = new Selection(startIndex[0], startIndex[1], endIndex[0], endIndex[1]);
+                net.java.sen.examples.ui.Selection selection = new net.java.sen.examples.ui.Selection(startIndex[0], startIndex[1], endIndex[0], endIndex[1]);
 
 				setSelection (selection);
 			}
