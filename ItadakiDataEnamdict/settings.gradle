@@ -1,12 +1,2 @@
-/*
-// To declare projects as part of a multi-project build use the 'include' method
-include 'shared'
-include 'api'
-include 'services:webservice'
-*/
-
 rootProject.name = 'ItadakiDataEnamdict'
 include ':Seashell'
-project(':Seashell').projectDir = new File(settingsDir, '../Seashell')
-settings.gradle.beforeProject { project ->
-    project.ext.dic = 'enamdict' }
