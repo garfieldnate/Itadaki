@@ -9,6 +9,24 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+allprojects {
+    tasks.withType(Test) {
+        // fail the whole build if any test fails
+        ignoreFailures = false
+
+        // half of the cores are probably virtual
+        maxParallelForks = Runtime.runtime.availableProcessors() / 2
+
+        afterTest { test, result ->
+            def time = (result.getEndTime() - result.getStartTime()) / 1000
+            logger.lifecycle("${test.getName()} took: ${time} seconds! -> ${result.getResultType()}")
+        }
+
+        testLogging {
+            // print details when tests fail
+            exceptionFormat = 'full'
+            // print everything the tests print
+            // showStandardStreams = true
+        }
+    }
 }
