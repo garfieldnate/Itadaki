@@ -1,0 +1,13 @@
+rootProject.name = 'Itadaki'
+include 'FastTextPane'
+include 'GoSen'
+include 'ItadakiDataEdict'
+include 'ItadakiDataEnamdict'
+include 'ItadakiDataIpadic'
+// TODO: ItadakiDataNAIST
+include 'ItadakiDictionary'
+include 'ItadakiFurigana'
+include 'ItadakiOpenOffice'
+include 'JISX0213'
+include 'Seashell'
+
