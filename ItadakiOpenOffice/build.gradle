@@ -1,0 +1,18 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.openoffice', name: 'unoil', version: '4.1.2'
+    compile group: 'org.openoffice', name: 'juh', version: '4.1.2'
+    compile project(':FastTextPane')
+    compile project(':GoSen')
+    compile project(':ItadakiDictionary')
+    compile project(':ItadakiFurigana')
+    compile project(':JISX0213')
+    compile project(':Seashell')
+
+    testCompile 'junit:junit:4.12'
+}

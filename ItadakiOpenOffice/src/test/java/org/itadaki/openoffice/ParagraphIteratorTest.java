@@ -1,17 +1,4 @@
-package test;
-
-import static org.junit.Assert.*;
-
-import static test.util.DocumentUtil.*;
-
-import org.itadaki.openoffice.ParagraphIterator;
-import org.itadaki.openoffice.TextPortionIterator;
-import org.itadaki.openoffice.util.As;
-import org.itadaki.openoffice.util.OfficeUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
+package org.itadaki.openoffice;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.XComponent;
@@ -19,6 +6,21 @@ import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextTable;
+
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.itadaki.openoffice.util.DocumentUtil.createBlankDocument;
+import static org.itadaki.openoffice.util.DocumentUtil.insertBlankParagraph;
+import static org.itadaki.openoffice.util.DocumentUtil.insertNumberedParagraph;
+import static org.itadaki.openoffice.util.DocumentUtil.insertPlainParagraph;
+import static org.itadaki.openoffice.util.DocumentUtil.insertTable;
+import static org.itadaki.openoffice.util.DocumentUtil.insertTextSection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -40,7 +42,7 @@ public class ParagraphIteratorTest {
 
 	/**
 	 * Sets up the text document for each test
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -68,7 +70,7 @@ public class ParagraphIteratorTest {
 	 *
 	 * @param paragraphIterator The paragraph iterator to test
 	 * @param expectedParagraphs The expected textual paragraph contents
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static void testFixture (ParagraphIterator paragraphIterator, String[] expectedParagraphs) throws Exception {
 
@@ -121,7 +123,7 @@ public class ParagraphIteratorTest {
 	 * Paragraph permutation tests:
 	 * Empty document
 	 *
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testBlank() throws Exception {
@@ -341,7 +343,7 @@ public class ParagraphIteratorTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
 
@@ -370,7 +372,7 @@ public class ParagraphIteratorTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, false);
@@ -401,7 +403,7 @@ public class ParagraphIteratorTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertBlankParagraph (text, textCursor, true);
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
@@ -433,7 +435,7 @@ public class ParagraphIteratorTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertBlankParagraph (text, textCursor, true);
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
@@ -467,7 +469,7 @@ public class ParagraphIteratorTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, true);
@@ -501,7 +503,7 @@ public class ParagraphIteratorTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, " 1", true);
 		insertNumberedParagraph (this.textDocument, text, textCursor, " 2", true);
@@ -524,7 +526,7 @@ public class ParagraphIteratorTest {
 
 	/**
 	 * 1x1 table with text
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -554,7 +556,7 @@ public class ParagraphIteratorTest {
 
 	/**
 	 * 3x3 table with text
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -592,7 +594,7 @@ public class ParagraphIteratorTest {
 
 	/**
 	 * 3x3 table with embedded table in centre cell
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -633,7 +635,7 @@ public class ParagraphIteratorTest {
 
 	/**
 	 * Single text section
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -662,7 +664,7 @@ public class ParagraphIteratorTest {
 
 	/**
 	 * 1x1 table with embedded text section
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -939,7 +941,7 @@ public class ParagraphIteratorTest {
 	/**
 	 * Paragraph permutation tests:
 	 * Selection within only cell of 1x1 table
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -974,7 +976,7 @@ public class ParagraphIteratorTest {
 	/**
 	 * Paragraph permutation tests:
 	 * Selection within first cell of 2x1 table
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -1011,7 +1013,7 @@ public class ParagraphIteratorTest {
 //	/**
 //	 * Paragraph permutation tests:
 //	 * Selection of both cells of 1x2 table
-//	 * 
+//	 *
 //	 * @throws Exception
 //	 */
 //	@Test

@@ -1,24 +1,27 @@
-package test;
-
-import static org.junit.Assert.*;
-
-import static test.util.DocumentUtil.*;
-
-import org.itadaki.openoffice.DocumentSentenceProvider;
-import org.itadaki.openoffice.util.As;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
+package org.itadaki.openoffice;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextTable;
 
+import org.itadaki.openoffice.util.As;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.itadaki.openoffice.util.DocumentUtil.createBlankDocument;
+import static org.itadaki.openoffice.util.DocumentUtil.insertBlankParagraph;
+import static org.itadaki.openoffice.util.DocumentUtil.insertNumberedParagraph;
+import static org.itadaki.openoffice.util.DocumentUtil.insertPlainParagraph;
+import static org.itadaki.openoffice.util.DocumentUtil.insertTable;
+import static org.itadaki.openoffice.util.DocumentUtil.insertTextSection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 
 /**
  * Test of DocumentSentenceProvider
- * 
+ *
  * Situations:
  *   - Blank document
  *   - Single text paragraph
@@ -36,23 +39,23 @@ import com.sun.star.text.XTextTable;
  *   - Frame (anchor as character)
  *   - Header
  *   - Footer
- *   
- *   
+ *
+ *
  * Tests that:
  *   - Existing readings can be read correctly
  *   - New readings can be written correctly
- * 
+ *
  * For text selections, tests that:
  *   - Readings are correctly masked to the bounds of the selection
- * 
+ *
  * For table cell selections, tests that:
  *   - The correct table cells are visited
- * 
+ *
  * ** Create document + readings
  * --> list of paragraphs + readings
  * ** Whole document test fixture (paragraphs, existing readings, readings to apply)
  * ** Selection test fixture (paragraphs, existing readings, readings to apply, selection start paragraph/index, selection end paragraph/index)
- *     - 
+ *     -
  */
 public class DocumentSentenceProviderTest {
 
@@ -70,7 +73,7 @@ public class DocumentSentenceProviderTest {
 
 	/**
 	 * Sets up the text document for each test
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -135,7 +138,7 @@ public class DocumentSentenceProviderTest {
 	 * Paragraph permutation tests:
 	 * Empty document
 	 *
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testBlank() throws Exception {
@@ -361,7 +364,7 @@ public class DocumentSentenceProviderTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
 
@@ -391,7 +394,7 @@ public class DocumentSentenceProviderTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, false);
@@ -423,7 +426,7 @@ public class DocumentSentenceProviderTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertBlankParagraph (text, textCursor, true);
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", false);
@@ -456,7 +459,7 @@ public class DocumentSentenceProviderTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertBlankParagraph (text, textCursor, true);
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
@@ -491,7 +494,7 @@ public class DocumentSentenceProviderTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, true);
@@ -526,7 +529,7 @@ public class DocumentSentenceProviderTest {
 
 		XText text = this.textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (this.textDocument, text, textCursor, " 1", true);
 		insertNumberedParagraph (this.textDocument, text, textCursor, " 2", true);
@@ -549,7 +552,7 @@ public class DocumentSentenceProviderTest {
 
 	/**
 	 * 1x1 table with text
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -580,7 +583,7 @@ public class DocumentSentenceProviderTest {
 
 	/**
 	 * 3x3 table with text
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -619,7 +622,7 @@ public class DocumentSentenceProviderTest {
 
 	/**
 	 * 3x3 table with embedded table in centre cell
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -661,7 +664,7 @@ public class DocumentSentenceProviderTest {
 
 	/**
 	 * Single text section
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -691,7 +694,7 @@ public class DocumentSentenceProviderTest {
 
 	/**
 	 * 1x1 table with embedded text section
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

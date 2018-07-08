@@ -1,13 +1,4 @@
-package test;
-
-import static org.junit.Assert.*;
-
-import org.itadaki.client.furigana.SentenceProvider;
-import org.itadaki.openoffice.OfficeSentenceProvider;
-import org.itadaki.openoffice.util.As;
-import org.itadaki.openoffice.util.OfficeUtil;
-import org.junit.Test;
-
+package org.itadaki.openoffice;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.comp.helper.Bootstrap;
@@ -25,6 +16,14 @@ import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.Any;
 import com.sun.star.uno.XComponentContext;
+
+import org.itadaki.client.furigana.SentenceProvider;
+import org.itadaki.openoffice.util.As;
+import org.itadaki.openoffice.util.OfficeUtil;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 
 /**
@@ -69,12 +68,12 @@ public class OfficeSentenceProviderTest {
 	/**
 	 * Creates a blank document
 	 *
-	 * @param hidden If <code>true</code>, the document will be created hidden 
+	 * @param hidden If <code>true</code>, the document will be created hidden
 	 * @return The XComponent of the blank document
 	 * @throws Exception
 	 */
 	private XComponent createBlankDocument (boolean hidden) throws Exception {
-		
+
 		if (context == null) {
 			context = Bootstrap.bootstrap();
 		}
@@ -84,7 +83,7 @@ public class OfficeSentenceProviderTest {
 		PropertyValue[] properties = new PropertyValue[1];
 		properties[0] = new PropertyValue();
 		properties[0].Name = "Hidden";
-		properties[0].Value = new Boolean (hidden); 
+		properties[0].Value = new Boolean (hidden);
 
 		XComponentLoader componentLoader = As.XComponentLoader (desktop);
 		XComponent component = componentLoader.loadComponentFromURL ("private:factory/swriter", "_blank", 0, properties);
@@ -122,7 +121,7 @@ public class OfficeSentenceProviderTest {
 	 * @param textCursor The text cursor to navigate with
 	 * @param appendNewParagraph If <code>true</code>, a new blank paragraph will be appended
 	 *
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void insertBlankParagraph (XText text, XTextCursor textCursor, boolean appendNewParagraph) throws Exception {
 
@@ -144,7 +143,7 @@ public class OfficeSentenceProviderTest {
 	 * @param extraText Additional text to append
 	 * @param appendNewParagraph If <code>true</code>, a new blank paragraph will be appended
 	 *
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void insertPlainParagraph (XText text, XTextCursor textCursor, String extraText, boolean appendNewParagraph) throws Exception {
 
@@ -215,7 +214,7 @@ public class OfficeSentenceProviderTest {
 	 * Paragraph permutation tests:
 	 * Empty document
 	 *
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test
 	public void testBlank() throws Exception {
@@ -488,7 +487,7 @@ public class OfficeSentenceProviderTest {
 		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (component, textDocument, text, textCursor, "", false);
 
@@ -524,7 +523,7 @@ public class OfficeSentenceProviderTest {
 		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (component, textDocument, text, textCursor, "", true);
 		insertBlankParagraph (text, textCursor, false);
@@ -563,7 +562,7 @@ public class OfficeSentenceProviderTest {
 //		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
-//		
+//
 //		// Insert test data
 //		insertBlankParagraph (text, textCursor, true);
 //		insertNumberedParagraph (component, textDocument, text, textCursor, false);
@@ -603,7 +602,7 @@ public class OfficeSentenceProviderTest {
 //		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
-//		
+//
 //		// Insert test data
 //		insertBlankParagraph (text, textCursor, true);
 //		insertNumberedParagraph (component, textDocument, text, textCursor, true);
@@ -645,7 +644,7 @@ public class OfficeSentenceProviderTest {
 //		XTextDocument textDocument = As.XTextDocument (component);
 //		XText text = textDocument.getText();
 //		XTextCursor textCursor = text.createTextCursor();
-//		
+//
 //		// Insert test data
 //		insertNumberedParagraph (component, textDocument, text, textCursor, true);
 //		insertBlankParagraph (text, textCursor, true);
@@ -686,7 +685,7 @@ public class OfficeSentenceProviderTest {
 		XTextDocument textDocument = As.XTextDocument (component);
 		XText text = textDocument.getText();
 		XTextCursor textCursor = text.createTextCursor();
-		
+
 		// Insert test data
 		insertNumberedParagraph (component, textDocument, text, textCursor, " 1", true);
 		insertNumberedParagraph (component, textDocument, text, textCursor, " 2", true);
