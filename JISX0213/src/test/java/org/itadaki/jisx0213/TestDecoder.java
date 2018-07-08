@@ -1,15 +1,12 @@
-package test;
+package org.itadaki.jisx0213;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 
-import org.itadaki.jisx0213.EUCJISX0213Charset;
-import org.itadaki.jisx0213.EUCJISX0213CharsetDecoder;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -87,8 +84,8 @@ public class TestDecoder {
 
 	/**
 	 * Tests basic decoding
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 */
 	@Test
 	public void testBasic() throws IOException {
@@ -110,8 +107,8 @@ public class TestDecoder {
 
 	/**
 	 * Test decoding of assorted strings
-	 * 
-	 * @throws Exception 
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testCommon() throws Exception {
@@ -119,12 +116,12 @@ public class TestDecoder {
 		for (int i = 0; i < commonTestStrings.length; i++) {
 
 			byte[] testData = shortToByteArray (commonTestEUCArrays[i]);
-	
+
 			ByteBuffer buffer = ByteBuffer.wrap(testData);
-	
+
 			CharsetDecoder decoder = new EUCJISX0213CharsetDecoder (new EUCJISX0213Charset());
 			CharBuffer output = decoder.decode (buffer);
-	
+
 			assertEquals (commonTestStrings[i], output.toString());
 
 		}

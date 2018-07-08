@@ -1,3 +1,6 @@
+group 'org.itadaki'
+version '0.0.1'
+
 apply plugin: 'java'
 
 repositories {
@@ -7,16 +10,11 @@ repositories {
 sourceSets {
     main {
         java {
-            srcDir 'src/main'
-            srcDir 'src/examples'
-            resources { srcDir 'src/main/resources' }
+            srcDirs 'src/examples/java'
         }
-    }
-    test {
-        java { srcDir 'src/test' }
     }
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
