@@ -59,7 +59,7 @@ task compile(dependsOn: ['extractEdict', ':Seashell:jar']) {
 }
 
 task unoPackage(type: Zip, dependsOn: 'compile') {
-    archiveName = "itadaki-data-edict-" + project.properties['dic.version'] + '.uno.pkg'
+    archiveName = project.properties['archiveName']
     from project.properties['dic.unpacked.file']
     from getIndexFileFor(project.properties['dic.unpacked.file'])
     from (projectDir) {

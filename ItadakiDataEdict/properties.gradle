@@ -10,5 +10,6 @@ ext {
     setProperty('dic.archive.file', new File(buildDir, 'edict-' + properties['dic.version'] + '.gz'))
     setProperty('dic.unpacked.file', new File(buildDir, 'edict-' + properties['dic.version']))
     setProperty('dic.compiled.file', new File(buildDir, 'edict-' + properties['dic.version'] + '.iidx'))
+    archiveName = "itadaki-data-edict-" + properties['dic.version'] + '.uno.pkg'
     getIndexFileFor = this.&getIndexFileFor
 }
