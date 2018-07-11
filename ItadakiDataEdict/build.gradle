@@ -2,78 +2,76 @@ plugins {
     id "de.undercouch.download" version "3.2.0"
 }
 apply plugin: 'base'
-
-defaultTasks 'unoPackage'
-
-import de.undercouch.gradle.tasks.download.Download
+apply from: './properties.gradle'
 
 dependencies {
     project(':Seashell')
 }
 
-task download (type: Download) {
-    src "http://ftp.monash.edu/pub/nihongo/${dic}.gz"
-    dest buildDir
-    onlyIfNewer true
-}
-
-task unpack {
-    dependsOn 'download'
-    doLast {
-        unpackFile("${buildDir}/${dic}.gz")
+def download(String url, File destination) {
+    if (destination.exists()) {
+        println "Skipping download because ${destination} already exists"
+    } else {
+        download {
+            src url
+            dest destination
+        }
     }
 }
 
-def unpackFile(source) {
-    def target = source - '.gz'
-    if (fileExists(target)) {
+task downloadEdict {
+    doLast {
+        download(project.properties['dic.url'], project.properties['dic.archive.file'])
+    }
+}
+
+// edict is a gzipped text file, not a tarball
+def extractTextArchive(File source, File target) {
+    if (target.exists()) {
         println "Already unpacked " + target + "; skipping"
     } else {
         file(target).text = resources.gzip(source).read().text
     }
 }
 
-def fileExists(path) {
-    File file = project.file(path)
-    return file.exists()
-}
-
-task compile {
-    // getTasksByName was the only way to depend on a child project task
-    dependsOn 'unpack', getTasksByName('jar', true)
-    doLast {
-        compileDic("${buildDir}/${dic}")
+task extractEdict(dependsOn: 'downloadEdict') {
+    doLast{
+        extractTextArchive(project.properties['dic.archive.file'], project.properties['dic.unpacked.file'])
     }
 }
 
-def compileDic(path) {
-    if(!file(path + ".iidx").exists()) {
+def compileEdict(File dicPath) {
+    if(!getIndexFileFor(dicPath).exists()) {
         javaexec {
-            classpath project(":Seashell").jar.outputs.files.getFiles()
+            classpath += files(project(":Seashell").jar.outputs.files.getFiles())
             main = "org.itadaki.seashell.tools.Indexer"
-            args path
+            args dicPath
         }
     } else {
-            println "already compiled " + path + "; skipping"
+            println "already compiled " + dicPath + "; skipping"
     }
 }
 
-// uno packaging had to be split in two tasks to use a version number generated at execution time
-// I think that setting the archiveName allows the task to run immediately;
-// instead, we set it from unoPackage
-task packageHelper(type: Zip) {
-    inputs.files "${buildDir}/${dic}.iidx"
+task compile(dependsOn: ['extractEdict', ':Seashell:jar']) {
+    doLast{
+        compileEdict(project.properties['dic.unpacked.file'])
+    }
+}
+
+task unoPackage(type: Zip, dependsOn: 'compile') {
+    archiveName = "itadaki-data-edict-" + project.properties['dic.version'] + '.uno.pkg'
+    from project.properties['dic.unpacked.file']
+    from getIndexFileFor(project.properties['dic.unpacked.file'])
     from (projectDir) {
         include ([
             "itadaki-data.properties",
-            "${dic}",
-            "${dic}.iidx",
             "LICENSE",
-            "README"])
+            "README"
+        ])
     }
     from ("unopackage") {
         include(["description.xml"])
-        filter {line -> line.replace("YYYYMMDD", project.version)}
+        filter {line -> line.replace("YYYYMMDD", project.properties['dic.version'])}
     }
     from ("unopackage") {
         include([
@@ -82,24 +80,4 @@ task packageHelper(type: Zip) {
     }
 }
 
-task unoPackage {
-    dependsOn 'compile'
-    finalizedBy packageHelper
-    doLast {
-        project.version = getDictVersion("${buildDir}/${dic}")
-        packageHelper.archiveName = "itadaki-data-${dic}-${project.version}.uno.pkg"
-   }
-}
-
-def getDictVersion(path) {
-    file(path).withReader { r ->
-        def line = r.readLine();
-        def version = line.find(/Created: ?(.*)\//) { fullMatch, date ->
-            return date.replaceAll(/-/, "");
-        }
-        if(version?.trim()){
-            return version;
-        }
-        throw new IllegalStateException("Couldn't find version in dictionary file");
-    }
-}
+build.dependsOn('unoPackage')

@@ -1,0 +1,14 @@
+File getIndexFileFor(File dicFile) {
+    return new File(dicFile.getPath() + '.iidx')
+}
+
+ext {
+    setProperty('dic.url', 'http://ftp.monash.edu/pub/nihongo/edict.gz')
+    // Edict file version is just a release date, and it is built daily.
+    // Instead of reading the file to get the version, just use today's date.
+    setProperty('dic.version', new Date().format('yyyy-MM-dd'))
+    setProperty('dic.archive.file', new File(buildDir, 'edict-' + properties['dic.version'] + '.gz'))
+    setProperty('dic.unpacked.file', new File(buildDir, 'edict-' + properties['dic.version']))
+    setProperty('dic.compiled.file', new File(buildDir, 'edict-' + properties['dic.version'] + '.iidx'))
+    getIndexFileFor = this.&getIndexFileFor
+}
