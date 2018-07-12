@@ -1,36 +1,14 @@
-plugins {
-    id "de.undercouch.download" version "3.2.0"
-}
 apply plugin: 'base'
 apply from: './properties.gradle'
+apply from: '../scripts/dic_utils.gradle'
 
 dependencies {
     project(':Seashell')
 }
 
-def download(String url, File destination) {
-    if (destination.exists()) {
-        println "Skipping download because ${destination} already exists"
-    } else {
-        download {
-            src url
-            dest destination
-        }
-    }
-}
-
 task downloadEnamdict {
     doLast {
-        download(project.properties['dic.url'], project.properties['dic.archive.file'])
-    }
-}
-
-// enam is a gzipped text file, not a tarball
-def extractTextArchive(File source, File target) {
-    if (target.exists()) {
-        println "Already unpacked " + target + "; skipping"
-    } else {
-        file(target).text = resources.gzip(source).read().text
+        downloadFile(project.properties['dic.url'], project.properties['dic.archive.file'])
     }
 }
 
@@ -40,21 +18,9 @@ task extractEnamdict(dependsOn: 'downloadEnamdict') {
     }
 }
 
-def compileEnamdict(File dicPath) {
-    if(!getIndexFileFor(dicPath).exists()) {
-        javaexec {
-            classpath += files(project(":Seashell").jar.outputs.files.getFiles())
-            main = "org.itadaki.seashell.tools.Indexer"
-            args dicPath
-        }
-    } else {
-        println "already compiled " + dicPath + "; skipping"
-    }
-}
-
 task compile(dependsOn: ['extractEnamdict', ':Seashell:jar']) {
     doLast{
-        compileEnamdict(project.properties['dic.unpacked.file'])
+        compileEdict(project.properties['dic.unpacked.file'])
     }
 }
 

@@ -1,4 +1,3 @@
-rootProject.name = 'ItadakiFurigana'
 include ':GoSen'
 include ':ItadakiFurigana'
 include ':ItadakiDataIpadic'

@@ -13,7 +13,7 @@ The dictionary window is designed to allow fast, efficient searching within the 
   * Links to each result section are provided above the results.
   * Matches within each line of the results are highlighted in blue text.
   * Results in different dictionaries are given different background highlights.
-  * The dictionary window can be linked to open Openoffice Writer windows such that selected text is automatically searched for. This is extremely fast on a reasonably modern machine, and does not take a noticeable amount of CPU power.
+  * The dictionary window can be linked to open OpenOffice Writer windows such that selected text is automatically searched for. This is extremely fast on a reasonably modern machine, and does not take a noticeable amount of CPU power.
 
 ## Context Menu
 

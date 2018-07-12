@@ -2,7 +2,7 @@ File getIndexFileFor(File dicFile) {
     return new File(dicFile.getPath() + '.iidx')
 }
 
-ext {
+project.ext {
     setProperty('dic.url', 'http://ftp.monash.edu/pub/nihongo/enamdict.gz')
     // Enam file version is just a release date, and it is built daily.
     // Instead of reading the file to get the version, just use today's date.

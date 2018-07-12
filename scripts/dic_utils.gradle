@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:3.4.3'
+    }
+}
+
+project.ext {
+    apply plugin: de.undercouch.gradle.tasks.download.DownloadTaskPlugin
+
+    downloadFile = { String url, File destination ->
+        if (destination.exists()) {
+            println "Skipping download because ${destination} already exists"
+        } else {
+            download {
+                src url
+                dest destination
+            }
+        }
+    }
+
+    // edict/enamdict are gzipped text files, not tarballs
+    extractTextArchive = { File source, File target ->
+        if (target.exists()) {
+            println "Already unpacked " + target + "; skipping"
+        } else {
+            file(target).text = resources.gzip(source).read().text
+        }
+    }
+
+    getIndexFileFor = { File dicFile ->
+        return new File(dicFile.getPath() + '.iidx')
+    }
+
+    compileEdict = { File dicPath ->
+        if (!getIndexFileFor(dicPath).exists()) {
+            javaexec {
+                classpath += files(project(":Seashell").jar.outputs.files.getFiles())
+                main = "org.itadaki.seashell.tools.Indexer"
+                args dicPath
+            }
+        } else {
+            println "already compiled " + dicPath + "; skipping"
+        }
+    }
+}

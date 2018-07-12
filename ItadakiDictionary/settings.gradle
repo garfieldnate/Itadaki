@@ -1,5 +1,4 @@
-rootProject.name = 'ItadakiDictionary'
 include ':FastTextPane'
-project(':FastTextPane').projectDir = new File(settingsDir, '../FastTextPane')
+//project(':FastTextPane').projectDir = new File(settingsDir, '../FastTextPane')
 include ':Seashell'
-project(':Seashell').projectDir = new File(settingsDir, '../Seashell')
+//project(':Seashell').projectDir = new File(settingsDir, '../Seashell')
