@@ -1,29 +1,42 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
 package org.itadaki.client.dictionary.ui.dictionary;
 
-import java.awt.Color;
-import java.awt.Font;
+import org.itadaki.client.dictionary.settings.Settings;
+import org.itadaki.client.dictionary.settings.SettingsListener;
+import org.itadaki.client.dictionary.ui.DictionaryWindow;
+import org.itadaki.client.dictionary.ui.OptionsWindow;
+import org.itadaki.client.dictionary.utility.StringUtil;
+import org.itadaki.fasttextpane.DocumentAttribute;
+import org.itadaki.fasttextpane.FastTextView;
+import org.itadaki.fasttextpane.HyperlinkListener;
+import org.itadaki.seashell.AsynchronousSearcher;
+import org.itadaki.seashell.DictionaryStatusListener;
+import org.itadaki.seashell.SearchListener;
+import org.itadaki.seashell.SearchMode;
+import org.itadaki.seashell.edict.EdictDictionary;
+
+import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.text.AttributedString;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,20 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import org.itadaki.client.dictionary.settings.Settings;
-import org.itadaki.client.dictionary.settings.SettingsListener;
-import org.itadaki.client.dictionary.ui.DictionaryWindow;
-import org.itadaki.client.dictionary.ui.OptionsWindow;
-import org.itadaki.client.dictionary.utility.StringUtil;
-import org.itadaki.fasttextpane.DocumentAttribute;
-import org.itadaki.fasttextpane.HyperlinkListener;
-import org.itadaki.fasttextpane.FastTextView;
-import org.itadaki.seashell.AsynchronousSearcher;
-import org.itadaki.seashell.DictionaryStatusListener;
-import org.itadaki.seashell.SearchListener;
-import org.itadaki.seashell.SearchMode;
-import org.itadaki.seashell.edict.EdictDictionary;
 
 
 /**
@@ -59,7 +58,7 @@ public class ResultMarshaller implements SearchListener, SettingsListener, Dicti
 	/**
 	 * The dictionary window
 	 */
-	private DictionaryWindow dictionaryWindow; 
+	private DictionaryWindow dictionaryWindow;
 
 	/**
 	 * The FastTextView to forward results to
@@ -88,7 +87,7 @@ public class ResultMarshaller implements SearchListener, SettingsListener, Dicti
 	private Map<SearchMode,Integer> resultPositions = new HashMap<SearchMode,Integer>();
 
 	/**
-	 * (during search) SearchMode of previously received results block 
+	 * (during search) SearchMode of previously received results block
 	 */
 	private SearchMode lastSearchMode = null;
 
@@ -163,7 +162,7 @@ public class ResultMarshaller implements SearchListener, SettingsListener, Dicti
 
 	/**
 	 * Notify all listeners of the creation of a new result section
-	 * 
+	 *
 	 * @param searchMode The result section created
 	 * @param documentIndex The Document index of the section
 	 */
@@ -192,8 +191,8 @@ public class ResultMarshaller implements SearchListener, SettingsListener, Dicti
 
 	/**
 	 * Highlight the search term in a result
-	 * 
-	 * @param entryString The unattributed result entry 
+	 *
+	 * @param entryString The unattributed result entry
 	 * @param attributedString The string to highlight
 	 * @param foldedSearchQuery The case-folded search query to highlight with
 	 */
@@ -359,7 +358,7 @@ public class ResultMarshaller implements SearchListener, SettingsListener, Dicti
 				"Indexing " + dictionary.getFilename() + "...",
 				"(" + remainingDictionaries + " more remaining)"
 		));
-		
+
 	}
 
 

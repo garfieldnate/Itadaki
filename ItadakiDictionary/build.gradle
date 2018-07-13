@@ -1,40 +1,25 @@
 apply plugin: 'java'
 
-repositories {
-    mavenCentral()
-}
-
 sourceSets {
     main {
         java {
-            srcDir 'src/main'
-            srcDir 'src/examples'
-            resources {
-                srcDir 'src/main/resources'
-                srcDir 'src/examples/resources'
-            }
+            srcDir 'src/examples/java'
         }
     }
-    test {
-        java { srcDir 'src/test' }
-    }
+}
+
+configurations {
+    demo
 }
 
 dependencies {
     compile project(':Seashell')
     compile project(':FastTextPane')
-    testCompile 'junit:junit:4.12'
-}
-
-// Basic demo with the "boring" dictionary
-task demo(type: JavaExec) {
-    classpath sourceSets.main.runtimeClasspath
-    main = "examples.DictionaryDemo"
 }
 
 // Basic demo with the edict dictionary
-task demoEdict(type: JavaExec) {
+task demo(type: JavaExec, dependsOn: ':ItadakiDataEdict:compile') {
     classpath sourceSets.main.runtimeClasspath
-    main = "examples.DictionaryDemo"
-    args "../ItadakiDataEdict/edict"
+    main = "org.itadaki.client.dictionary.examples.DictionaryDemo"
+    args project(":ItadakiDataEdict").getProperty('dic.unpacked.file')
 }
