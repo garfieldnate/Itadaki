@@ -35,6 +35,11 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import static net.java.sen.compiler.DictionaryFileNames.CONNECTION_COST_DATA_FILENAME;
+import static net.java.sen.compiler.DictionaryFileNames.PART_OF_SPEECH_DATA_FILENAME;
+import static net.java.sen.compiler.DictionaryFileNames.TOKEN_DATA_FILENAME;
+import static net.java.sen.compiler.DictionaryFileNames.TRIE_DATA_FILENAME;
+
 
 /**
  * A factory to manage creation of {@link Viterbi}, {@link StringTagger}, and
@@ -45,27 +50,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * not be accessed simultaneously by multiple threads
  */
 public class SenFactory {
-
-	/**
-	 * Filename of the compiled connection cost data
-	 */
-	private static final String CONNECTION_COST_DATA_FILENAME = "connectionCost.sen";
-
-	/**
-	 * Filename of the compiled part of speech data
-	 */
-	private static final String PART_OF_SPEECH_DATA_FILENAME = "partOfSpeech.sen";
-
-	/**
-	 * Filename of the compiled token data
-	 */
-	private static final String TOKEN_DATA_FILENAME = "token.sen";
-
-	/**
-	 * Filename of the compiled trie data
-	 */
-	private static final String TRIE_DATA_FILENAME = "trie.sen";
-
 	/**
 	 * A cache of pre-loaded tokenizer configurations
 	 */

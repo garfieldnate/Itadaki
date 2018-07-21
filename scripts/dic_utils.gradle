@@ -12,11 +12,17 @@ project.ext {
 
     downloadFile = { String url, File destination ->
         if (destination.exists()) {
-            println "Skipping download because ${destination} already exists"
+            println "Skipping download because $destination already exists"
         } else {
-            download {
-                src url
-                dest destination
+            try {
+                download {
+                    src url
+                    dest destination
+                }
+            } catch (IllegalStateException e) {
+                System.err.println("Error while downloading $url")
+                e.printStackTrace()
+                throw e
             }
         }
     }
@@ -24,9 +30,22 @@ project.ext {
     // edict/enamdict are gzipped text files, not tarballs
     extractTextArchive = { File source, File target ->
         if (target.exists()) {
-            println "Already unpacked " + target + "; skipping"
+            println "Already unpacked $target; skipping"
         } else {
             file(target).text = resources.gzip(source).read().text
+        }
+    }
+
+    unpackTarBall = { File source, File targetDir ->
+        def finalDir = new File(targetDir, source.name - ".tar.gz")
+        if (!finalDir.isDirectory()) {
+            println "unpacking $source into $targetDir"
+            copy {
+                from tarTree(resources.gzip(source))
+                into targetDir
+            }
+        } else {
+            println "$targetDir already exists; skipping tarball unpack"
         }
     }
 
@@ -36,13 +55,14 @@ project.ext {
 
     compileEdict = { File dicPath ->
         if (!getIndexFileFor(dicPath).exists()) {
+            println "compiling $dicPath"
             javaexec {
                 classpath += files(project(":Seashell").jar.outputs.files.getFiles())
                 main = "org.itadaki.seashell.tools.Indexer"
                 args dicPath
             }
         } else {
-            println "already compiled " + dicPath + "; skipping"
+            println "already compiled ${dicPath}; skipping"
         }
     }
 }

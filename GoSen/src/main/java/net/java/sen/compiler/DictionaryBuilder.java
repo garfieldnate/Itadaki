@@ -47,37 +47,7 @@ import java.util.Vector;
  */
 public class DictionaryBuilder {
 
-	/**
-	 * Input dictionary CSV filename
-	 */
-	private static final String DICTIONARY_CSV_FILENAME = "dictionary.csv";
-
-	/**
-	 * Input connection CSV filename
-	 */
-	private static final String CONNECTION_CSV_FILENAME = "connection.csv";
-
-	/**
-	 * Compiled connection cost data filename
-	 */
-	private static final String CONNECTION_COST_DATA_FILENAME = "connectionCost.sen";
-
-	/**
-	 * Compiled part of speech data filename
-	 */
-	private static final String PART_OF_SPEECH_DATA_FILENAME = "partOfSpeech.sen";
-
-	/**
-	 * Compiled token data filename
-	 */
-	private static final String TOKEN_DATA_FILENAME = "token.sen";
-
-	/**
-	 * Compiled trie data filename
-	 */
-	private static final String TRIE_DATA_FILENAME = "trie.sen";
-
-	/**
+    /**
 	 * Default connection cost
 	 */
 	private static final short DEFAULT_CONNECTION_COST = 10000;
@@ -521,7 +491,7 @@ public class DictionaryBuilder {
 	public DictionaryBuilder(String[] customDictionaryCSVFilenames) throws IOException {
 
 		List<String> dictionaryCSVFilenames = new ArrayList<String>();
-		dictionaryCSVFilenames.add(DICTIONARY_CSV_FILENAME);
+		dictionaryCSVFilenames.add(DictionaryFileNames.DICTIONARY_CSV_FILENAME);
 		dictionaryCSVFilenames.addAll(Arrays.asList(customDictionaryCSVFilenames));
 
 		String charset = "UTF-8";
@@ -529,10 +499,10 @@ public class DictionaryBuilder {
 
 		// Create connection cost file (matrix.sen)
 		CostMatrixBuilder[] matrixBuilders = createConnectionCostFile(
-				CONNECTION_CSV_FILENAME,
-				CONNECTION_COST_DATA_FILENAME,
-				DEFAULT_CONNECTION_COST,
-				charset
+            DictionaryFileNames.CONNECTION_CSV_FILENAME,
+            DictionaryFileNames.CONNECTION_COST_DATA_FILENAME,
+            DEFAULT_CONNECTION_COST,
+            charset
 		);
 
 
@@ -541,17 +511,17 @@ public class DictionaryBuilder {
 		CToken[] standardCTokens = new CToken[3];
 
 		createPartOfSpeechDataFile(
-				dictionaryCSVFilenames,
-				PART_OF_SPEECH_DATA_FILENAME,
-				matrixBuilders,
-				PART_OF_SPEECH_START,
-				PART_OF_SPEECH_SIZE,
-				charset,
-				BOS_PART_OF_SPEECH,
-				EOS_PART_OF_SPEECH,
-				UNKNOWN_PART_OF_SPEECH,
-				dictionaryList,
-				standardCTokens
+            dictionaryCSVFilenames,
+            DictionaryFileNames.PART_OF_SPEECH_DATA_FILENAME,
+            matrixBuilders,
+            PART_OF_SPEECH_START,
+            PART_OF_SPEECH_SIZE,
+            charset,
+            BOS_PART_OF_SPEECH,
+            EOS_PART_OF_SPEECH,
+            UNKNOWN_PART_OF_SPEECH,
+            dictionaryList,
+            standardCTokens
 		);
 
 		// Free temporary object for GC
@@ -560,17 +530,17 @@ public class DictionaryBuilder {
 
 		// Create Token file (token.sen)
 		TrieData trieData = createTokenFile(
-				TOKEN_DATA_FILENAME,
-				standardCTokens,
-				dictionaryList
+            DictionaryFileNames.TOKEN_DATA_FILENAME,
+            standardCTokens,
+            dictionaryList
 		);
 
 		// Free temporary object for GC
 		dictionaryList = null;
 
 
-		// Create Trie file (da.sen)
-		createTrieFile(TRIE_DATA_FILENAME, trieData);
+		// Create Trie file
+		createTrieFile(DictionaryFileNames.TRIE_DATA_FILENAME, trieData);
 
 	}
 

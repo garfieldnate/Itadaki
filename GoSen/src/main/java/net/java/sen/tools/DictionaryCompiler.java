@@ -21,9 +21,9 @@
 
 package net.java.sen.tools;
 
-import java.io.IOException;
-
 import net.java.sen.compiler.DictionaryBuilder;
+
+import java.io.IOException;
 
 
 /**
@@ -34,12 +34,11 @@ public class DictionaryCompiler {
 	/**
 	 * Main method
 	 * 
-	 * @param args &lt;Custom dictionary file&gt; (optional)
+	 * @param customDictionaries &lt;Custom dictionary file&gt; (optional)
 	 * @throws IOException 
 	 */
-	public static void main(String args[]) throws IOException {
+	public static void main(String customDictionaries[]) throws IOException {
 
-		String[] customDictionaries = args;
 		new DictionaryBuilder(customDictionaries);
 
 	}

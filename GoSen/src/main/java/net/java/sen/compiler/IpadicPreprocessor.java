@@ -37,22 +37,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static net.java.sen.compiler.DictionaryFileNames.CONNECTION_CSV_FILENAME;
+import static net.java.sen.compiler.DictionaryFileNames.DICTIONARY_CSV_FILENAME;
+
 
 /**
  * Preprocesses an unpacked Ipadic dictionary into the CSV form used for
  * compilation
  */
 public class IpadicPreprocessor {
-
-	/**
-	 * Input dictionary CSV filename
-	 */
-	private static final String DICTIONARY_CSV_FILENAME = "dictionary.csv";
-
-	/**
-	 * Input connection CSV filename
-	 */
-	private static final String CONNECTION_CSV_FILENAME = "connection.csv";
 
 	/**
 	 * The charset used to read the dictionary

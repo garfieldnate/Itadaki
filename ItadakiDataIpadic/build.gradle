@@ -1,22 +1,98 @@
+import net.java.sen.compiler.DictionaryFileNames
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
 apply plugin: 'base'
+apply from: './properties.gradle'
+apply from: '../scripts/dic_utils.gradle'
 
 defaultTasks 'unoPackage'
 
-task unoPackage(type: Zip) {
-    project.version = "20070228"
-    from (projectDir) {
-        include ([
-            "COPYING",
-            "README.md"])
+buildscript {
+    dependencies {
+        classpath files(project(":GoSen").compileJava.outputs)
     }
-    from ('dictionary')
-    from ("unopackage") {
-        include(["description.xml"])
+}
+
+dependencies {
+    project(':JISX0213')
+}
+
+def preprocessIpadic = { File dicDir ->
+    if (    !Files.exists(Paths.get(dicDir.path, DictionaryFileNames.DICTIONARY_CSV_FILENAME)) ||
+            !Files.exists(Paths.get(dicDir.path, DictionaryFileNames.CONNECTION_CSV_FILENAME))) {
+        println "Preprocessing $dicDir"
+        javaexec {
+            classpath += files(project(":GoSen").compileJava.destinationDir)
+            classpath += files(project(':JISX0213').jar.outputs.files.getFiles())
+            main = "net.java.sen.tools.DictionaryPreprocessor"
+            args 'X-EUC-JISX0213'
+            args dicDir
+            args dicDir
+        }
+    } else {
+        println "already preprocessed $dicDir; skipping"
     }
-    from ("unopackage") {
+}
+
+def compileIpadic = { File dicDir ->
+    if (    !Files.exists(Paths.get(dicDir.path, DictionaryFileNames.TRIE_DATA_FILENAME)) ||
+            !Files.exists(Paths.get(dicDir.path, DictionaryFileNames.CONNECTION_COST_DATA_FILENAME)) ||
+            !Files.exists(Paths.get(dicDir.path, DictionaryFileNames.PART_OF_SPEECH_DATA_FILENAME)) ||
+            !Files.exists(Paths.get(dicDir.path, DictionaryFileNames.TOKEN_DATA_FILENAME))) {
+        javaexec {
+            classpath += files(project(":GoSen").compileJava.outputs.files.getFiles())
+            workingDir = dicDir
+            main = "net.java.sen.tools.DictionaryCompiler"
+        }
+    } else {
+        println "already compiled $dicDir; skipping"
+    }
+}
+
+task downloadIpadic {
+    doLast {
+        downloadFile(project.properties['dic.url'], project.properties['dic.archive.file'])
+    }
+}
+
+task unpack(dependsOn: downloadIpadic) {
+    doLast {
+        unpackTarBall(project.properties['dic.archive.file'], buildDir)
+    }
+}
+
+task preprocess(dependsOn: [unpack, ':GoSen:compileJava', ':JISX0213:jar']) {
+    doLast {
+        preprocessIpadic(project.properties['dic.unpacked.dir'])
+    }
+}
+
+task compile(dependsOn: [preprocess]) {
+    doLast {
+        compileIpadic(project.properties['dic.unpacked.dir'])
+    }
+}
+
+task unoPackage(type: Zip, dependsOn: compile) {
+    from(projectDir) {
         include([
-            "manifest.xml"])
+                "COPYING",
+                "README.md"])
+    }
+    from(project.properties['dic.unpacked.dir']) {
+        include('*.sen')
+    }
+    from("unopackage") {
+        include(["description.xml"])
+        filter {line -> line.replace("YYYYMMDD", project.properties['dic.version'])}
+    }
+    from("unopackage") {
+        include([
+                "manifest.xml"])
         into "META-INF"
     }
-    archiveName = "itadaki-data-${dic}-${project.version}.uno.pkg"
+    // TODO: include dictionary.xml?
+    archiveName = "itadaki-data-ipadic-${version}.uno.pkg"
 }
