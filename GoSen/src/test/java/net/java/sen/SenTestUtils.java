@@ -17,28 +17,26 @@
  * 
  */
 
-package test;
+package net.java.sen;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
-
-import net.java.sen.ReadingProcessor;
-import net.java.sen.SenFactory;
-import net.java.sen.StringTagger;
 import net.java.sen.dictionary.Reading;
 import net.java.sen.dictionary.Token;
 import net.java.sen.dictionary.Viterbi;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
 /**
  * Test utilities
  */
-public class TestUtil {
+public class SenTestUtils {
 
-    public static final String DIC_PATH = TestUtil.class.getClassLoader()
-                                                    .getResource("dictionary/dictionary.xml")
-                                                    .getPath();
+    public static final String DIC_PATH = SenTestUtils.class.getClassLoader()
+                                                            .getResource("dictionary/dictionary.xml")
+                                                            .getPath();
     /**
 	 * A StringTagger for testing
 	 */

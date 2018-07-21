@@ -17,18 +17,17 @@
  * 
  */
 
-package test;
-
-import java.util.List;
+package net.java.sen.filter.reading;
 
 import net.java.sen.ReadingProcessor;
 import net.java.sen.dictionary.Reading;
-import net.java.sen.filter.reading.NumberFilter;
-import net.java.sen.filter.reading.OverrideFilter;
 
 import org.junit.Test;
 
-import static test.TestUtil.*;
+import java.util.List;
+
+import static net.java.sen.SenTestUtils.compareReadings;
+import static net.java.sen.SenTestUtils.getReadingProcessor;
 
 
 /**

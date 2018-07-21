@@ -17,16 +17,16 @@
  * 
  */
 
-package test;
+package net.java.sen;
 
-import java.util.List;
-
-import net.java.sen.ReadingProcessor;
 import net.java.sen.dictionary.Reading;
 
 import org.junit.Test;
 
-import static test.TestUtil.*;
+import java.util.List;
+
+import static net.java.sen.SenTestUtils.compareReadings;
+import static net.java.sen.SenTestUtils.getReadingProcessor;
 
 
 /**

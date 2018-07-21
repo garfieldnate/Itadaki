@@ -17,18 +17,18 @@
  * 
  */
 
-package test;
+package net.java.sen;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.java.sen.StringTagger;
 import net.java.sen.dictionary.Morpheme;
 import net.java.sen.dictionary.Token;
 
 import org.junit.Test;
 
-import static test.TestUtil.*;
+import java.io.IOException;
+import java.util.List;
+
+import static net.java.sen.SenTestUtils.compareTokens;
+import static net.java.sen.SenTestUtils.getStringTagger;
 
 
 /**

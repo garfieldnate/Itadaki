@@ -17,7 +17,9 @@
  * 
  */
 
-package test;
+package net.java.sen.trie;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -25,12 +27,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.NoSuchElementException;
 
-import net.java.sen.trie.CharIterator;
-import net.java.sen.trie.TrieBuilder;
-import net.java.sen.trie.TrieSearcher;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 /**

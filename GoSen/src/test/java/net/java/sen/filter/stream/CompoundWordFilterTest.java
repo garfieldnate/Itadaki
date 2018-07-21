@@ -17,9 +17,14 @@
  * 
  */
 
-package test;
+package net.java.sen.filter.stream;
 
-import static test.TestUtil.*;
+import net.java.sen.StringTagger;
+import net.java.sen.dictionary.Morpheme;
+import net.java.sen.dictionary.Token;
+import net.java.sen.tools.CompoundWordTableCompiler;
+
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,13 +32,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import net.java.sen.StringTagger;
-import net.java.sen.dictionary.Morpheme;
-import net.java.sen.dictionary.Token;
-import net.java.sen.filter.stream.CompoundWordFilter;
-import net.java.sen.tools.CompoundWordTableCompiler;
-
-import org.junit.Test;
+import static net.java.sen.SenTestUtils.compareTokens;
+import static net.java.sen.SenTestUtils.getStringTagger;
 
 
 /**

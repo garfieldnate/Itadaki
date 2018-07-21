@@ -17,22 +17,21 @@
  * 
  */
 
-package test;
+package net.java.sen.dictionary;
+
+import net.java.sen.SenTestUtils;
+
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import net.java.sen.dictionary.Morpheme;
-import net.java.sen.dictionary.Reading;
-import net.java.sen.dictionary.Sentence;
-import net.java.sen.dictionary.SentenceIterator;
-import net.java.sen.dictionary.Token;
-import net.java.sen.dictionary.Viterbi;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static test.TestUtil.*;
+import static net.java.sen.SenTestUtils.compareTokens;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 /**
@@ -856,7 +855,7 @@ public class SentenceTest {
 				new Token ("は", 6470, 2, 1, new Morpheme ("助詞-係助詞", "*", "*", "は", new String[]{"ハ"}, new String[]{"ワ"}, null))
 		};
 
-		Viterbi viterbi = TestUtil.getViterbi();
+		Viterbi viterbi = SenTestUtils.getViterbi();
 
 		List<Token> tokens = viterbi.getBestTokens (testSentence);
 
@@ -888,7 +887,7 @@ public class SentenceTest {
 				new Token ("日", 0, 1, 1, new Morpheme ("名詞-副詞可能", "*", "*", "日", new String[]{"ヒ"}, new String[]{"ヒ"}, null))
 		};
 	
-		Viterbi viterbi = TestUtil.getViterbi();
+		Viterbi viterbi = SenTestUtils.getViterbi();
 
 		List<Token> tokens = viterbi.getPossibleTokens (testSentence, 1);
 
@@ -916,7 +915,7 @@ public class SentenceTest {
 				new Token ("買", 0, 0, 1, new Morpheme ("名詞-接尾-一般", "*", "*", "買", new String[]{"カイ", "ガイ"}, new String[]{"カイ", "ガイ"}, null))
 		};
 	
-		Viterbi viterbi = TestUtil.getViterbi();
+		Viterbi viterbi = SenTestUtils.getViterbi();
 
 		List<Token> tokens = viterbi.getPossibleTokens (testSentence, 0);
 
