@@ -1,5 +1,7 @@
 apply plugin: 'java'
 
+version = '1.2'
+
 repositories {
     mavenCentral()
 }
@@ -15,4 +17,43 @@ dependencies {
     compile project(':Seashell')
 
     testCompile 'junit:junit:4.12'
+}
+
+jar {
+    manifest {
+        attributes(
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+                "RegistrationClassName": "org.itadaki.openoffice.ComponentProvider"
+        )
+    }
+}
+
+task unoPackage(type: Zip, dependsOn: build) {
+    archiveName = "itadaki-${version}.uno.pkg"
+    from configurations.runtime.allArtifacts.files
+    from jar.outputs.files
+    from(projectDir) {
+        include([
+                "COPYING.LGPL",
+                "README.md"
+        ])
+    }
+    from("unopackage") {
+        include([
+                "description.xml",
+                "description.txt",
+                "*.xcu"
+        ])
+        filter {line -> line.replace("{VERSION}", version.toString())}
+    }
+    from("unopackage") {
+        include([
+                "manifest.xml"])
+        into "META-INF"
+    }
+}
+
+task install(type: Exec, dependsOn: unoPackage) {
+    commandLine 'unopkg', 'remove', unoPackage.outputs.files.asPath
+    commandLine 'unopkg', 'add', unoPackage.outputs.files.asPath
 }
