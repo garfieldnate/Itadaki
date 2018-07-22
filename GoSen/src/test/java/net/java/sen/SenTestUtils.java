@@ -34,8 +34,8 @@ import static org.junit.Assert.fail;
  */
 public class SenTestUtils {
 
-    public static final String DIC_PATH = SenTestUtils.class.getClassLoader()
-                                                            .getResource("dictionary/dictionary.xml")
+    // TODO: next get this to read from the Ipadic project
+    public static final String DIC_PATH = SenTestUtils.class.getResource("dictionary.xml")
                                                             .getPath();
     /**
 	 * A StringTagger for testing

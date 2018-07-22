@@ -26,7 +26,7 @@ package org.itadaki.client.dictionary.utility;
 public class StringUtil {
 
 	/**
-	 * Fold the character case of a string. Specifically, alphabetic upper -> lower case, and katakana -> hiragana
+	 * Fold the character case of a string. Specifically, alphabetic upper -&gt; lower case, and katakana -&gt; hiragana
 	 *
 	 * @param text The text to fold
 	 * @return The case-folded string

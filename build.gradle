@@ -7,31 +7,47 @@ repositories {
     mavenCentral()
 }
 
-allprojects {
-    tasks.withType(JavaCompile) {
-        sourceCompatibility = 1.7
-        targetCompatibility = 1.7
-        options.encoding = "UTF-8"
-        options.compilerArgs << "-Xlint:all"
-    }
-
-    tasks.withType(Test) {
-        // fail the whole build if any test fails
-        ignoreFailures = false
-
-        // half of the cores are probably virtual
-        setMaxParallelForks(Runtime.runtime.availableProcessors() / 2 as int)
-
-        afterTest { test, result ->
-            def time = (result.getEndTime() - result.getStartTime()) / 1000
-            logger.lifecycle("${test.getName()} took: ${time} seconds! -> ${result.getResultType()}")
+subprojects {
+    plugins.withId('java', { _ ->
+        tasks.withType(JavaCompile) {
+            sourceCompatibility = 1.7
+            targetCompatibility = 1.7
+            options.encoding = "UTF-8"
+            options.compilerArgs << "-Xlint:all"
         }
 
-        testLogging {
-            // print details when tests fail
-            exceptionFormat = 'full'
-            // print everything the tests print
-            // showStandardStreams = true
+        tasks.withType(Test) {
+            // fail the whole build if any test fails
+            ignoreFailures = false
+
+            // half of the cores are probably virtual
+            setMaxParallelForks(Runtime.runtime.availableProcessors() / 2 as int)
+
+            afterTest { test, result ->
+                def time = (result.getEndTime() - result.getStartTime()) / 1000
+                logger.lifecycle("${test.getName()} took: ${time} seconds! -> ${result.getResultType()}")
+            }
+
+            testLogging {
+                // print details when tests fail
+                exceptionFormat = 'full'
+                // print everything the tests print
+                // showStandardStreams = true
+            }
         }
-    }
+
+        javadoc {
+            options.locale = 'en_US'
+        }
+        task sourcesJar(type: Jar) {
+            description "Build a jar containing just the java source files"
+            from sourceSets.main.allJava
+            classifier 'sources'
+        }
+        task javadocsJar(type: Jar) {
+            description "Build a jar containing just the JavaDocs"
+            from javadoc
+            classifier 'javadoc'
+        }
+    })
 }
