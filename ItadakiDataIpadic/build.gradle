@@ -93,6 +93,6 @@ task unoPackage(type: Zip, dependsOn: compile) {
                 "manifest.xml"])
         into "META-INF"
     }
-    // TODO: include dictionary.xml?
+    include("dictionary.xml")
     archiveName = "itadaki-data-ipadic-${version}.uno.pkg"
 }

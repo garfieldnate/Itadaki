@@ -4,6 +4,5 @@ project.ext {
     setProperty('dic.url', 'http://jaist.dl.sourceforge.jp/ipadic/24435/ipadic-' + properties['dic.version'] + '.tar.gz')
     setProperty('dic.archive.file', new File(buildDir, 'ipadic-' + properties['dic.version'] + '.tar.gz'))
     setProperty('dic.unpacked.dir', new File(buildDir, 'ipadic-' + properties['dic.version']))
-    println properties['dic.unpacked.dir']
     setProperty('archive.name', "itadaki-data-ipadic-" + properties['dic.version'] + '.uno.pkg')
 }
