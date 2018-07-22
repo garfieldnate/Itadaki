@@ -182,9 +182,10 @@ public class BasicDecompositionTest {
 				new Token ("魔女", 3864, 0, 2, new Morpheme ("名詞-一般", "*", "*", "魔女", new String[]{"マジョ"}, new String[]{"マジョ"}, null)),
 				new Token ("狩", 8565, 2, 1, new Morpheme ("名詞-一般", "*", "*", "狩", new String[]{"カリ"}, new String[]{"カリ"}, null)),
 				new Token ("大将", 12916, 3, 2, new Morpheme ("名詞-一般", "*", "*", "大将", new String[]{"タイショウ"}, new String[]{"タイショー"}, null)),
-				// TODO: this used to be split around the ・
-                new Token ("マシュー・ホプキンス", 43720, 5, 10, new Morpheme ("未知語", null, null, "マシュー・ホプキンス", new String[]{}, new String[]{}, null)),
-				new Token ("。", 44778, 15, 1, new Morpheme ("記号-句点", "*", "*", "。", new String[]{"。"}, new String[]{"。"}, null))
+                new Token ("マシュー", 43720, 5, 4, new Morpheme ("未知語", null, null, "*", new String[]{}, new String[]{}, null)),
+                new Token ("・", 45399, 9, 1, new Morpheme ("記号-一般", "*", "*", "・", new String[]{"・"}, new String[]{"・"}, null)),
+                new Token ("ホプキンス", 76438, 10, 5, new Morpheme ("未知語", null, null, "*", new String[]{}, new String[]{}, null)),
+				new Token ("。", 77496, 15, 1, new Morpheme ("記号-句点", "*", "*", "。", new String[]{"。"}, new String[]{"。"}, null))
 		};
 
 
@@ -225,5 +226,42 @@ public class BasicDecompositionTest {
 
 	}
 
+    /**
+     * Test the tokenizer that is able to recognize a Latin-1 accented character as a proper Latin character,
+     * which will not handle as a separator.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testLatinAccentedCharacter() throws IOException {
+        StringTagger tagger = SenFactory.getStringTagger(SenTestUtils.DIC_PATH);
 
+        String strTest = "mündlichen";
+
+        Token[] expectedTokens = new Token[] {
+            new Token ("mündlichen", 31057, 0, 10, new Morpheme ("未知語", null, null, "*", new String[]{}, new String[]{}, null))
+        };
+
+        List<Token> analyzedTokens = tagger.analyze(strTest);
+        compareTokens (expectedTokens, analyzedTokens);
+    }
+
+    /**
+     * Test the tokenizer that a half-width Katakana character handles properly.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testKatakanaString() throws IOException {
+        StringTagger tagger = SenFactory.getStringTagger(SenTestUtils.DIC_PATH);
+
+        String strTest = "ッﾊﾞサ";
+
+        Token[] expectedTokens = new Token[] {
+            new Token ("ッﾊﾞサ", 31057, 0, 4, new Morpheme ("未知語", null, null, "*", new String[]{}, new String[]{}, null))
+        };
+
+        List<Token> analyzedTokens = tagger.analyze(strTest);
+        compareTokens (expectedTokens, analyzedTokens);
+    }
 }

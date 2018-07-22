@@ -20,17 +20,17 @@
 
 package net.java.sen.filter.stream;
 
+import net.java.sen.dictionary.Morpheme;
+import net.java.sen.dictionary.Sentence;
+import net.java.sen.dictionary.Token;
+import net.java.sen.filter.StreamFilter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import net.java.sen.dictionary.Morpheme;
-import net.java.sen.dictionary.Sentence;
-import net.java.sen.dictionary.Token;
-import net.java.sen.filter.StreamFilter;
 
 
 /**
@@ -73,6 +73,11 @@ public class CommentFilter implements StreamFilter {
 		 * The part-of-speech code used in the Token that replaces the comment
 		 */
 		public String partOfSpeech;
+
+		@Override
+        public String toString() {
+		    return start + " " + end + " " + partOfSpeech;
+        }
 
 	}
 

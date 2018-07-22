@@ -31,6 +31,7 @@ import java.io.IOException;
  * strings into potential morphemes
  */
 public abstract class Tokenizer {
+    private final Morpheme unknownMorpheme;
 
 	/**
 	 * The {@link Dictionary}  used to find possible morphemes
@@ -51,12 +52,6 @@ public abstract class Tokenizer {
 	 * A {@link Node} representing an end-of-string
 	 */
 	protected Node eosNode;
-
-	/**
-	 * The part-of-speech code to use for unknown tokens
-	 */
-	protected String unknownPartOfSpeechDescription;
-
 
 	/**
 	 * @return Returns the dictionary used to find possible morphemes
@@ -95,30 +90,26 @@ public abstract class Tokenizer {
 
 	}
 
-
 	/**
 	 * Creates an "unknown morpheme" {@link Node} with the specified
 	 * characteristics.  The {@link Node} returned by this method is freshly
 	 * cloned and not an alias of any other {@link Node}
 	 *
-	 * @param surface The underlying surface of which the {@link Node} is part
 	 * @param start The index of the first character of the surface within the
 	 *              {@link Node}
 	 * @param length The length of the {@link Node}
 	 * @param span The span of the {@link Node}
 	 * @return The new "unknown morpheme" {@link Node}
 	 */
-	public Node getUnknownNode(char[] surface, int start, int length, int span) {
+	public Node getUnknownNode(int start, int length, int span) {
 
 		Node unknownNode = new Node();
-
 		unknownNode.ctoken = this.unknownCToken;
 		unknownNode.start = start;
 		unknownNode.length = length;
 		unknownNode.span = span;
 		unknownNode.morpheme = new Morpheme();
-		unknownNode.morpheme.setBasicForm(new String(surface, start, length));
-		unknownNode.morpheme.setPartOfSpeech(this.unknownPartOfSpeechDescription);
+		unknownNode.morpheme = this.unknownMorpheme;
 
 		return unknownNode;
 
@@ -151,7 +142,7 @@ public abstract class Tokenizer {
 	public Tokenizer(Dictionary dictionary, String unknownPartOfSpeechDescription) {
 
 		this.dictionary = dictionary;
-		this.unknownPartOfSpeechDescription = unknownPartOfSpeechDescription;
+		this.unknownMorpheme = new Morpheme(unknownPartOfSpeechDescription, null, null, "*", new String[0], new String[0], null);
 
 		this.bosNode = new Node();
 		this.bosNode.ctoken = this.dictionary.getBOSToken();

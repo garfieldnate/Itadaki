@@ -79,7 +79,7 @@ public class CompositeTokenFilterTest {
 		Token[] testTokens = new Token[] {
 				new Token ("ロンドン", 3038, 0, 4, new Morpheme ("名詞-固有名詞-地域-一般", "*", "*", "ロンドン", new String[]{"ロンドン"}, new String[]{"ロンドン"}, null)),
 				new Token ("０１７１", 26464, 4, 4, new Morpheme ("名詞-数", "*", "*", "０１７１", new String[]{"ゼロイチナナイチ"}, new String[]{"ゼロイチナナイチ"}, null)),
-				new Token ("ー", 40061, 8, 1, new Morpheme ("未知語", null, null, "ー", new String[]{}, new String[]{}, null)),
+				new Token ("ー", 40061, 8, 1, new Morpheme ("未知語", null, null, "*", new String[]{}, new String[]{}, null)),
 				new Token ("１２３４５６７", 322469, 9, 7, new Morpheme ("名詞-数", "*", "*", "１２３４５６７", new String[]{"イチニサンヨンゴロクナナ"}, new String[]{"イチニサンヨンゴロクナナ"}, null)),
 		};
 

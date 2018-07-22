@@ -148,7 +148,7 @@ public class Viterbi {
 		}
 
 		// Synthesize Node
-		Node unknownNode = this.tokenizer.getUnknownNode(surface, iterator.origin(), constraint.length, constraint.length + iterator.skippedCharCount());
+		Node unknownNode = this.tokenizer.getUnknownNode(iterator.origin(), constraint.length, constraint.length + iterator.skippedCharCount());
 		unknownNode.morpheme.setReadings(Arrays.asList(constraint.text));
 
 		return unknownNode;
