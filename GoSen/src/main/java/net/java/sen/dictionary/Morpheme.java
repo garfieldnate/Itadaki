@@ -24,6 +24,7 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -394,36 +395,20 @@ public class Morpheme {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object object) {
+	public boolean equals(Object other) {
 
-		if (object instanceof Morpheme) {
+		if (other instanceof Morpheme) {
 
-			Morpheme morpheme = (Morpheme) object;
+			Morpheme otherMorpheme = (Morpheme) other;
 
-			String partOfSpeech = this.getPartOfSpeech();
-			String conjugationalType = this.getConjugationalType();
-			String conjugationalForm = this.getConjugationalForm();
-			String basicForm = this.getBasicForm();
-			List<String> pronunciations = this.getPronunciations();
-			List<String> readings = this.getReadings();
-			String additionalInformation = this.getAdditionalInformation();
-
-			String otherPartOfSpeech = morpheme.getPartOfSpeech();
-			String otherConjugationalType = morpheme.getConjugationalType();
-			String otherConjugationalForm = morpheme.getConjugationalForm();
-			String otherBasicForm = morpheme.getBasicForm();
-			List<String> otherPronunciations = morpheme.getPronunciations();
-			List<String> otherReadings = morpheme.getReadings();
-			String otherAdditionalInformation = morpheme.getAdditionalInformation();
-
-			if (
-					   ((basicForm == otherBasicForm) || (basicForm != null && basicForm.equals(otherBasicForm)))
-					&& ((conjugationalType == otherConjugationalType) || (conjugationalType != null && conjugationalType.equals(otherConjugationalType)))
-					&& ((conjugationalForm == otherConjugationalForm) || (conjugationalForm != null && conjugationalForm.equals(otherConjugationalForm)))
-					&& ((partOfSpeech == otherPartOfSpeech) || (partOfSpeech != null && partOfSpeech.equals(otherPartOfSpeech)))
-					&& (stringListsEqual(pronunciations, otherPronunciations))
-					&& (stringListsEqual(readings, otherReadings))
-					&& ((additionalInformation == otherAdditionalInformation) || (additionalInformation != null && additionalInformation.equals(otherAdditionalInformation)))					
+            if (
+					   (Objects.equals(this.getBasicForm(), otherMorpheme.getBasicForm()))
+                        && (Objects.equals(this.getConjugationalType(), otherMorpheme.getConjugationalType()))
+                        && (Objects.equals(this.getConjugationalForm(), otherMorpheme.getConjugationalForm()))
+                        && (Objects.equals(this.getPartOfSpeech(), otherMorpheme.getPartOfSpeech()))
+                        && (Objects.equals(this.getPronunciations(), otherMorpheme.getPronunciations()))
+                        && (Objects.equals(this.getReadings(), otherMorpheme.getReadings()))
+                        && (Objects.equals(this.getAdditionalInformation(), otherMorpheme.getAdditionalInformation()))
 			   )
 			{
 				return true;

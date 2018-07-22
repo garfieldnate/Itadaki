@@ -23,6 +23,7 @@ import net.java.sen.dictionary.Reading;
 import net.java.sen.dictionary.Token;
 import net.java.sen.dictionary.Viterbi;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -195,26 +196,36 @@ public class SenTestUtils {
 	 */
 	public static void compareTokens (Token[] expectedTokens, List<Token> actualTokens) {
 
-		assertEquals (expectedTokens.length, actualTokens.size());
+        if (expectedTokens.length != actualTokens.size()) {
+            String error =
+                "Expected " + expectedTokens.length + " tokens but found " + actualTokens.size() + "\n" +
+                "Expected: " + Arrays.toString(expectedTokens) + "\n" +
+                "Actual: " + actualTokens + "\n";
+            fail(error);
+        }
 
+        StringBuilder errors = new StringBuilder();
 		for (int i = 0; i < expectedTokens.length; i++) {
 
 			if (!expectedTokens[i].equals(actualTokens.get(i))) {
 				String expectedMorpheme = expectedTokens[i].getMorpheme() == null ? "" : expectedTokens[i].getMorpheme().toString();
 				String actualMorpheme = actualTokens.get(i).getMorpheme() == null ? "" : actualTokens.get(i).getMorpheme().toString();
 
-				String error = "";
-				error += String.format ("surface: %1$20s : %2$20s\n", expectedTokens[i].getSurface(), actualTokens.get(i).getSurface());
-				error += String.format ("cost: %1$20s : %2$20s\n", expectedTokens[i].getCost(), actualTokens.get(i).getCost());
-				error += String.format ("start: %1$20s : %2$20s\n", expectedTokens[i].getStart(), actualTokens.get(i).getStart());
-				error += String.format ("length: %1$20s : %2$20s\n", expectedTokens[i].getLength(), actualTokens.get(i).getLength());
-				error += String.format ("morpheme: %1$20s : %2$20s\n", expectedMorpheme, actualMorpheme);
+				errors.append("--\n");
+				// TODO: doesn't align double-width characters correctly
+				errors.append(String.format("%1$9s: %2$20s : %3$20s\n", "field", "expected", "actual"));
+				errors.append(String.format("%1$9s: %2$20s : %3$20s\n", "surface", expectedTokens[i].getSurface(), actualTokens.get(i).getSurface()));
+				errors.append(String.format ("%1$9s: %2$20s : %3$20s\n", "cost", expectedTokens[i].getCost(), actualTokens.get(i).getCost()));
+				errors.append(String.format ("%1$9s: %2$20s : %3$20s\n", "start", expectedTokens[i].getStart(), actualTokens.get(i).getStart()));
+				errors.append(String.format ("%1$9s: %2$20s : %3$20s\n", "length", expectedTokens[i].getLength(), actualTokens.get(i).getLength()));
+				errors.append(String.format ("%1$9s: %2$20s : %3$20s\n", "morpheme", expectedMorpheme, actualMorpheme));
 				
-				fail("Tokens don't match\n" + error);
 			}
 
 		}
-
+        if(errors.length() != 0) {
+		    fail("Tokens don't match:\n" + errors.toString());
+        }
 	}
 
 

@@ -59,8 +59,8 @@ public class CompoundWordFilterTest {
 		String testString = "駆け出し";
 
 		Token[] testTokens = new Token[] {
-				new Token ("駆け", 4281, 0, 2, new Morpheme ("名詞-一般", "*", "*", "駆け", new String[]{"カケ"}, new String[]{"カケ,"}, "")),
-				new Token ("出し", 4281, 2, 2, new Morpheme ("名詞-一般", "*", "*", "出し", new String[]{"ダシ"}, new String[]{"ダシ,"}, ""))
+				new Token ("駆け", 4279, 0, 2, new Morpheme ("名詞-一般", "*", "*", "駆け", new String[]{"カケ"}, new String[]{"カケ,"}, "")),
+				new Token ("出し", 4279, 2, 2, new Morpheme ("名詞-一般", "*", "*", "出し", new String[]{"ダシ"}, new String[]{"ダシ,"}, ""))
 		};
 
 
@@ -93,10 +93,10 @@ public class CompoundWordFilterTest {
 		String testString = "駆け出している";
 	
 		Token[] testTokens = new Token[] {
-				new Token ("駆け", 5205, 0, 2, new Morpheme ("名詞-一般", "*", "*", "駆け", new String[]{"カケ"}, new String[]{"カケ,"}, "")),
-				new Token ("出し", 5205, 2, 2, new Morpheme ("名詞-一般", "*", "*", "出し", new String[]{"ダシ"}, new String[]{"ダシ,"}, "")),
-				new Token ("て", 5551, 4, 1, new Morpheme ("助詞-接続助詞", "*", "*", "て", new String[]{"テ"}, new String[]{"テ"}, null)),
-				new Token ("いる", 5794, 5, 2, new Morpheme ("動詞-非自立", "一段", "基本形", "いる", new String[]{"イル"}, new String[]{"イル"}, null))
+				new Token ("駆け", 5224, 0, 2, new Morpheme ("名詞-一般", "*", "*", "駆け", new String[]{"カケ"}, new String[]{"カケ,"}, "")),
+				new Token ("出し", 5224, 2, 2, new Morpheme ("名詞-一般", "*", "*", "出し", new String[]{"ダシ"}, new String[]{"ダシ,"}, "")),
+				new Token ("て", 5567, 4, 1, new Morpheme ("助詞-接続助詞", "*", "*", "て", new String[]{"テ"}, new String[]{"テ"}, null)),
+				new Token ("いる", 5807, 5, 2, new Morpheme ("動詞-非自立", "一段", "基本形", "いる", new String[]{"イル"}, new String[]{"イル"}, null))
 		};
 	
 	

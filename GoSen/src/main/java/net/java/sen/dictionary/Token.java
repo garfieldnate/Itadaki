@@ -1,31 +1,33 @@
 /*
  * Copyright (C) 2006-2007
  * Matt Francis <asbel@neosheffield.co.uk>
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
 package net.java.sen.dictionary;
 
 
+import java.util.Objects;
+
 /**
  * A single token from an analysed sentence
- * 
+ *
  *  <p><b>Thread Safety</b>: Objects of this class are <b>NOT</b> thread safe and
  * should not be accessed simultaneously by multiple threads.
- * 
+ *
  *  <p><b>CAUTION</b>: {@link Morpheme}s are implemented as lazy proxies onto a
  *  {@link Dictionary}, and care should be taken not to access the same
  *  {@link Dictionary} from multiple threads. Once any member of a
@@ -79,7 +81,7 @@ public class Token {
 	/**
 	 * Sets the start of the character range of this Token within the
 	 * underlying sentence
-	 * 
+	 *
 	 * @param start The start of the character range of this Token within the
 	 *              underlying sentence
 	 */
@@ -93,7 +95,7 @@ public class Token {
 	/**
 	 * Gets the length of the character range of this Token within the
 	 * underlying sentence
-	 * 
+	 *
 	 * @return The length of the character range of this Token within the
 	 *         underlying sentence
 	 */
@@ -105,7 +107,7 @@ public class Token {
 	/**
 	 * Sets the length of the character range of this Token within the
 	 * underlying sentence
-	 * 
+	 *
 	 * @param length The length of the character range of this Token within the
 	 *               underlying sentence
 	 */
@@ -128,9 +130,9 @@ public class Token {
 
 	/**
 	 * Sets the character range of this Token within the underlying sentence
-	 * 
+	 *
 	 * @param surface The character range of this Token within the underlying
-	 *                sentence 
+	 *                sentence
 	 */
 	public void setSurface(String surface) {
 
@@ -153,7 +155,7 @@ public class Token {
 
 	/**
 	 * Sets the Viterbi cost of this Token
-	 * 
+	 *
 	 * @param cost The Viterbi cost of this Token
 	 */
 	public void setCost(int cost) {
@@ -198,11 +200,11 @@ public class Token {
 			Token token = ((Token) object);
 
 			if (
-					   ((this.surface == token.surface) || (this.surface != null && this.surface.equals(token.surface)))
+					   (Objects.equals(this.surface, token.surface))
 					&& (this.cost == token.cost)
 					&& (this.start == token.start)
 					&& (this.length == token.length)
-					&& ((this.morpheme == token.morpheme) || (this.morpheme != null && this.morpheme.equals(token.morpheme)))
+					&& (Objects.equals(this.morpheme, token.morpheme))
 			   )
 			{
 				return true;
@@ -217,7 +219,7 @@ public class Token {
 
 	/**
 	 * Returns the character range of this Token within the underlying sentence
-	 * 
+	 *
 	 * @return The character range of this Token within the underlying sentence
 	 */
 	@Override
@@ -230,8 +232,8 @@ public class Token {
 
 	/**
 	 * Creates a Token from a Node
-	 * 
-	 * @param surface The underlying sentence string 
+	 *
+	 * @param surface The underlying sentence string
 	 * @param node The Node to create from
 	 */
 	public Token(String surface, Node node) {
@@ -247,7 +249,7 @@ public class Token {
 
 	/**
 	 * Creates a Token with explicit parameters
-	 * 
+	 *
 	 * @param surface The character range within the underlying sentence
 	 * @param cost The Viterbi cost
 	 * @param start The start of the character range within the underlying

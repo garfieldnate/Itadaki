@@ -1,4 +1,3 @@
-//Next: ask on SO how to import scripts without getting an error for redefining things
 apply plugin: 'base'
 apply from: './properties.gradle'
 apply from: '../scripts/dic_utils.gradle'
